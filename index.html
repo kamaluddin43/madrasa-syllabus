@@ -101,6 +101,23 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 </style>
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col">
+<!-- ═══════════════════ TEACHER PICKER MODAL ═══════════════════ -->
+<div id="teacher-picker-modal" class="fixed inset-0 modal-backdrop z-[300] items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col modal-enter">
+        <div class="bg-emerald-900 text-white p-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-user-check"></i> শিক্ষক নির্বাচন করুন
+            </h3>
+            <button onclick="closeTeacherPicker()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+        </div>
+        <div class="p-4 border-b">
+            <input type="text" id="tp-search" oninput="filterTeacherPicker()" placeholder="🔍 নাম/কার্ড/মোবাইল দিয়ে খুঁজুন..." class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+        </div>
+        <div id="tp-list" class="p-4 overflow-y-auto flex-1 space-y-2">
+            <!-- JS populate করবে -->
+        </div>
+    </div>
+</div>
 <div id="login-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[200] flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-emerald-900 text-white p-6 text-center">
@@ -2374,6 +2391,7 @@ document.addEventListener('keydown', e => {
         }
     }
 });
+
 // ═══════════════════ LOGIN SYSTEM ═══════════════════
 let currentUser = null;
 let currentUserData = null;
@@ -3706,16 +3724,38 @@ window.addAdminUser = async function() {
     const role = prompt('Role (admin / teacher):', 'teacher');
     if (!role || !['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
     
-    // শিক্ষকের সাথে লিংক (teacher হলে)
-    let teacherName = '';
+    // শিক্ষকের সাথে লিংক (teacher হলে) — Modal দিয়ে
     if (role.trim() === 'teacher') {
-        const teacherListStr = teachersArr.map((t, i) => `${i + 1}. ${t.name} (${t.dept})`).join('\n');
-        const idxStr = prompt('শিক্ষকের নম্বর নির্বাচন করুন:\n\n' + teacherListStr);
-        if (idxStr === null) return;
-        const idx = parseInt(idxStr) - 1;
-        if (idx < 0 || idx >= teachersArr.length) { showToast('⚠️ ভুল নম্বর', 'warn'); return; }
-        teacherName = teachersArr[idx].name;
+        // পুরো email/password/name/role তথ্য globals এ রাখি
+        window._pendingUserData = {
+            email: email.trim(),
+            password: password,
+            name: name.trim(),
+            role: role.trim()
+        };
+        
+        openTeacherPicker('', async function(selectedTeacher) {
+            window._pendingUserData.teacherName = selectedTeacher.name;
+            await finalizeAddAdminUser();
+        });
+        return;
     }
+    
+    await finalizeAddAdminUser({
+        email: email.trim(),
+        password: password,
+        name: name.trim(),
+        role: role.trim(),
+        teacherName: ''
+    });
+};
+
+window.finalizeAddAdminUser = async function(dataOrUndefined) {
+    const data = dataOrUndefined || window._pendingUserData;
+    if (!data) { showToast('❌ তথ্য হারিয়ে গেছে', 'error'); return; }
+    
+    const { email, password, name, role, teacherName = '' } = data;
+    window._pendingUserData = null;
     
     try {
         showToast('⏳ ইউজার তৈরি হচ্ছে...', 'info');
@@ -3780,25 +3820,40 @@ window.editAdminUser = async function(uid) {
     if (role === null) return;
     if (!['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
     
-    let teacherName = u.teacherName || '';
     if (role.trim() === 'teacher') {
-        const teacherListStr = teachersArr.map((t, i) => `${i + 1}. ${t.name} (${t.dept})${t.name === teacherName ? ' ← বর্তমান' : ''}`).join('\n');
-        const idxStr = prompt('শিক্ষকের নম্বর (খালি রাখলে লিংক মুছে যাবে):\n\n' + teacherListStr, teacherName ? String(teachersArr.findIndex(t => t.name === teacherName) + 1) : '');
-        if (idxStr === null) return;
-        if (idxStr.trim() === '') { teacherName = ''; }
-        else {
-            const idx = parseInt(idxStr) - 1;
-            if (idx >= 0 && idx < teachersArr.length) teacherName = teachersArr[idx].name;
-        }
-    } else {
-        teacherName = '';
+        window._pendingEditData = {
+            uid: uid,
+            name: name.trim(),
+            role: role.trim()
+        };
+        
+        openTeacherPicker(u.teacherName || '', async function(selectedTeacher) {
+            window._pendingEditData.teacherName = selectedTeacher.name;
+            await finalizeEditAdminUser();
+        });
+        return;
     }
+    
+    await finalizeEditAdminUser({
+        uid: uid,
+        name: name.trim(),
+        role: role.trim(),
+        teacherName: ''
+    });
+};
+
+window.finalizeEditAdminUser = async function(dataOrUndefined) {
+    const data = dataOrUndefined || window._pendingEditData;
+    if (!data) { showToast('❌ তথ্য হারিয়ে গেছে', 'error'); return; }
+    
+    const { uid, name, role, teacherName = '' } = data;
+    window._pendingEditData = null;
     
     try {
         const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
         await updateDoc(doc(window.fbDB, 'users', uid), {
-            name: name.trim(),
-            role: role.trim(),
+            name: name,
+            role: role,
             teacherName: teacherName,
             updatedAt: serverTimestamp(),
             updatedBy: currentUser?.uid || 'admin'
@@ -4185,6 +4240,74 @@ window.exportRecordsCSV = function() {
     URL.revokeObjectURL(url);
     
     showToast(`✅ ${exportList.length}টি রেকর্ড export হয়েছে`, 'success');
+};
+// ═══════════════════ TEACHER PICKER ═══════════════════
+let _teacherPickerCallback = null;
+
+window.openTeacherPicker = function(currentTeacherName, callback) {
+    _teacherPickerCallback = callback;
+    const modal = document.getElementById('teacher-picker-modal');
+    const list = document.getElementById('tp-list');
+    const search = document.getElementById('tp-search');
+    
+    search.value = '';
+    list.innerHTML = '';
+    
+    const teachers = configData?.teachers || [];
+    const deptOrder = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const grouped = {};
+    deptOrder.forEach(d => grouped[d] = []);
+    teachers.forEach(t => {
+        if (!grouped[t.dept]) grouped[t.dept] = [];
+        grouped[t.dept].push(t);
+    });
+    
+    deptOrder.forEach(dept => {
+        if (!grouped[dept] || grouped[dept].length === 0) return;
+        const header = document.createElement('div');
+        header.className = 'text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-2 rounded-lg mt-3 mb-1 sticky top-0';
+        header.textContent = `${dept} বিভাগ (${grouped[dept].length} জন)`;
+        list.appendChild(header);
+        
+        grouped[dept].forEach(t => {
+            const div = document.createElement('div');
+            const selected = t.name === currentTeacherName;
+            div.className = `p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition flex items-center gap-3 ${selected ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`;
+            div.dataset.name = (t.name + ' ' + t.card + ' ' + t.mobile + ' ' + t.post).toLowerCase();
+            div.innerHTML = `
+                <div class="flex-1">
+                    <p class="text-sm font-bold">${t.name}</p>
+                    <p class="text-[10px] text-slate-500">${t.post} | কার্ড: ${t.card} | ${t.mobile}</p>
+                </div>
+                ${selected ? '<i class="fa-solid fa-check-circle text-emerald-600"></i>' : ''}
+            `;
+            div.onclick = function() {
+                if (_teacherPickerCallback) _teacherPickerCallback(t);
+                closeTeacherPicker();
+            };
+            list.appendChild(div);
+        });
+    });
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => search.focus(), 100);
+};
+
+window.closeTeacherPicker = function() {
+    const modal = document.getElementById('teacher-picker-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    _teacherPickerCallback = null;
+};
+
+window.filterTeacherPicker = function() {
+    const q = document.getElementById('tp-search').value.toLowerCase();
+    const items = document.querySelectorAll('#tp-list [data-name]');
+    items.forEach(el => {
+        if (!q || el.dataset.name.includes(q)) el.style.display = '';
+        else el.style.display = 'none';
+    });
 };
 </script>
 </body>
