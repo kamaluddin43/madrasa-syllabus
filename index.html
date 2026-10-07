@@ -217,8 +217,24 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <p class="text-sm text-emerald-200 mt-1">মাকাদীরে আসবাক সিস্টেম</p>
         </div>
 
-        <div id="login-form-wrap" class="p-6 space-y-4">
+        <div class="p-6 space-y-4">
             <h2 class="text-lg font-bold text-slate-800 text-center mb-2">লগইন করুন</h2>
+
+            <button onclick="doGoogleLogin()" id="google-login-btn" class="w-full py-3 bg-white hover:bg-slate-50 border-2 border-slate-300 text-slate-800 font-bold rounded-lg transition flex items-center justify-center gap-3 shadow-sm">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span>Google দিয়ে সাইন-ইন করুন</span>
+            </button>
+
+            <div class="flex items-center gap-3 my-3">
+                <div class="flex-1 h-px bg-slate-200"></div>
+                <span class="text-xs text-slate-500 font-semibold">অথবা</span>
+                <div class="flex-1 h-px bg-slate-200"></div>
+            </div>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
@@ -231,13 +247,98 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </div>
 
             <button onclick="doLogin()" id="login-btn" class="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-lg transition flex items-center justify-center gap-2 shadow-md">
-                <i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>
+                <i class="fa-solid fa-sign-in-alt"></i> <span>Email/Password দিয়ে লগইন</span>
             </button>
 
             <p id="login-error" class="text-xs text-red-600 text-center hidden"></p>
         </div>
+
+        <div class="bg-slate-50 px-6 py-3 text-center border-t">
+            <p class="text-[10px] text-slate-500">
+                <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                শুধু মাদরাসার নিবন্ধিত শিক্ষকগণ প্রবেশ করতে পারবেন
+            </p>
+        </div>
     </div>
 </div>
+
+<!-- ═══════════════════ CARD VERIFICATION MODAL ═══════════════════ -->
+<div id="card-verify-modal" class="fixed inset-0 modal-backdrop z-[250] items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden modal-enter">
+        <div class="bg-amber-600 text-white p-4 text-center">
+            <i class="fa-solid fa-id-card text-3xl mb-2"></i>
+            <h3 class="text-lg font-bold">পরিচয় যাচাই</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <p class="text-sm text-slate-700 text-center">
+                প্রথমবার লগইনের জন্য আপনার <strong>কার্ড নম্বর</strong> দিন। এটি মাদরাসার শিক্ষক ডাটাবেসের সাথে মিলিয়ে দেখা হবে।
+            </p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">কার্ড নম্বর</label>
+                <input type="text" id="cv-card-input" placeholder="যেমন: 0012203" class="w-full rounded-lg border-slate-300 border p-3 text-center font-mono text-lg focus:ring-2 focus:ring-amber-500">
+            </div>
+            <p id="cv-error" class="text-xs text-red-600 text-center hidden"></p>
+            <button onclick="verifyCardNumber()" id="cv-verify-btn" class="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-check"></i> যাচাই করুন
+            </button>
+            <button onclick="cancelCardVerify()" class="w-full py-2 text-slate-500 hover:text-slate-700 text-sm font-semibold">
+                বাতিল
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ PENDING APPROVAL SCREEN ═══════════════════ -->
+<div id="pending-screen" class="fixed inset-0 bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 z-[240] items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="bg-amber-600 text-white p-6 text-center">
+            <i class="fa-solid fa-hourglass-half text-5xl mb-3"></i>
+            <h2 class="text-xl font-bold">অনুমোদনের অপেক্ষা</h2>
+        </div>
+        <div class="p-6 space-y-4 text-center">
+            <p class="text-sm text-slate-700">
+                আপনার কার্ড নম্বর <strong class="font-mono text-emerald-700" id="pending-card-display"></strong> যাচাই করা হয়েছে ✅
+            </p>
+            <p class="text-sm text-slate-700">
+                এখন এডমিন আপনাকে কোন জামাতের দায়িত্ব দেবেন সেটা নির্ধারণ করবেন। <strong>তিনি অনুমোদন দিলে আপনি ঢুকতে পারবেন।</strong>
+            </p>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-left">
+                <p class="text-xs text-blue-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    এডমিনকে জানান আপনার কার্ড নম্বর: <strong id="pending-card-share"></strong>
+                </p>
+            </div>
+            <button onclick="doLogout()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-lg transition">
+                <i class="fa-solid fa-sign-out-alt"></i> লগআউট করুন
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ ACCESS DENIED SCREEN ═══════════════════ -->
+<div id="denied-screen" class="fixed inset-0 bg-gradient-to-br from-red-900 via-red-800 to-red-900 z-[240] items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="bg-red-600 text-white p-6 text-center">
+            <i class="fa-solid fa-ban text-5xl mb-3"></i>
+            <h2 class="text-xl font-bold">প্রবেশ অনুমোদিত নয়</h2>
+        </div>
+        <div class="p-6 space-y-4 text-center">
+            <p class="text-sm text-slate-700" id="denied-message">
+                আপনি এই সিস্টেমে প্রবেশের অনুমতি পাননি।
+            </p>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-left">
+                <p class="text-xs text-red-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    বিস্তারিত জানতে মাদরাসার এডমিনের সাথে যোগাযোগ করুন।
+                </p>
+            </div>
+            <button onclick="doLogout()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition">
+                <i class="fa-solid fa-sign-out-alt"></i> লগআউট করুন
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══════════════════ TOAST ═══════════════════ -->
 <div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2 no-print"></div>
 
@@ -2481,9 +2582,11 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// ═══════════════════ LOGIN SYSTEM ═══════════════════
+// ═══════════════════ GOOGLE LOGIN SYSTEM ═══════════════════
 let currentUser = null;
 let currentUserData = null;
+let _pendingUid = null;
+let _pendingCard = null;
 
 window.doLogin = async function() {
     const email = document.getElementById('login-email').value.trim();
@@ -2504,6 +2607,7 @@ window.doLogin = async function() {
     try {
         const { signInWithEmailAndPassword } = window.fbFuncs;
         await signInWithEmailAndPassword(window.fbAuth, email, pass);
+        // onAuthStateChanged handle করবে
     } catch (err) {
         console.error('❌ Login error:', err.code, err.message);
         let msg = 'লগইন ব্যর্থ হয়েছে';
@@ -2515,10 +2619,11 @@ window.doLogin = async function() {
         errEl.textContent = msg;
         errEl.classList.remove('hidden');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>';
+        btn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>Email/Password দিয়ে লগইন</span>';
     }
 };
 
+// Enter key দিয়ে Login
 document.addEventListener('keydown', e => {
     const ls = document.getElementById('login-screen');
     if (e.key === 'Enter' && ls && !ls.classList.contains('hidden')) {
@@ -2529,10 +2634,42 @@ document.addEventListener('keydown', e => {
     }
 });
 
+window.doGoogleLogin = async function() {
+    const errEl = document.getElementById('login-error');
+    const btn = document.getElementById('google-login-btn');
+    errEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> সাইন-ইন হচ্ছে...';
+
+    try {
+        const { getAuth, GoogleAuthProvider, signInWithPopup, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        
+        await signInWithPopup(window.fbAuth, provider);
+        // onAuthStateChanged হ্যান্ডেল করবে
+    } catch (err) {
+        console.error('❌ Google Login error:', err);
+        let msg = 'লগইন ব্যর্থ';
+        if (err.code === 'auth/popup-closed-by-user') msg = 'আপনি popup বন্ধ করে দিয়েছেন';
+        else if (err.code === 'auth/popup-blocked') msg = 'Popup ব্লক করা হয়েছে — ব্রাউজার permission দিন';
+        else if (err.code === 'auth/unauthorized-domain') msg = 'Domain অনুমোদিত নয় — এডমিনের সাথে যোগাযোগ করুন';
+        else msg = err.message;
+        errEl.textContent = msg;
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Google দিয়ে সাইন-ইন করুন</span>';
+    }
+};
+
 window.doLogout = async function() {
     if (!confirm('লগআউট করতে চান?')) return;
-    const { signOut } = window.fbFuncs;
-    await signOut(window.fbAuth);
+    try {
+        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        await signOut(window.fbAuth);
+    } catch (err) {
+        console.error('Logout error:', err);
+    }
 };
 
 window.addEventListener('load', () => {
@@ -2543,10 +2680,7 @@ window.addEventListener('load', () => {
             onAuthStateChanged(window.fbAuth, async (user) => {
                 if (user) {
                     currentUser = user;
-                    await loadUserData(user.uid);
-                    await loadConfigFromFirestore();
-                    await loadRecordsFromFirestore();  // ★ Records লোড
-                    showApp();
+                    await handleUserLogin(user);
                 } else {
                     currentUser = null;
                     currentUserData = null;
@@ -2557,26 +2691,182 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
-async function loadUserData(uid) {
+async function handleUserLogin(user) {
+    // users কালেকশনে এই UID আছে কিনা
+    let userData = null;
     try {
         const { doc, getDoc } = window.fbFuncs;
-        const ref = doc(window.fbDB, 'users', uid);
-        const snap = await getDoc(ref);
+        const snap = await getDoc(doc(window.fbDB, 'users', user.uid));
         if (snap.exists()) {
-            currentUserData = snap.data();
-        } else {
-            currentUserData = { role: 'pending', email: currentUser.email };
+            userData = { uid: snap.id, ...snap.data() };
         }
     } catch (err) {
-        console.error('❌ loadUserData error:', err);
-        currentUserData = null;
+        console.error('❌ userDoc error:', err);
     }
+
+    // Case 1: User doc নেই → কার্ড verification modal দেখাও
+    if (!userData) {
+        _pendingUid = user.uid;
+        showLoginHidden();
+        showCardVerifyModal();
+        return;
+    }
+
+    // Case 2: user doc আছে কিন্তু role pending
+    if (userData.role === 'pending') {
+        _pendingUid = user.uid;
+        _pendingCard = userData.cardNumber || '';
+        await loadConfigFromFirestore();
+        showLoginHidden();
+        document.getElementById('pending-card-display').textContent = _pendingCard;
+        document.getElementById('pending-card-share').textContent = _pendingCard;
+        document.getElementById('pending-screen').classList.remove('hidden');
+        document.getElementById('pending-screen').classList.add('flex');
+        return;
+    }
+
+    // Case 3: role = 'admin' বা 'teacher'
+    if (userData.role === 'admin' || userData.role === 'teacher') {
+        currentUserData = userData;
+        await loadConfigFromFirestore();
+        await loadRecordsFromFirestore();
+        showApp();
+        return;
+    }
+
+    // Case 4: অজানা role
+    _pendingUid = user.uid;
+    showLoginHidden();
+    document.getElementById('denied-message').textContent = 'আপনার অ্যাকাউন্টে ভুল role সেট করা আছে। এডমিনের সাথে যোগাযোগ করুন।';
+    document.getElementById('denied-screen').classList.remove('hidden');
+    document.getElementById('denied-screen').classList.add('flex');
 }
 
+function showLoginHidden() {
+    ['login-screen', 'card-verify-modal', 'pending-screen', 'denied-screen'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+    });
+}
+
+function showCardVerifyModal() {
+    document.getElementById('card-verify-modal').classList.remove('hidden');
+    document.getElementById('card-verify-modal').classList.add('flex');
+    document.getElementById('cv-card-input').value = '';
+    document.getElementById('cv-error').classList.add('hidden');
+    setTimeout(() => document.getElementById('cv-card-input').focus(), 200);
+}
+
+window.cancelCardVerify = async function() {
+    try {
+        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        await signOut(window.fbAuth);
+    } catch (err) {}
+    showLoginHidden();
+    showLogin();
+};
+
+window.verifyCardNumber = async function() {
+    const cardInput = document.getElementById('cv-card-input').value.trim();
+    const errEl = document.getElementById('cv-error');
+    const btn = document.getElementById('cv-verify-btn');
+    
+    if (!cardInput) {
+        errEl.textContent = 'কার্ড নম্বর দিন';
+        errEl.classList.remove('hidden');
+        return;
+    }
+    
+    errEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> যাচাই হচ্ছে...';
+    
+    // শিক্ষক ডাটাবেসে কার্ড খোঁজা (configData থেকে)
+    await loadConfigFromFirestore();
+    const teachers = configData?.teachers || [];
+    
+    // কার্ড নম্বর ক্লিন (স্পেস, ড্যাশ বাদ)
+    const cleanInput = cardInput.replace(/[\s\-]/g, '');
+    
+    const found = teachers.find(t => {
+        if (!t.card || t.card === '-') return false;
+        const cleanCard = String(t.card).replace(/[\s\-]/g, '');
+        return cleanCard === cleanInput;
+    });
+    
+    if (!found) {
+        errEl.textContent = '❌ এই কার্ড নম্বর মাদরাসার ডাটাবেসে নেই। এডমিনের সাথে যোগাযোগ করুন।';
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> যাচাই করুন';
+        return;
+    }
+    
+    // ✅ কার্ড মিলেছে → pending user তৈরি
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        await setDoc(doc(window.fbDB, 'users', _pendingUid), {
+            name: found.name,
+            email: currentUser?.email || '',
+            role: 'pending',
+            cardNumber: found.card,
+            teacherName: found.name,
+            dept: found.dept,
+            requestedAt: serverTimestamp()
+        });
+        
+        _pendingCard = found.card;
+        
+        // Pending screen
+        showLoginHidden();
+        document.getElementById('pending-card-display').textContent = found.card;
+        document.getElementById('pending-card-share').textContent = found.card;
+        document.getElementById('pending-screen').classList.remove('hidden');
+        document.getElementById('pending-screen').classList.add('flex');
+        
+        showToast('✅ কার্ড যাচাই সম্পন্ন — অনুমোদনের অপেক্ষা', 'success');
+    } catch (err) {
+        console.error('❌ pending create error:', err);
+        errEl.textContent = 'সিস্টেম error: ' + err.message;
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> যাচাই করুন';
+    }
+};
+
 function showLogin() {
+    showLoginHidden();
     document.getElementById('login-screen').classList.remove('hidden');
-    const btn = document.getElementById('login-btn');
-    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>'; }
+    
+    // Google বাটন রিসেট
+    const gBtn = document.getElementById('google-login-btn');
+    if (gBtn) {
+        gBtn.disabled = false;
+        gBtn.innerHTML = `
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Google দিয়ে সাইন-ইন করুন</span>
+        `;
+    }
+    
+    // Email/Password বাটন রিসেট
+    const eBtn = document.getElementById('login-btn');
+    if (eBtn) {
+        eBtn.disabled = false;
+        eBtn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>Email/Password দিয়ে লগইন</span>';
+    }
+    
+    // Email/Password fields খালি করুন
+    const emlEl = document.getElementById('login-email');
+    const pwdEl = document.getElementById('login-password');
+    if (emlEl) emlEl.value = '';
+    if (pwdEl) pwdEl.value = '';
+    
+    // Error লুকান
     const errEl = document.getElementById('login-error');
     if (errEl) errEl.classList.add('hidden');
 }
@@ -2593,54 +2883,33 @@ function showApp() {
         roleEl.textContent = roleMap[currentUserData?.role] || (currentUserData?.role || '---');
     }
 
-    // পুরনো হেডার নাম
+    // হেডারে মাদরাসার নাম
     const madrasaEl = document.getElementById('header-madrasa-name');
     if (madrasaEl && settings.madrasaName) {
         madrasaEl.textContent = settings.madrasaName;
     }
 
-    // এডমিন বাটন শুধু এডমিনের জন্য দেখান
+    const isAdmin = currentUserData?.role === 'admin';
+    const isTeacher = currentUserData?.role === 'teacher';
+
+    // এডমিন বাটন
     const admBtn = document.getElementById('tab-btn-admin');
-    if (admBtn) {
-        if (currentUserData?.role === 'admin') {
-            admBtn.classList.remove('hidden');
-        } else {
-            admBtn.classList.add('hidden');
-        }
-    }
+    if (admBtn) admBtn.classList.toggle('hidden', !isAdmin);
 
-    // ★ শিক্ষকদের জন্য সেটিংস বাটন লুকান
+    // সেটিংস বাটন
     const setBtn = document.getElementById('tab-btn-settings');
-    if (setBtn) {
-        if (currentUserData?.role === 'admin') {
-            setBtn.classList.remove('hidden');
-        } else {
-            setBtn.classList.add('hidden');
-        }
-    }
+    if (setBtn) setBtn.classList.toggle('hidden', !isAdmin);
 
-    // ★ শিক্ষক হলে: ডাটা তালিকা বাটন লুকান (শিক্ষক নিজের রেকর্ড দেখতে পারবেন ডাটা এন্ট্রির নিচে)
+    // ডাটা তালিকা বাটন
     const dlBtn = document.getElementById('tab-btn-data-list');
-    if (dlBtn) {
-        if (currentUserData?.role === 'admin') {
-            dlBtn.classList.remove('hidden');
-        } else {
-            dlBtn.classList.add('hidden');
-        }
-    }
+    if (dlBtn) dlBtn.classList.toggle('hidden', !isAdmin);
 
-    // ★ Dashboard বাটন শুধু এডমিনের জন্য
+    // Dashboard বাটন
     const dashBtn = document.getElementById('tab-btn-dashboard');
-    if (dashBtn) {
-        if (currentUserData?.role === 'admin') {
-            dashBtn.classList.remove('hidden');
-        } else {
-            dashBtn.classList.add('hidden');
-        }
-    }
+    if (dashBtn) dashBtn.classList.toggle('hidden', !isAdmin);
 
-    // ★ শিক্ষক হলে: ডিফল্ট ট্যাব = ডাটা এন্ট্রি
-    if (currentUserData?.role === 'teacher') {
+    // শিক্ষক হলে restriction
+    if (isTeacher) {
         setTimeout(() => switchTab('entry'), 300);
 
         // Jamat Report-এ শুধু নিজের বিভাগ
@@ -2658,6 +2927,20 @@ function showApp() {
                 setTimeout(() => onJamatDeptChange(), 200);
             }
         }
+        
+        // Teacher restrictions
+        setTimeout(() => {
+            if (typeof applyTeacherRestrictions === 'function') applyTeacherRestrictions();
+            // শিক্ষকের নাম auto-fill
+            const myFullName = currentUserData.teacherName || currentUserData.name;
+            const tNameEl = document.getElementById('teacher-name');
+            if (tNameEl && myFullName) {
+                tNameEl.value = myFullName;
+                tNameEl.readOnly = true;
+                tNameEl.classList.add('bg-slate-100', 'cursor-not-allowed');
+                if (typeof onTeacherNameInput === 'function') onTeacherNameInput();
+            }
+        }, 500);
     }
 }
 
