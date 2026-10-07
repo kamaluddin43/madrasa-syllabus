@@ -102,19 +102,105 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col">
 <!-- ═══════════════════ TEACHER PICKER MODAL ═══════════════════ -->
+<!-- ═══════════════════ TEACHER PICKER MODAL ═══════════════════ -->
 <div id="teacher-picker-modal" class="fixed inset-0 modal-backdrop z-[300] items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col modal-enter">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col modal-enter">
         <div class="bg-emerald-900 text-white p-4 rounded-t-2xl flex items-center justify-between">
             <h3 class="text-lg font-bold flex items-center gap-2">
-                <i class="fa-solid fa-user-check"></i> শিক্ষক নির্বাচন করুন
+                <i class="fa-solid fa-user-plus"></i> <span id="tp-title">নতুন ইউজার তৈরি</span>
             </h3>
             <button onclick="closeTeacherPicker()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
         </div>
-        <div class="p-4 border-b">
-            <input type="text" id="tp-search" oninput="filterTeacherPicker()" placeholder="🔍 নাম/কার্ড/মোবাইল দিয়ে খুঁজুন..." class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+
+        <!-- STEP 1: বিভাগ -->
+        <div id="tp-step-1" class="p-6 overflow-y-auto">
+            <p class="text-sm font-bold text-slate-700 mb-3">১. বিভাগ নির্বাচন করুন</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <button onclick="tpSelectDept('শরীয়াহ')" class="tp-dept-btn p-4 border-2 border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                    <i class="fa-solid fa-book-quran text-2xl text-emerald-600 mb-2"></i>
+                    <p class="font-bold">শরীয়াহ</p>
+                    <p class="text-xs text-slate-500">৪র্থ - তাকমীল</p>
+                </button>
+                <button onclick="tpSelectDept('নূরানী-নাযেরা')" class="tp-dept-btn p-4 border-2 border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                    <i class="fa-solid fa-child text-2xl text-emerald-600 mb-2"></i>
+                    <p class="font-bold">নূরানী-নাযেরা</p>
+                    <p class="text-xs text-slate-500">নূরানী ও নাযেরা</p>
+                </button>
+                <button onclick="tpSelectDept('অনাবাসিক')" class="tp-dept-btn p-4 border-2 border-slate-200 rounded-lg hover:border-emerald-500 hover:bg-emerald-50 transition text-left">
+                    <i class="fa-solid fa-school text-2xl text-emerald-600 mb-2"></i>
+                    <p class="font-bold">অনাবাসিক</p>
+                    <p class="text-xs text-slate-500">প্লে - ৫ম</p>
+                </button>
+            </div>
         </div>
-        <div id="tp-list" class="p-4 overflow-y-auto flex-1 space-y-2">
-            <!-- JS populate করবে -->
+
+        <!-- STEP 2: শিক্ষক -->
+        <div id="tp-step-2" class="p-6 overflow-y-auto hidden">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <p class="text-sm font-bold text-slate-700">
+                    <span class="text-emerald-700">২. শিক্ষক নির্বাচন করুন</span>
+                    <span class="text-xs text-slate-500 ml-2">বিভাগ: <strong id="tp-dept-display">---</strong></span>
+                </p>
+                <button onclick="tpBackToStep(1)" class="text-xs text-blue-600 hover:underline"><i class="fa-solid fa-arrow-left"></i> বিভাগ পরিবর্তন</button>
+            </div>
+            <input type="text" id="tp-search" oninput="filterTeacherPicker()" placeholder="🔍 নাম/কার্ড/মোবাইল দিয়ে খুঁজুন..." class="w-full rounded-lg border-slate-300 border p-2.5 text-sm mb-3">
+            <div id="tp-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+        </div>
+
+        <!-- STEP 3: জামাত নির্বাচন -->
+        <div id="tp-step-3" class="p-6 overflow-y-auto hidden">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <p class="text-sm font-bold text-slate-700">
+                    <span class="text-emerald-700">৩. জামাত নির্বাচন করুন</span>
+                    <span class="text-xs text-slate-500 ml-2">শিক্ষক: <strong id="tp-teacher-display">---</strong></span>
+                </p>
+                <button onclick="tpBackToStep(2)" class="text-xs text-blue-600 hover:underline"><i class="fa-solid fa-arrow-left"></i> শিক্ষক পরিবর্তন</button>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">একাধিক জামাত নির্বাচন করা যাবে (একজন শিক্ষক একাধিক জামাতের দায়িত্বে থাকতে পারেন)</p>
+            <div id="tp-class-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto"></div>
+            <div class="mt-4 flex justify-end gap-2">
+                <button onclick="tpGenerateUser()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-magic"></i> Email ও Password তৈরি করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 4: Result (Email/Password) -->
+        <div id="tp-step-4" class="p-6 overflow-y-auto hidden">
+            <p class="text-sm font-bold text-slate-700 mb-3">
+                <i class="fa-solid fa-check-circle text-emerald-600"></i> ইউজার প্রস্তুত — কপি করে শিক্ষককে পাঠান
+            </p>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Email</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="text" id="tp-res-email" readonly class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm bg-white font-mono">
+                        <button onclick="tpCopy('tp-res-email')" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-copy"></i> কপি</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Password</label>
+                    <div class="flex gap-2 mt-1">
+                        <input type="text" id="tp-res-password" readonly class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm bg-white font-mono">
+                        <button onclick="tpCopy('tp-res-password')" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition"><i class="fa-solid fa-copy"></i> কপি</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">যোগ্য জামাত</label>
+                    <div id="tp-res-classes" class="text-xs mt-1 p-2 bg-white rounded-lg border border-slate-200"></div>
+                </div>
+            </div>
+
+            <div class="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs text-blue-900"><strong>পরবর্তী ধাপ:</strong> উপরে Email ও Password কপি করে WhatsApp/SMS-এ শিক্ষককে পাঠান। তিনি লিংক খুলে এই তথ্য দিয়ে লগইন করতে পারবেন।</p>
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-2 justify-end">
+                <button onclick="tpCopyBothAndClose()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-copy"></i> দুটোই কপি করুন
+                </button>
+                <button onclick="closeTeacherPicker()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold rounded-lg transition">বন্ধ করুন</button>
+            </div>
         </div>
     </div>
 </div>
@@ -3709,161 +3795,14 @@ window.renderAdminUsers = async function() {
         </div>
     `;
 };
-window.addAdminUser = async function() {
-    const teachersArr = configData?.teachers || [];
-    
-    const email = prompt('Email (লগইনের জন্য):\nযেমন: teacher1@gmail.com');
-    if (!email || !email.includes('@')) { showToast('⚠️ সঠিক Email দিন', 'warn'); return; }
-    
-    const password = prompt('Password (কমপক্ষে ৬ অক্ষর):');
-    if (!password || password.length < 6) { showToast('⚠️ Password কমপক্ষে ৬ অক্ষর', 'warn'); return; }
-    
-    const name = prompt('ইউজারের নাম (হেডারে দেখানোর জন্য):');
-    if (!name) return;
-    
-    const role = prompt('Role (admin / teacher):', 'teacher');
-    if (!role || !['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
-    
-    // শিক্ষকের সাথে লিংক (teacher হলে) — Modal দিয়ে
-    if (role.trim() === 'teacher') {
-        // পুরো email/password/name/role তথ্য globals এ রাখি
-        window._pendingUserData = {
-            email: email.trim(),
-            password: password,
-            name: name.trim(),
-            role: role.trim()
-        };
-        
-        openTeacherPicker('', async function(selectedTeacher) {
-            window._pendingUserData.teacherName = selectedTeacher.name;
-            await finalizeAddAdminUser();
-        });
-        return;
-    }
-    
-    await finalizeAddAdminUser({
-        email: email.trim(),
-        password: password,
-        name: name.trim(),
-        role: role.trim(),
-        teacherName: ''
-    });
+window.addAdminUser = function() {
+    openTeacherPicker('', null, null);
 };
 
-window.finalizeAddAdminUser = async function(dataOrUndefined) {
-    const data = dataOrUndefined || window._pendingUserData;
-    if (!data) { showToast('❌ তথ্য হারিয়ে গেছে', 'error'); return; }
-    
-    const { email, password, name, role, teacherName = '' } = data;
-    window._pendingUserData = null;
-    
-    try {
-        showToast('⏳ ইউজার তৈরি হচ্ছে...', 'info');
-        
-        // Firebase SDK থেকে secondary app দিয়ে user তৈরি (primary app logout হবে না)
-        const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-        const { getAuth, createUserWithEmailAndPassword, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        
-        // Secondary app নাম চেক
-        const secAppName = 'secondary-' + Date.now();
-        const firebaseConfig = {
-            apiKey: "AIzaSyAbE1avpXXb7tNSTnOEPYepcjA04Nrrg0Q",
-            authDomain: "madrasa-syllabus.firebaseapp.com",
-            projectId: "madrasa-syllabus",
-            storageBucket: "madrasa-syllabus.firebasestorage.app",
-            messagingSenderId: "835893307104",
-            appId: "1:835893307104:web:457c20ec2182027d561285"
-        };
-        
-        const secApp = initializeApp(firebaseConfig, secAppName);
-        const secAuth = getAuth(secApp);
-        
-        const cred = await createUserWithEmailAndPassword(secAuth, email.trim(), password);
-        const newUid = cred.user.uid;
-        
-        // Firestore-এ users ডকুমেন্ট তৈরি
-        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
-        await setDoc(doc(window.fbDB, 'users', newUid), {
-            name: name.trim(),
-            email: email.trim(),
-            role: role.trim(),
-            teacherName: teacherName,
-            createdAt: serverTimestamp(),
-            createdBy: currentUser?.uid || 'admin'
-        });
-        
-        // Secondary app signOut
-        await signOut(secAuth);
-        
-        showToast('✅ ইউজার তৈরি হয়েছে: ' + email.trim(), 'success');
-        renderAdminUsers();
-    } catch (err) {
-        console.error('❌ addAdminUser error:', err);
-        let msg = err.message;
-        if (err.code === 'auth/email-already-in-use') msg = 'এই Email ইতিমধ্যে ব্যবহৃত';
-        else if (err.code === 'auth/weak-password') msg = 'Password দুর্বল';
-        else if (err.code === 'auth/invalid-email') msg = 'Email ভুল';
-        showToast('❌ ' + msg, 'error');
-    }
-};
-
-window.editAdminUser = async function(uid) {
+window.editAdminUser = function(uid) {
     const u = adminUsersList.find(x => x.uid === uid);
-    if (!u) return;
-    
-    const teachersArr = configData?.teachers || [];
-    
-    const name = prompt('নাম:', u.name || '');
-    if (name === null) return;
-    
-    const role = prompt('Role (admin / teacher):', u.role || 'teacher');
-    if (role === null) return;
-    if (!['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
-    
-    if (role.trim() === 'teacher') {
-        window._pendingEditData = {
-            uid: uid,
-            name: name.trim(),
-            role: role.trim()
-        };
-        
-        openTeacherPicker(u.teacherName || '', async function(selectedTeacher) {
-            window._pendingEditData.teacherName = selectedTeacher.name;
-            await finalizeEditAdminUser();
-        });
-        return;
-    }
-    
-    await finalizeEditAdminUser({
-        uid: uid,
-        name: name.trim(),
-        role: role.trim(),
-        teacherName: ''
-    });
-};
-
-window.finalizeEditAdminUser = async function(dataOrUndefined) {
-    const data = dataOrUndefined || window._pendingEditData;
-    if (!data) { showToast('❌ তথ্য হারিয়ে গেছে', 'error'); return; }
-    
-    const { uid, name, role, teacherName = '' } = data;
-    window._pendingEditData = null;
-    
-    try {
-        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
-        await updateDoc(doc(window.fbDB, 'users', uid), {
-            name: name,
-            role: role,
-            teacherName: teacherName,
-            updatedAt: serverTimestamp(),
-            updatedBy: currentUser?.uid || 'admin'
-        });
-        showToast('✅ ইউজার আপডেট হয়েছে', 'success');
-        renderAdminUsers();
-    } catch (err) {
-        console.error('❌ editAdminUser error:', err);
-        showToast('❌ ' + err.message, 'error');
-    }
+    if (!u) { showToast('❌ ইউজার পাওয়া যায়নি', 'error'); return; }
+    openTeacherPicker(u.teacherName || '', null, { uid: uid, email: u.email, name: u.name });
 };
 
 window.deleteAdminUser = async function(uid, name) {
@@ -4241,58 +4180,341 @@ window.exportRecordsCSV = function() {
     
     showToast(`✅ ${exportList.length}টি রেকর্ড export হয়েছে`, 'success');
 };
-// ═══════════════════ TEACHER PICKER ═══════════════════
-let _teacherPickerCallback = null;
+// ═══════════════════ TEACHER PICKER (Multi-Step) ═══════════════════
+let _tpState = {
+    mode: 'add',        // 'add' | 'edit'
+    editingUid: null,
+    editingEmail: null,
+    dept: '',
+    teacher: null,
+    classes: [],
+    email: '',
+    password: ''
+};
 
-window.openTeacherPicker = function(currentTeacherName, callback) {
-    _teacherPickerCallback = callback;
+window.openTeacherPicker = function(currentTeacherName, callback, editMeta) {
+    _tpState = {
+        mode: editMeta ? 'edit' : 'add',
+        editingUid: editMeta?.uid || null,
+        editingEmail: editMeta?.email || null,
+        editingName: editMeta?.name || null,
+        dept: '',
+        teacher: null,
+        classes: [],
+        email: '',
+        password: '',
+        callback: callback
+    };
+    document.getElementById('tp-title').textContent = editMeta ? 'ইউজার এডিট' : 'নতুন ইউজার তৈরি';
+    
+    // ★ Edit mode: শিক্ষক ও তার assigned classes pre-load
+    if (editMeta && currentTeacherName) {
+        const teachers = configData?.teachers || [];
+        const found = teachers.find(t => t.name === currentTeacherName);
+        if (found) {
+            _tpState.dept = found.dept;
+            _tpState.teacher = found;
+            
+            // Existing assignments থেকে এই শিক্ষকের classes বের করি
+            const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+            const deptKey = deptKeyMap[found.dept];
+            const assignments = configData?.assignments || {};
+            const myClasses = [];
+            Object.keys(assignments).forEach(key => {
+                if (key.startsWith(deptKey + '::') && (assignments[key] || []).includes(found.name)) {
+                    myClasses.push(key.split('::')[1]);
+                }
+            });
+            _tpState.classes = myClasses;
+            
+            document.getElementById('tp-dept-display').textContent = found.dept;
+            document.getElementById('tp-teacher-display').textContent = found.name;
+            
+            tpRenderClassList();
+            tpShowStep(3);
+            const modal = document.getElementById('teacher-picker-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            return;
+        }
+    }
+    
+    tpShowStep(1);
     const modal = document.getElementById('teacher-picker-modal');
-    const list = document.getElementById('tp-list');
-    const search = document.getElementById('tp-search');
-    
-    search.value = '';
-    list.innerHTML = '';
-    
-    const teachers = configData?.teachers || [];
-    const deptOrder = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
-    const grouped = {};
-    deptOrder.forEach(d => grouped[d] = []);
-    teachers.forEach(t => {
-        if (!grouped[t.dept]) grouped[t.dept] = [];
-        grouped[t.dept].push(t);
-    });
-    
-    deptOrder.forEach(dept => {
-        if (!grouped[dept] || grouped[dept].length === 0) return;
-        const header = document.createElement('div');
-        header.className = 'text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-2 rounded-lg mt-3 mb-1 sticky top-0';
-        header.textContent = `${dept} বিভাগ (${grouped[dept].length} জন)`;
-        list.appendChild(header);
-        
-        grouped[dept].forEach(t => {
-            const div = document.createElement('div');
-            const selected = t.name === currentTeacherName;
-            div.className = `p-3 border rounded-lg cursor-pointer hover:bg-emerald-50 transition flex items-center gap-3 ${selected ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`;
-            div.dataset.name = (t.name + ' ' + t.card + ' ' + t.mobile + ' ' + t.post).toLowerCase();
-            div.innerHTML = `
-                <div class="flex-1">
-                    <p class="text-sm font-bold">${t.name}</p>
-                    <p class="text-[10px] text-slate-500">${t.post} | কার্ড: ${t.card} | ${t.mobile}</p>
-                </div>
-                ${selected ? '<i class="fa-solid fa-check-circle text-emerald-600"></i>' : ''}
-            `;
-            div.onclick = function() {
-                if (_teacherPickerCallback) _teacherPickerCallback(t);
-                closeTeacherPicker();
-            };
-            list.appendChild(div);
-        });
-    });
-    
     modal.classList.remove('hidden');
     modal.classList.add('flex');
-    setTimeout(() => search.focus(), 100);
 };
+
+window.closeTeacherPicker = function() {
+    const modal = document.getElementById('teacher-picker-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    _tpState = { mode: 'add', dept: '', teacher: null, classes: [], email: '', password: '' };
+};
+
+function tpShowStep(n) {
+    [1, 2, 3, 4].forEach(i => {
+        const el = document.getElementById('tp-step-' + i);
+        if (el) el.classList.toggle('hidden', i !== n);
+    });
+}
+
+window.tpSelectDept = function(dept) {
+    _tpState.dept = dept;
+    document.getElementById('tp-dept-display').textContent = dept;
+    tpRenderTeacherList('');
+    tpShowStep(2);
+};
+
+window.tpBackToStep = function(n) {
+    tpShowStep(n);
+};
+
+function tpRenderTeacherList(search) {
+    const list = document.getElementById('tp-list');
+    list.innerHTML = '';
+    const teachers = (configData?.teachers || []).filter(t => t.dept === _tpState.dept);
+    const filtered = search 
+        ? teachers.filter(t => (t.name + t.card + t.mobile + t.post).toLowerCase().includes(search.toLowerCase()))
+        : teachers;
+    
+    if (filtered.length === 0) {
+        list.innerHTML = '<p class="text-center text-slate-400 text-sm py-4">কোন শিক্ষক নেই</p>';
+        return;
+    }
+    
+    filtered.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-emerald-50 hover:border-emerald-400 transition flex items-center gap-3';
+        div.dataset.name = (t.name + ' ' + t.card + ' ' + t.mobile + ' ' + t.post).toLowerCase();
+        div.innerHTML = `
+            <div class="flex-1">
+                <p class="text-sm font-bold">${t.name}</p>
+                <p class="text-[10px] text-slate-500">${t.post} | কার্ড: ${t.card} | ${t.mobile}</p>
+            </div>
+            <i class="fa-solid fa-chevron-right text-slate-300"></i>
+        `;
+        div.onclick = () => tpSelectTeacher(t);
+        list.appendChild(div);
+    });
+}
+
+window.filterTeacherPicker = function() {
+    const q = document.getElementById('tp-search').value;
+    tpRenderTeacherList(q);
+};
+
+window.tpSelectTeacher = function(teacher) {
+    _tpState.teacher = teacher;
+    _tpState.classes = [];
+    document.getElementById('tp-teacher-display').textContent = teacher.name;
+    tpRenderClassList();
+    tpShowStep(3);
+};
+
+function tpRenderClassList() {
+    const container = document.getElementById('tp-class-list');
+    container.innerHTML = '';
+    
+    // বিভাগ key ম্যাপ
+    const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+    const deptKey = deptKeyMap[_tpState.dept];
+    const classes = (configData?.classes || {})[deptKey] || [];
+    
+    if (classes.length === 0) {
+        container.innerHTML = '<p class="text-center text-slate-400 text-sm py-4 col-span-2">এই বিভাগে কোন জামাত নেই</p>';
+        return;
+    }
+    
+    classes.forEach(c => {
+        const div = document.createElement('label');
+        div.className = 'p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-emerald-50 transition flex items-center gap-3';
+        div.innerHTML = `
+            <input type="checkbox" value="${c}" onchange="tpToggleClass(this)" class="w-4 h-4 rounded text-emerald-600">
+            <span class="text-sm font-arabic font-bold">${c}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
+window.tpToggleClass = function(checkbox) {
+    const cls = checkbox.value;
+    if (checkbox.checked) {
+        if (!_tpState.classes.includes(cls)) _tpState.classes.push(cls);
+    } else {
+        _tpState.classes = _tpState.classes.filter(c => c !== cls);
+    }
+};
+
+window.tpGenerateUser = async function() {
+    if (!_tpState.teacher) { showToast('⚠️ শিক্ষক নির্বাচন করুন', 'warn'); return; }
+    if (_tpState.classes.length === 0) { showToast('⚠️ কমপক্ষে একটি জামাত নির্বাচন করুন', 'warn'); return; }
+    
+    if (_tpState.mode === 'edit') {
+        // Edit mode: teacher/classes update করে সেভ
+        await tpSaveEdit();
+        return;
+    }
+    
+    // Add mode: Email/Password তৈরি
+    const cleanName = _tpState.teacher.name
+        .replace(/মাও\.|হা\.|জনাব|ক্বারী|মোঃ|মো\.|\./g, '')
+        .replace(/\s+/g, '.')
+        .replace(/[^\w.]/g, '')
+        .toLowerCase()
+        .slice(0, 20);
+    
+    const rand = Math.floor(Math.random() * 9000) + 1000;
+    _tpState.email = cleanName + rand + '@madrasa-asbaq.local';
+    
+    // Password: বাংলা নাম থেকে সহজ মনে রাখার মতো
+    const passWords = ['Asbaq', 'Madrasa', 'Ilm', 'Noor', 'Hikmah'];
+    const pw = passWords[Math.floor(Math.random() * passWords.length)] + '@' + rand;
+    _tpState.password = pw;
+    
+    document.getElementById('tp-res-email').value = _tpState.email;
+    document.getElementById('tp-res-password').value = _tpState.password;
+    document.getElementById('tp-res-classes').innerHTML = _tpState.classes.map(c => `<span class="badge bg-emerald-100 text-emerald-800 mr-1 mb-1">${c}</span>`).join('');
+    
+    tpShowStep(4);
+};
+
+window.tpCopy = function(id) {
+    const el = document.getElementById(id);
+    el.select();
+    document.execCommand('copy');
+    showToast('✅ কপি হয়েছে', 'success');
+};
+
+window.tpCopyBothAndClose = function() {
+    const email = document.getElementById('tp-res-email').value;
+    const pass = document.getElementById('tp-res-password').value;
+    const classes = _tpState.classes.join(', ');
+    const text = `Email: ${email}\nPassword: ${pass}\nযোগ্য জামাত: ${classes}`;
+    
+    navigator.clipboard.writeText(text).then(() => {
+        showToast('✅ সব তথ্য কপি হয়েছে', 'success');
+    }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast('✅ সব তথ্য কপি হয়েছে', 'success');
+    });
+    
+    // Save to Firebase
+    tpSaveNewUser();
+};
+
+async function tpSaveNewUser() {
+    const t = _tpState.teacher;
+    const email = _tpState.email;
+    const password = _tpState.password;
+    const classes = _tpState.classes.slice();
+    
+    try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const { getAuth, createUserWithEmailAndPassword, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbE1avpXXb7tNSTnOEPYepcjA04Nrrg0Q",
+            authDomain: "madrasa-syllabus.firebaseapp.com",
+            projectId: "madrasa-syllabus",
+            storageBucket: "madrasa-syllabus.firebasestorage.app",
+            messagingSenderId: "835893307104",
+            appId: "1:835893307104:web:457c20ec2182027d561285"
+        };
+        
+        const secApp = initializeApp(firebaseConfig, 'sec-' + Date.now());
+        const secAuth = getAuth(secApp);
+        const cred = await createUserWithEmailAndPassword(secAuth, email, password);
+        const newUid = cred.user.uid;
+        
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        await setDoc(doc(window.fbDB, 'users', newUid), {
+            name: t.name,
+            email: email,
+            role: 'teacher',
+            teacherName: t.name,
+            dept: t.dept,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser?.uid || 'admin'
+        });
+        
+        // Assignments আপডেট
+        if (!configData.assignments) configData.assignments = {};
+        const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+        const deptKey = deptKeyMap[t.dept];
+        classes.forEach(cls => {
+            const key = deptKey + '::' + cls;
+            if (!configData.assignments[key]) configData.assignments[key] = [];
+            if (!configData.assignments[key].includes(t.name)) {
+                configData.assignments[key].push(t.name);
+            }
+        });
+        await saveAdminConfig();
+        
+        await signOut(secAuth);
+        
+        showToast('✅ ইউজার তৈরি হয়েছে!', 'success');
+        setTimeout(() => {
+            closeTeacherPicker();
+            renderAdminUsers();
+        }, 800);
+    } catch (err) {
+        console.error('❌ tpSaveNewUser error:', err);
+        let msg = err.message;
+        if (err.code === 'auth/email-already-in-use') msg = 'এই Email ইতিমধ্যে ব্যবহৃত — আবার চেষ্টা করুন';
+        showToast('❌ ' + msg, 'error');
+    }
+}
+
+async function tpSaveEdit() {
+    // Edit mode-এ class update
+    const t = _tpState.teacher;
+    const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+    const deptKey = deptKeyMap[t.dept];
+    
+    // পুরনো assignment থেকে মুছি
+    if (!configData.assignments) configData.assignments = {};
+    Object.keys(configData.assignments).forEach(key => {
+        if (key.startsWith(deptKey + '::')) {
+            configData.assignments[key] = configData.assignments[key].filter(n => n !== t.name);
+        }
+    });
+    
+    // নতুন যোগ
+    _tpState.classes.forEach(cls => {
+        const key = deptKey + '::' + cls;
+        if (!configData.assignments[key]) configData.assignments[key] = [];
+        if (!configData.assignments[key].includes(t.name)) {
+            configData.assignments[key].push(t.name);
+        }
+    });
+    
+    // User doc update
+    try {
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+        await updateDoc(doc(window.fbDB, 'users', _tpState.editingUid), {
+            teacherName: t.name,
+            dept: t.dept,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser?.uid || 'admin'
+        });
+        await saveAdminConfig();
+        showToast('✅ ইউজার আপডেট হয়েছে', 'success');
+        setTimeout(() => {
+            closeTeacherPicker();
+            renderAdminUsers();
+        }, 500);
+    } catch (err) {
+        console.error('❌ tpSaveEdit error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+}
 
 window.closeTeacherPicker = function() {
     const modal = document.getElementById('teacher-picker-modal');
