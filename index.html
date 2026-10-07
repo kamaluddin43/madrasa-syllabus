@@ -199,7 +199,10 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 <button onclick="tpCopyBothAndClose()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
                     <i class="fa-solid fa-copy"></i> দুটোই কপি করুন
                 </button>
-                <button onclick="closeTeacherPicker()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold rounded-lg transition">বন্ধ করুন</button>
+                <button onclick="tpFinalizeSave()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> চূড়ান্ত সেভ করুন
+                </button>
+                <button onclick="closeTeacherPicker()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 text-sm font-bold rounded-lg transition">বাতিল</button>
             </div>
         </div>
     </div>
@@ -4395,7 +4398,6 @@ window.tpCopyBothAndClose = function() {
     navigator.clipboard.writeText(text).then(() => {
         showToast('✅ সব তথ্য কপি হয়েছে', 'success');
     }).catch(() => {
-        // fallback
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
@@ -4404,9 +4406,6 @@ window.tpCopyBothAndClose = function() {
         ta.remove();
         showToast('✅ সব তথ্য কপি হয়েছে', 'success');
     });
-    
-    // Save to Firebase
-    tpSaveNewUser();
 };
 
 async function tpSaveNewUser() {
@@ -4530,6 +4529,18 @@ window.filterTeacherPicker = function() {
         if (!q || el.dataset.name.includes(q)) el.style.display = '';
         else el.style.display = 'none';
     });
+};
+window.tpFinalizeSave = async function() {
+    if (!_tpState.teacher) { showToast('⚠️ শিক্ষক নির্বাচন করুন', 'warn'); return; }
+    if (_tpState.classes.length === 0) { showToast('⚠️ কমপক্ষে একটি জামাত নির্বাচন করুন', 'warn'); return; }
+    
+    showToast('⏳ সেভ হচ্ছে...', 'info');
+    
+    if (_tpState.mode === 'edit') {
+        await tpSaveEdit();
+    } else {
+        await tpSaveNewUser();
+    }
 };
 </script>
 </body>
