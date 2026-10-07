@@ -1,0 +1,3692 @@
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মাকাদীরে আসবাক v3 - সম্পূর্ণ সিস্টেম</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAbE1avpXXb7tNSTnOEPYepcjA04Nrrg0Q",
+    authDomain: "madrasa-syllabus.firebaseapp.com",
+    projectId: "madrasa-syllabus",
+    storageBucket: "madrasa-syllabus.firebasestorage.app",
+    messagingSenderId: "835893307104",
+    appId: "1:835893307104:web:457c20ec2182027d561285"
+  };
+
+  const fbApp = initializeApp(firebaseConfig);
+  const fbAuth = getAuth(fbApp);
+  const fbDB = getFirestore(fbApp);
+
+  // Global expose (script নিচে ব্যবহার করবে)
+  window.fbAuth = fbAuth;
+  window.fbDB = fbDB;
+  window.fbFuncs = { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc, getDocs, query, where, serverTimestamp, onSnapshot };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: { emerald: { 800: '#065f46', 900: '#064e3b' }, amber: { 600: '#d97706' } },
+            fontFamily: { arabic: ['Amiri', 'Noto Naskh Arabic', 'serif'], bengali: ['Hind Siliguri', 'sans-serif'] }
+        }
+    }
+}
+</script>
+<style>
+body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8fafc; }
+.font-arabic { font-family: 'Amiri', 'Noto Naskh Arabic', serif; }
+
+.modal-backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); }
+.modal-enter { animation: modalIn .2s ease-out; }
+@keyframes modalIn { from { opacity:0; transform: scale(.95);} to {opacity:1; transform:scale(1);} }
+
+.toast { animation: toastIn .3s ease-out; }
+@keyframes toastIn { from { opacity:0; transform: translateY(-20px);} to {opacity:1; transform: translateY(0);} }
+
+@media print {
+    body { background: white !important; padding: 0 !important; margin: 0 !important; }
+    .no-print { display: none !important; }
+    .print-area { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
+    .page-break { page-break-after: always; }
+    @page {
+        size: A4 landscape;
+        margin: 8mm 8mm 20mm 8mm;
+        @bottom-center {
+            content: "মাকাদীরে আসবাক | শিক্ষাবর্ষ " counter(page);
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 9pt;
+        }
+    }
+    table { border-collapse: collapse !important; width: 100% !important; }
+    th, td { border: 1px solid #000 !important; padding: 3px 4px !important; font-size: 9.5pt !important; }
+        /* ★ কালার প্রিন্ট নিশ্চিতকরণ */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+
+    /* ★ প্রিন্ট ফুটার */
+    .print-footer {
+        margin-top: 20px;
+        padding-top: 8px;
+        text-align: center;
+        font-size: 10pt;
+        color: #065f46;
+        border-top: 2px solid #065f46;
+        background: white;
+        font-family: 'Hind Siliguri', sans-serif;
+    }
+    .print-footer-line { display: block; line-height: 1.5; }
+        @media print {
+        .print-footer { display: block !important; }
+    }
+    .print-footer-line { display: block; }
+    .print-page-num::after { content: "পৃষ্ঠা " counter(page); }
+    .print-header { display: block !important; }
+    .no-print-area { display: none !important; }
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+
+.decade-input-row { background: #fffbeb; border: 1px solid #fcd34d; }
+.decade-input-row input { font-size: 13px; }
+.badge { display:inline-flex; align-items:center; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+</style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+<div id="login-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[200] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="bg-emerald-900 text-white p-6 text-center">
+            <div class="w-16 h-16 mx-auto bg-amber-500/20 rounded-2xl border-2 border-amber-400/40 flex items-center justify-center text-amber-400 text-3xl mb-3">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            <h1 class="text-2xl font-bold font-arabic">مقادير الأسباق</h1>
+            <p class="text-sm text-emerald-200 mt-1">মাকাদীরে আসবাক সিস্টেম</p>
+        </div>
+
+        <div id="login-form-wrap" class="p-6 space-y-4">
+            <h2 class="text-lg font-bold text-slate-800 text-center mb-2">লগইন করুন</h2>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                <input type="email" id="login-email" placeholder="your.email@example.com" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <button onclick="doLogin()" id="login-btn" class="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white font-bold rounded-lg transition flex items-center justify-center gap-2 shadow-md">
+                <i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>
+            </button>
+
+            <p id="login-error" class="text-xs text-red-600 text-center hidden"></p>
+        </div>
+    </div>
+</div>
+<!-- ═══════════════════ TOAST ═══════════════════ -->
+<div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2 no-print"></div>
+
+<!-- ═══════════════════ HEADER ═══════════════════ -->
+<header class="bg-emerald-900 text-white shadow-md no-print sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-amber-500/20 rounded-xl border border-amber-400/40 flex items-center justify-center text-amber-400 text-2xl shadow-inner">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-xl font-bold font-arabic leading-tight flex items-center gap-2">
+                    <span>مقادير الأسباق</span>
+                    <span class="text-amber-400 text-sm font-bengali font-normal">| মাকাদীরে আসবাক v3</span>
+                </h1>
+                <p id="header-madrasa-name" class="text-xs text-emerald-200 mt-0.5">পাঠ পরিমাণ ট্র্যাকিং সিস্টেম</p>
+            </div>
+        </div>
+
+        <nav class="flex flex-wrap gap-1.5 bg-emerald-800/90 p-1.5 rounded-xl border border-emerald-700/60 shadow-inner">
+            <button onclick="switchTab('entry')" id="tab-btn-entry" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all bg-amber-500 text-white shadow-md flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square"></i><span class="hidden sm:inline">ডাটা এন্ট্রি</span>
+            </button>
+            <button onclick="switchTab('jamat-report')" id="tab-btn-jamat-report" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap"></i><span class="hidden sm:inline">জামাত রিপোর্ট</span>
+            </button>
+            <button onclick="switchTab('teacher-report')" id="tab-btn-teacher-report" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
+                <i class="fa-solid fa-user-tie"></i><span class="hidden sm:inline">শিক্ষক রিপোর্ট</span>
+            </button>
+            <button onclick="switchTab('data-list')" id="tab-btn-data-list" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
+                <i class="fa-solid fa-database"></i><span class="hidden sm:inline">ডাটা তালিকা</span>
+            </button>
+            <button onclick="switchTab('settings')" id="tab-btn-settings" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
+                <i class="fa-solid fa-gear"></i><span class="hidden sm:inline">সেটিংস</span>
+            </button>
+            <button onclick="switchTab('admin')" id="tab-btn-admin" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-amber-300 hover:bg-emerald-700 flex items-center gap-2 hidden">
+                <i class="fa-solid fa-shield-halved"></i><span class="hidden sm:inline">এডমিন</span>
+            </button>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <div class="text-right hidden sm:block">
+                <p id="header-user-name" class="text-xs font-bold text-white">---</p>
+                <p id="header-user-role" class="text-[10px] text-amber-400">---</p>
+            </div>
+            <button onclick="doLogout()" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow" title="Logout">
+                <i class="fa-solid fa-sign-out-alt"></i><span class="hidden sm:inline">লগআউট</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="flex-grow max-w-7xl w-full mx-auto p-3 md:p-6">
+
+<!-- ═══════════════════ TAB 1: DATA ENTRY ═══════════════════ -->
+<section id="tab-entry" class="tab-content space-y-6">
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+            <h2 class="text-lg font-bold text-emerald-900 flex items-center gap-3">
+                <i class="fa-solid fa-file-circle-plus text-emerald-600 text-xl"></i>
+                <span id="form-title">নতুন পাঠ বিবরণী এন্ট্রি করুন</span>
+            </h2>
+            <span id="year-badge" class="text-xs px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-semibold">শিক্ষাবর্ষ: ২০২৪-২০২৫</span>
+        </div>
+
+        <form id="asbaq-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+            <input type="hidden" id="editing-id">
+
+            <!-- Step 1: Term & Dept -->
+            <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-emerald-700"></i>
+                            <span>১. বিভাগ <span class="text-red-500">*</span></span>
+                        </label>
+                        <select id="dept-select" onchange="onDeptChange()" required class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm font-medium">
+                            <option value="">-- বিভাগ নির্বাচন করুন --</option>
+                            <option value="shariah">শরীয়াহ (৪র্থ - তাকমীল)</option>
+                            <option value="non_res">অনাবাসিক (প্লে - ৫ম)</option>
+                            <option value="noorani">নূরানী ও নাযেরা</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-emerald-700"></i>
+                            <span>২. সেশন / সাময়িক / মাসিক <span class="text-red-500">*</span></span>
+                        </label>
+                        <select id="term-select" onchange="onTermChange()" required class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm font-medium">
+                            <option value="">-- পূর্বে বিভাগ নির্বাচন করুন --</option>
+                        </select>
+                        <p id="session-display" class="text-[10px] text-emerald-700 mt-1 font-semibold"></p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-lg border border-slate-200">
+                    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <label class="block text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-amber-600"></i>
+                            <span>দশক নির্বাচন <span class="text-red-500">*</span></span>
+                        </label>
+                        <button type="button" onclick="toggleSelectAllDecades()" id="select-all-btn" class="text-xs text-emerald-800 font-bold px-2 py-1 rounded border border-emerald-300 hover:bg-emerald-50 transition">
+                            সব দশক নির্বাচন
+                        </button>
+                    </div>
+                    <div id="decades-checkbox-container" class="flex flex-wrap gap-2 pt-1">
+                        <span class="text-xs text-slate-400 italic">পূর্বে পর্ব নির্বাচন করুন</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Class & Book -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1"><i class="fa-solid fa-users-rectangle text-slate-500"></i> জামাত *</label>
+                    <select id="class-select" onchange="updateBooks()" required class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm font-arabic">
+                        <option value="">-- বিভাগ নির্বাচন করুন --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1"><i class="fa-solid fa-diagram-project text-slate-500"></i> শাখা</label>
+                    <select id="section-select" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <option value="নাই">শাখা নেই</option>
+                        <option value="ক (أ)">ক (أ)</option>
+                        <option value="খ (ب)">খ (ب)</option>
+                        <option value="গ (ج)">গ (ج)</option>
+                        <option value="ঘ (د)">ঘ (د)</option>
+                    </select>
+                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1"><i class="fa-solid fa-book text-slate-500"></i> কিতাব *</label>
+                        <select id="book-name" required class="w-full rounded-lg border-slate-300 border p-2.5 focus:ring-2 focus:ring-emerald-500 text-sm font-arabic">
+                            <option value="">-- পূর্বে জামাত নির্বাচন করুন --</option>
+                        </select>
+                    </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1"><i class="fa-solid fa-building-columns text-slate-500"></i> প্রকাশনী</label>
+                    <input type="text" id="publisher-name" placeholder="إمدادية" class="w-full rounded-lg border-slate-300 border p-2.5 focus:ring-2 focus:ring-emerald-500 text-sm font-arabic" dir="rtl">
+                </div>
+            </div>
+
+            <!-- Step 3: Teacher & Nisab -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-user-chalkboard text-emerald-700"></i> শিক্ষক ও নিসাব তথ্য
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">শিক্ষক *</label>
+                        <input type="text" id="teacher-name" required list="teacher-names-datalist" oninput="onTeacherNameInput()" placeholder="নাম লিখুন বা তালিকা থেকে বাছুন" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                        <div id="teacher-info-display" class="text-[10px] mt-1"></div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মোট কিতাব পৃষ্ঠা</label>
+                        <input type="number" id="total-book-pages" min="0" placeholder="৬০০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">পর্বের নিসাব পৃষ্ঠা</label>
+                        <input type="number" id="term-nisab-pages" min="0" placeholder="১৫০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">দশকের নিসাব পৃষ্ঠা</label>
+                        <input type="number" id="decade-nisab-pages" min="0" placeholder="৪০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Per-Decade Inputs (NEW!) -->
+            <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
+                <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
+                    <h3 class="text-sm font-bold text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-amber-600"></i>
+                        <span>প্রতিটি দশকের পঠিত বিবরণী (আলাদা এন্ট্রি)</span>
+                    </h3>
+                    <span id="decade-summary" class="badge bg-amber-200 text-amber-900">মোট: ০ পৃষ্ঠা</span>
+                </div>
+                <div id="per-decade-inputs" class="space-y-3">
+                    <p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-2 flex-wrap">
+                <button type="button" onclick="resetForm()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> রিসেট
+                </button>
+                <button type="submit" id="submit-btn" class="px-6 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-sm shadow-md transition flex items-center gap-2.5">
+                    <i class="fa-solid fa-floppy-disk"></i> <span id="submit-btn-text">সংরক্ষণ করুন</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB 2: JAMAT REPORT ═══════════════════ -->
+<section id="tab-jamat-report" class="tab-content hidden space-y-6">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3 items-center">
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">বিভাগ:</label>
+                <select id="jamat-filter-dept" onchange="onJamatDeptChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                    <option value="shariah">শরীয়াহ</option>
+                    <option value="non_res">অনাবাসিক</option>
+                    <option value="noorani">নূরানী ও নাযেরা</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">পর্ব:</label>
+                <select id="jamat-filter-term" onchange="renderJamatReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium"></select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">জামাত:</label>
+                <select id="jamat-filter-class" onchange="renderJamatReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-arabic"></select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">শাখা:</label>
+                <select id="jamat-filter-section" onchange="renderJamatReport()" class="rounded-lg border-slate-300 border p-2 text-sm">
+                    <option value="">সব</option>
+                    <option value="নাই">নাই</option>
+                    <option value="ক (أ)">ক (أ)</option>
+                    <option value="খ (ب)">খ (ب)</option>
+                    <option value="গ (ج)">গ (ج)</option>
+                    <option value="ঘ (د)">ঘ (د)</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="window.print()" class="px-4 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900 transition flex items-center gap-2 shadow">
+                <i class="fa-solid fa-print"></i> প্রিন্ট
+            </button>
+            <button onclick="sharePDF('teacher-print-container', 'teacher_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
+                <i class="fa-solid fa-file-pdf"></i> PDF শেয়ার
+            </button>
+        </div>
+    </div>
+
+    <div id="jamat-print-container" class="bg-white p-6 md:p-10 rounded-xl shadow-lg border border-slate-200 print-area font-arabic" dir="rtl">
+        <!-- ★ নতুন হেডার -->
+        <div class="border-2 border-emerald-800 rounded-lg overflow-hidden mb-4">
+            <div class="flex items-center gap-4 p-4 bg-gradient-to-l from-emerald-50 via-amber-50 to-emerald-50">
+                <div class="flex-shrink-0">
+                    <img id="print-logo-jamat" src="" alt="Logo" class="w-20 h-20 object-contain bg-white border-2 border-emerald-700 rounded-full p-1">
+                </div>
+                <div class="flex-1 text-center">
+                    <h1 id="print-arabic-name-jamat" class="text-2xl md:text-3xl font-bold text-emerald-900 font-arabic mb-1">جامعة الإسلامية دار العلوم</h1>
+                    <h2 id="print-bn-name-jamat" class="text-xl md:text-2xl font-bold text-emerald-800 font-bengali mb-1">জামিয়া ইসলামিয়া দারুল উলূম</h2>
+                    <p id="print-addr-jamat" class="text-xs text-slate-700 font-bengali">গ্রাম, উপজেলা, জেলা</p>
+                </div>
+                <div class="flex-shrink-0 w-20"></div>
+            </div>
+            <div class="grid grid-cols-3 text-center text-xs bg-emerald-800 text-white font-bengali">
+                <div class="py-2 border-l border-emerald-600"><strong>তারিখ:</strong> <span id="print-date-jamat"></span></div>
+                <div class="py-2 border-l border-emerald-600"><strong>শিক্ষাবর্ষ:</strong> <span id="print-year-jamat">২০২৪-২০২৫</span></div>
+                <div class="py-2"><strong>সেশন:</strong> <span id="print-session-jamat">---</span></div>
+            </div>
+        </div>
+
+        <!-- ★ রিপোর্ট টাইটেল -->
+        <div class="bg-amber-600 text-white py-2 text-center mb-4 rounded-md">
+            <h3 class="text-lg md:text-xl font-bold font-arabic">تقرير المبلغ المقروء (مقادير الأسباق)</h3>
+            <p class="text-xs font-bengali mt-0.5">জামাত ভিত্তিক পাঠ পরিমাণ রিপোর্ট</p>
+        </div>
+
+        <!-- জামাত তথ্য ছক -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-xs border border-black p-2 bg-slate-50 font-sans">
+            <div class="text-right"><strong>জামাত:</strong> <span id="rep-jamat-name" class="font-arabic font-bold">---</span></div>
+            <div class="text-right"><strong>বিভাগ:</strong> <span id="rep-jamat-dept">---</span></div>
+            <div class="text-right"><strong>পর্ব:</strong> <span id="rep-jamat-term">---</span></div>
+            <div class="text-right"><strong>শিক্ষাবর্ষ:</strong> <span id="rep-jamat-year">---</span></div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-center border-collapse border border-black text-xs">
+                <thead id="jamat-report-thead"></thead>
+                <tbody id="jamat-report-table-body"></tbody>
+            </table>
+        </div>
+
+        <div class="mt-16 pt-8 grid grid-cols-2 justify-between text-center font-bold text-xs">
+            <div><p class="border-t border-black inline-block px-10 pt-1">توقيع أمين التعليم</p></div>
+            <div><p class="border-t border-black inline-block px-10 pt-1">توقيع الرئيس</p></div>
+        </div>
+
+        <!-- ★ প্রিন্ট ফুটার -->
+        <div class="print-footer hidden">
+            <span class="print-footer-line">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> | শিক্ষাবর্ষ: <span id="footer-year-jamat"></span> | প্রিন্টের তারিখ: <span id="footer-date-jamat"></span>
+            </span>
+            <span class="print-footer-line" style="font-size: 8pt; color: #047857;">
+                প্রস্তুতকৃত: মাকাদীরে আসবাক সিস্টেম — কওমী মাদরাসার জন্য
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB 3: TEACHER REPORT ═══════════════════ -->
+<section id="tab-teacher-report" class="tab-content hidden space-y-6">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3 items-center">
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">শিক্ষক:</label>
+                <select id="teacher-filter-name" onchange="renderTeacherReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium"></select>
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">পর্ব:</label>
+                <select id="teacher-filter-term" onchange="renderTeacherReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                    <option value="year">পুরো বছর</option>
+                    <option value="qurbani">কুরবানী</option>
+                    <option value="term1">১ম সাময়িক</option>
+                    <option value="term2">২য় সাময়িক</option>
+                    <option value="annual">বার্ষিক</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="window.print()" class="px-4 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900 transition flex items-center gap-2 shadow">
+                <i class="fa-solid fa-print"></i> প্রিন্ট
+            </button>
+            <button onclick="sharePDF('jamat-print-container', 'jamat_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
+                <i class="fa-solid fa-file-pdf"></i> PDF শেয়ার
+            </button>
+        </div>
+    </div>
+
+    <div id="teacher-print-container" class="bg-white p-6 md:p-10 rounded-xl shadow-lg border border-slate-200 print-area font-arabic" dir="rtl">
+        <!-- ★ নতুন হেডার: মাদরাসার নাম + লোগো + ঠিকানা -->
+        <div class="border-2 border-emerald-800 rounded-lg overflow-hidden mb-4">
+            <div class="flex items-center gap-4 p-4 bg-gradient-to-l from-emerald-50 via-amber-50 to-emerald-50">
+                <div class="flex-shrink-0">
+                    <img id="print-logo-teacher" src="" alt="Logo" class="w-20 h-20 object-contain bg-white border-2 border-emerald-700 rounded-full p-1">
+                </div>
+                <div class="flex-1 text-center">
+                    <h1 id="print-arabic-name-teacher" class="text-2xl md:text-3xl font-bold text-emerald-900 font-arabic mb-1">جامعة الإسلامية دار العلوم</h1>
+                    <h2 id="print-bn-name-teacher" class="text-xl md:text-2xl font-bold text-emerald-800 font-bengali mb-1">জামিয়া ইসলামিয়া দারুল উলূম</h2>
+                    <p id="print-addr-teacher" class="text-xs text-slate-700 font-bengali">গ্রাম, উপজেলা, জেলা</p>
+                </div>
+                <div class="flex-shrink-0 w-20"></div>
+            </div>
+            <!-- তথ্য বার -->
+            <div class="grid grid-cols-3 text-center text-xs bg-emerald-800 text-white font-bengali">
+                <div class="py-2 border-l border-emerald-600"><strong>তারিখ:</strong> <span id="print-date-teacher"></span></div>
+                <div class="py-2 border-l border-emerald-600"><strong>শিক্ষাবর্ষ:</strong> <span id="print-year-teacher">২০২৪-২০২৫</span></div>
+                <div class="py-2"><strong>সেশন:</strong> <span id="print-session-teacher">---</span></div>
+            </div>
+        </div>
+
+        <!-- ★ রিপোর্ট টাইটেল -->
+        <div class="bg-amber-600 text-white py-2 text-center mb-4 rounded-md">
+            <h3 class="text-lg md:text-xl font-bold font-arabic">تقرير المبلغ المقروء (خاص بالأستاذ - مقادير الأسباق)</h3>
+            <p class="text-xs font-bengali mt-0.5">শিক্ষকভিত্তিক পাঠ বিবরণী রিপোর্ট</p>
+        </div>
+
+        <!-- শিক্ষকের তথ্য ছক -->
+        <div class="mb-4 font-sans text-xs">
+            <table class="w-full border border-black text-right">
+                <tbody>
+                <tr>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold w-32">শিক্ষক:</td>
+                    <td class="p-2 border border-black font-bold text-sm" id="rep-teacher-name">---</td>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold w-28">পদবী:</td>
+                    <td class="p-2 border border-black" id="rep-teacher-post">---</td>
+                </tr>
+                <tr>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold">কার্ড নং:</td>
+                    <td class="p-2 border border-black font-mono" id="rep-teacher-card">---</td>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold">বিভাগ:</td>
+                    <td class="p-2 border border-black" id="rep-teacher-dept">---</td>
+                </tr>
+                <tr>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold">মোবাইল:</td>
+                    <td class="p-2 border border-black font-mono" id="rep-teacher-mobile">---</td>
+                    <td class="p-2 border border-black bg-emerald-100 font-bold">শিক্ষাবর্ষ:</td>
+                    <td class="p-2 border border-black" id="rep-teacher-year">---</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="text-center font-bold text-sm mb-2 underline">শিক্ষকভিত্তিক পাঠ বিবরণী ও নিসাব তুলনা</h3>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-center border-collapse border border-black text-xs">
+                <thead id="teacher-report-thead"></thead>
+                <tbody id="teacher-report-table-body"></tbody>
+            </table>
+        </div>
+
+        <div id="teacher-nisab-summary" class="mt-4 border border-black p-3 rounded-sm text-xs bg-slate-50 font-sans"></div>
+
+        <div class="mt-8 border border-black p-4 rounded-sm text-xs">
+            <p class="font-bold mb-2">পরিদর্শকের মন্তব্য:</p>
+            <div class="h-10 border-b border-dashed border-slate-400"></div>
+            <div class="mt-4 text-left font-bold">
+                <span>স্বাক্ষর: .......................................</span>
+            </div>
+        </div>
+
+        <!-- ★ প্রিন্ট ফুটার -->
+        <div class="print-footer hidden">
+            <span class="print-footer-line">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> | শিক্ষাবর্ষ: <span id="footer-year-teacher"></span> | প্রিন্টের তারিখ: <span id="footer-date-teacher"></span>
+            </span>
+            <span class="print-footer-line" style="font-size: 8pt; color: #047857;">
+                প্রস্তুতকৃত: মাকাদীরে আসবাক সিস্টেম — কওমী মাদরাসার জন্য
+            </span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB 4: DATA LIST ═══════════════════ -->
+<section id="tab-data-list" class="tab-content hidden space-y-4">
+    <div class="bg-white p-4 md:p-6 rounded-xl shadow-md border border-slate-200">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 mb-4 border-b">
+            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-3">
+                <i class="fa-solid fa-list-check text-emerald-600 text-xl"></i>
+                <span>সংরক্ষিত ডাটা তালিকা</span>
+                <span id="record-count" class="badge bg-emerald-100 text-emerald-800">০ রেকর্ড</span>
+            </h2>
+            <div class="flex gap-2 flex-wrap">
+                <button onclick="exportData()" class="px-3 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Export JSON
+                </button>
+                <label class="px-3 py-2 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg text-xs font-semibold transition flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-upload"></i> Import JSON
+                    <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+                </label>
+                <button onclick="clearAllData()" class="px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> সব মুছুন
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-slate-50 p-3 rounded-lg mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
+            <input type="text" id="search-input" oninput="renderSavedDataTable()" placeholder="🔍 খুঁজুন (কিতাব/শিক্ষক)" class="col-span-2 rounded-lg border-slate-300 border p-2 text-sm">
+            <select id="filter-term" onchange="renderSavedDataTable()" class="rounded-lg border-slate-300 border p-2 text-xs">
+                <option value="">সব পর্ব</option>
+                <option value="qurbani">কুরবানী</option>
+                <option value="term1">১ম সাময়িক</option>
+                <option value="term2">২য় সাময়িক</option>
+                <option value="annual">বার্ষিক</option>
+            </select>
+            <select id="filter-dept" onchange="renderSavedDataTable()" class="rounded-lg border-slate-300 border p-2 text-xs">
+                <option value="">সব বিভাগ</option>
+                <option value="shariah">শরীয়াহ</option>
+                <option value="non_res">অনাবাসিক</option>
+                <option value="noorani">নূরানী</option>
+            </select>
+            <select id="filter-teacher" onchange="renderSavedDataTable()" class="rounded-lg border-slate-300 border p-2 text-xs"></select>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 font-semibold border-b text-xs">
+                        <th class="p-3">পর্ব</th>
+                        <th class="p-3">জামাত</th>
+                        <th class="p-3">কিতাব</th>
+                        <th class="p-3">শিক্ষক</th>
+                        <th class="p-3">দশক ও পৃষ্ঠা</th>
+                        <th class="p-3">মোট</th>
+                        <th class="p-3 text-center">অ্যাকশন</th>
+                    </tr>
+                </thead>
+                <tbody id="saved-data-tbody" class="divide-y divide-slate-100"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB 5: SETTINGS ═══════════════════ -->
+<section id="tab-settings" class="tab-content hidden space-y-6">
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6">
+        <h2 class="text-lg font-bold text-emerald-900 flex items-center gap-3 pb-4 mb-4 border-b">
+            <i class="fa-solid fa-gear text-emerald-600"></i>
+            <span>মাদরাসা তথ্য সেটিংস</span>
+        </h2>
+
+        <form id="settings-form" onsubmit="saveSettings(event)" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">মাদরাসার নাম (বাংলা) *</label>
+                    <input type="text" id="set-madrasa-bn" required placeholder="যেমন: জামিয়া ইসলামিয়া দারুল উলূম" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">মাদরাসার নাম (আরবি)</label>
+                    <input type="text" id="set-madrasa-ar" placeholder="جامعة الإسلامية دار العلوم" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-arabic" dir="rtl">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">ঠিকানা</label>
+                    <input type="text" id="set-address" placeholder="গ্রাম, উপজেলা, জেলা" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">শিক্ষাবর্ষ</label>
+                    <input type="text" id="set-year" placeholder="২০২৪-২০২৫" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">লোগো (URL বা আপলোড)</label>
+                    <input type="file" id="set-logo" accept="image/*" onchange="handleLogoUpload(event)" class="w-full rounded-lg border-slate-300 border p-2 text-xs">
+                </div>
+            </div>
+
+            <div id="logo-preview-wrap" class="hidden">
+                <p class="text-xs font-semibold text-slate-600 mb-1">লোগো প্রিভিউ:</p>
+                <img id="logo-preview" src="" alt="Logo" class="h-20 w-20 object-contain border border-slate-200 rounded-lg bg-white p-1">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="submit" class="px-6 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-sm shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-save"></i> সেটিংস সংরক্ষণ
+                </button>
+            </div>
+        </form>
+        <div class="mt-8 pt-6 border-t border-slate-200">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <h3 class="text-sm font-bold text-slate-700">
+                    <i class="fa-solid fa-users text-emerald-600"></i> শিক্ষক তালিকা
+                    <span id="teacher-master-count" class="badge bg-emerald-100 text-emerald-800 ml-2">০ জন</span>
+                </h3>
+                <div class="flex gap-2">
+                    <input type="text" id="teacher-master-search" oninput="renderTeacherMasterList()" placeholder="🔍 নাম/কার্ড/মোবাইল" class="rounded-lg border-slate-300 border p-2 text-xs">
+                    <button type="button" onclick="exportTeachers()" class="px-3 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-xs font-semibold transition">
+                        <i class="fa-solid fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg max-h-96 overflow-y-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-2 border-b">বিভাগ</th>
+                            <th class="p-2 border-b">নাম</th>
+                            <th class="p-2 border-b">কার্ড নং</th>
+                            <th class="p-2 border-b">পদবী</th>
+                            <th class="p-2 border-b">যোগদান</th>
+                            <th class="p-2 border-b">মোবাইল</th>
+                            <th class="p-2 border-b text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teacher-master-tbody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+                <div class="mt-8 pt-6 border-t border-slate-200">
+            <h3 class="text-sm font-bold text-slate-700 mb-3">
+                <i class="fa-solid fa-cloud-arrow-up text-emerald-600"></i> Firestore সিঙ্ক
+            </h3>
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+                <p class="text-xs text-amber-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    প্রথমবার ব্যবহারের আগে বর্তমান কনফিগ ডাটা Firestore-এ সেভ করুন। এটা একবারই লাগবে।
+                </p>
+                <button type="button" onclick="seedConfigToFirestore()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Firestore-এ সেভ করুন (একবার)
+                </button>
+                <p id="seed-status" class="text-xs text-slate-600"></p>
+            </div>
+        </div>
+        <div class="mt-8 pt-6 border-t border-slate-200">
+            <h3 class="text-sm font-bold text-slate-700 mb-3">ডাটা ব্যবস্থাপনা</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <p class="font-bold text-emerald-900 mb-1">মোট রেকর্ড</p>
+                    <p id="stat-total-records" class="text-2xl font-bold text-emerald-700">০</p>
+                </div>
+                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200">
+                    <p class="font-bold text-amber-900 mb-1">মোট শিক্ষক</p>
+                    <p id="stat-total-teachers" class="text-2xl font-bold text-amber-700">০</p>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p class="font-bold text-blue-900 mb-1">মোট পঠিত পৃষ্ঠা</p>
+                    <p id="stat-total-pages" class="text-2xl font-bold text-blue-700">০</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ═══════════════════ TAB 6: ADMIN PANEL ═══════════════════ -->
+<section id="tab-admin" class="tab-content hidden space-y-6">
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6">
+        <h2 class="text-lg font-bold text-emerald-900 flex items-center gap-3 pb-4 mb-4 border-b">
+            <i class="fa-solid fa-shield-halved text-amber-600"></i>
+            <span>এডমিন প্যানেল</span>
+        </h2>
+
+        <!-- সাব-ট্যাব নেভিগেশন -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-slate-200 pb-3">
+            <button onclick="switchAdminSub('dept')" id="adm-sub-dept" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-700 text-white shadow">
+                <i class="fa-solid fa-layer-group"></i> বিভাগ
+            </button>
+            <button onclick="switchAdminSub('term')" id="adm-sub-term" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-calendar-days"></i> সেশন ও পর্ব
+            </button>
+            <button onclick="switchAdminSub('class')" id="adm-sub-class" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-graduation-cap"></i> জামাত ও কিতাব
+            </button>
+            <button onclick="switchAdminSub('teacher')" id="adm-sub-teacher" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-users"></i> শিক্ষক
+            </button>
+            <button onclick="switchAdminSub('assign')" id="adm-sub-assign" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-user-shield"></i> দায়িত্বশীল
+            </button>
+            <button onclick="switchAdminSub('users')" id="adm-sub-users" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-user-gear"></i> ইউজার অ্যাকাউন্ট
+            </button>
+        </div>
+
+        <!-- কনটেন্ট এলাকা — পরে পূরণ হবে -->
+        <div id="adm-content" class="min-h-[300px]">
+            <div class="text-center py-16 text-slate-400">
+                <i class="fa-solid fa-screwdriver-wrench text-4xl mb-3"></i>
+                <p class="text-sm">এডমিন সেকশন লোড হচ্ছে...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="bg-slate-800 text-slate-400 text-center text-xs py-4 no-print mt-auto border-t border-slate-700">
+    <p>মাকাদীরে আসবাক (مقادير الأسباق) v3 &copy; ২০২৬ | কওমী মাদরাসার জন্য</p>
+</footer>
+
+<script>
+// ═══════════════════ শিক্ষক মাস্টার ডাটাবেস ═══════════════════
+const SEED_TEACHERS = [
+    // ═══ শরীয়াহ বিভাগ (২৩ জন) ═══
+    { dept: 'শরীয়াহ', sl: 1,  name: 'মাও. রুহুল আমীন কাসেমী',      card: '0012203', post: 'অধ্যক্ষ',           joinDate: '21-05-2017', mobile: '01711148200, 01873148200' },
+    { dept: 'শরীয়াহ', sl: 2,  name: 'মাও. হাবীবুর রহমান',           card: '0012511', post: 'সহকারী অধ্যক্ষ',     joinDate: '12.06.2019', mobile: '01871210092, 01929704627' },
+    { dept: 'শরীয়াহ', sl: 3,  name: 'মাও. কামালুদ্দীন শেখ',         card: '0034138', post: 'শিক্ষাসচিব',        joinDate: '09.02.2020', mobile: '01876316050, 01860978057' },
+    { dept: 'শরীয়াহ', sl: 4,  name: 'মাও. হুসাইন আহমাদ',            card: '0012372', post: 'সহ. শিক্ষক',         joinDate: '24.04.2019', mobile: '01818828426' },
+    { dept: 'শরীয়াহ', sl: 5,  name: 'মাও. শিহাব উদ্দীন',            card: '0012369', post: 'সহ. শিক্ষক',         joinDate: '26.04.2019', mobile: '01725426555, 01882042932' },
+    { dept: 'শরীয়াহ', sl: 6,  name: 'মাও. মুহিব্বুল্লাহ',           card: '0046779', post: 'সহ. শিক্ষক',         joinDate: '24.05.2021', mobile: '01862534875' },
+    { dept: 'শরীয়াহ', sl: 7,  name: 'মাও. নুরুল্লাহ',               card: '0046780', post: 'সহ. শিক্ষক',         joinDate: '24.05.2021', mobile: '01943248269' },
+    { dept: 'শরীয়াহ', sl: 8,  name: 'মাও. যাকারিয়া',                card: '0012209', post: 'সহ. শিক্ষক',         joinDate: '19-05-2018', mobile: '01883317241' },
+    { dept: 'শরীয়াহ', sl: 9,  name: 'মাও. মো. আবদুল্লাহ',           card: '0012206', post: 'সহ. শিক্ষক',         joinDate: '09-07-2017', mobile: '01988199519, 01984162223' },
+    { dept: 'শরীয়াহ', sl: 10, name: 'মাও. মো. নাঈম আহমাদ',          card: '0012208', post: 'সহ. শিক্ষক',         joinDate: '03-07-2017', mobile: '01880240224' },
+    { dept: 'শরীয়াহ', sl: 11, name: 'মাও. হাবীবুল্লাহ',             card: '0036217', post: 'সহ. শিক্ষক',         joinDate: '08-08-2020', mobile: '01839790949' },
+    { dept: 'শরীয়াহ', sl: 12, name: 'মাও. কামরুল হাসান',            card: '0046781', post: 'সহ. শিক্ষক',         joinDate: '24.05.2021', mobile: '01303717835' },
+    { dept: 'শরীয়াহ', sl: 13, name: 'মাও. মাহবুবুর রহমান',          card: '0046778', post: 'সহ. শিক্ষক',         joinDate: '24.05.2021', mobile: '01609080135' },
+    { dept: 'শরীয়াহ', sl: 14, name: 'মাও. সাব্বির আহমাদ',           card: '88271',   post: 'সহ. শিক্ষক',         joinDate: '10.05.2022', mobile: '01712026299' },
+    { dept: 'শরীয়াহ', sl: 15, name: 'মাও. ইমরান হুসাইন',            card: '88270',   post: 'সহ. শিক্ষক',         joinDate: '10.05.2022', mobile: '01308087428' },
+    { dept: 'শরীয়াহ', sl: 16, name: 'মাও. কামরুজ্জামান',            card: '104960',  post: 'সহ. শিক্ষক',         joinDate: '29.04.2023', mobile: '01744553425' },
+    { dept: 'শরীয়াহ', sl: 17, name: 'মাও. রোকনুজ্জামান',            card: '88556',   post: 'নাযেমে মাকতাবা',     joinDate: '10.05.2022', mobile: '01303812535' },
+    { dept: 'শরীয়াহ', sl: 18, name: 'মাও. আলিমুল ইসলাম',            card: '126122',  post: 'সহ. শিক্ষক',         joinDate: '18-04-2024', mobile: '01866996884' },
+    { dept: 'শরীয়াহ', sl: 19, name: 'মাও. জুবায়ের হুসাইন',           card: '126123',  post: 'সহ. শিক্ষক',         joinDate: '18-04-2024', mobile: '01612992680' },
+    { dept: 'শরীয়াহ', sl: 20, name: 'মাও. মিজানুর রহমান',           card: '126124',  post: 'সহ. শিক্ষক',         joinDate: '18-04-2024', mobile: '01616837433' },
+    { dept: 'শরীয়াহ', sl: 21, name: 'মাও. শুআইব আহমাদ',             card: '0012218', post: 'সহ. শিক্ষক',         joinDate: '24-03-2018', mobile: '01754212325' },
+    { dept: 'শরীয়াহ', sl: 22, name: 'জনাব মারুফ সিকদার',            card: '0031825', post: 'সহ. শিক্ষক',         joinDate: '19-10-2019', mobile: '01917590370' },
+    { dept: 'শরীয়াহ', sl: 23, name: 'জনাব ইয়াকুব আলী',             card: '147371',  post: 'সহ. শিক্ষক',         joinDate: '16-08-2025', mobile: '01780301807, 01982012643' },
+
+    // ═══ নূরানী-নাযেরা বিভাগ (১০ জন) ═══
+    { dept: 'নূরানী-নাযেরা', sl: 1,  name: 'মাও. মুরাদুল ইসলাম',     card: '0012627', post: 'সহ. শিক্ষক', joinDate: '20.8.2019',  mobile: '01761844165' },
+    { dept: 'নূরানী-নাযেরা', sl: 2,  name: 'হা. মহসিন উদ্দীন',       card: '0031828', post: 'সহ. শিক্ষক', joinDate: '03-11-2019', mobile: '01782107176' },
+    { dept: 'নূরানী-নাযেরা', sl: 3,  name: 'হা. মাযহারুল ইসলাম',     card: '-',       post: 'সহ. শিক্ষক', joinDate: '27-11-2025', mobile: '01401268096' },
+    { dept: 'নূরানী-নাযেরা', sl: 4,  name: 'মাও. মাহমুদুল হাসান',    card: '0012210', post: 'সহ. শিক্ষক', joinDate: '17-08-2013', mobile: '01920128796' },
+    { dept: 'নূরানী-নাযেরা', sl: 5,  name: 'হা. আবুল হোসেন মোল্লা',  card: '0012629', post: 'সহ. শিক্ষক', joinDate: '11-09-2019', mobile: '01772212770' },
+    { dept: 'নূরানী-নাযেরা', sl: 6,  name: 'হা. আহসান হাবীব',        card: '0044621', post: 'সহ. শিক্ষক', joinDate: '06/02/2021', mobile: '01756689398' },
+    { dept: 'নূরানী-নাযেরা', sl: 7,  name: 'মাও. আশরাফুল ইসলাম',     card: '0044622', post: 'সহ. শিক্ষক', joinDate: '06/02/2021', mobile: '01735694621' },
+    { dept: 'নূরানী-নাযেরা', sl: 8,  name: 'মাও. আ. আউয়াল',          card: '0031826', post: 'সহ. শিক্ষক', joinDate: '02-11-2019', mobile: '01731423602' },
+    { dept: 'নূরানী-নাযেরা', sl: 9,  name: 'হা. নাযির আহমাদ',        card: '0012233', post: 'সহ. শিক্ষক', joinDate: '07-07-2018', mobile: '01682671629, 01728180009' },
+    { dept: 'নূরানী-নাযেরা', sl: 10, name: 'জনাব মো: সাইফুল ইসলাম',  card: '147368',  post: 'সহ. শিক্ষক', joinDate: '15/07/2025', mobile: '01843329298, 01317138710' },
+
+    // ═══ অনাবাসিক বিভাগ (৯ জন) ═══
+    { dept: 'অনাবাসিক', sl: 1, name: 'জনাব মহিবুল ইসলাম',       card: '0036216', post: 'সহ. শিক্ষক', joinDate: '08-08-2001', mobile: '01950893757' },
+    { dept: 'অনাবাসিক', sl: 2, name: 'মাও. আব্দুল হান্নান',      card: '0012211', post: 'সহ. শিক্ষক', joinDate: '08-08-2014', mobile: '01785436571' },
+    { dept: 'অনাবাসিক', sl: 3, name: 'মাও. সুহাইল',              card: '0067123', post: 'সহ. শিক্ষক', joinDate: '30/09/2021', mobile: '01767252932' },
+    { dept: 'অনাবাসিক', sl: 4, name: 'এস. এম. সাদেকুর রহমান',    card: '0036214', post: 'সহ. শিক্ষক', joinDate: '08-08-2002', mobile: '01722499739, 01672520883' },
+    { dept: 'অনাবাসিক', sl: 5, name: 'মাও. ফজলে রাব্বী',         card: '139041',  post: 'সহ. শিক্ষক', joinDate: '03-12-2024', mobile: '01921732560' },
+    { dept: 'অনাবাসিক', sl: 6, name: 'মাও. মাহমুদুল হাসান',      card: '126125',  post: 'সহ. শিক্ষক', joinDate: '18-04-2024', mobile: '-' },
+    { dept: 'অনাবাসিক', sl: 7, name: 'মাও. কাউসার আলম',          card: '-',       post: 'সহ. শিক্ষক', joinDate: '08-11-2025', mobile: '01709880511, 01982742096' },
+    { dept: 'অনাবাসিক', sl: 8, name: 'ক্বারী মো. জসিম উদ্দীন',    card: '012213',  post: 'সহ. শিক্ষক', joinDate: '01-11-2012', mobile: '01756705330, 01731343631' },
+    { dept: 'অনাবাসিক', sl: 9, name: 'মাও. আমীরুল ইসলাম',        card: '143802',  post: 'সহ. শিক্ষক', joinDate: '06/03/2025', mobile: '01781881995, 01623462960' }
+];
+
+const TEACHERS_STORAGE_KEY = 'madrasa_teachers_v3';
+
+// ═══════════════════ CONFIG ═══════════════════
+const TERM_CONFIG = {
+    shariah: {
+        session: 'শাওয়াল → শাবান',
+        terms: {
+            qurbani: { name: 'কুরবানী পর্ব (৪০ দিন)', days: 40, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৪০)'] },
+            term1:   { name: '১ম সাময়িক (২৭ দিন)', days: 27, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-২৭)'] },
+            term2:   { name: '২য় সাময়িক (৫৪ দিন)', days: 54, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৪০)', '৫ম দশক (৪১-৫০)', '৬ষ্ঠ দশক (৫১-৫৪)'] },
+            annual:  { name: 'বার্ষিক পরীক্ষা (৩৫ দিন)', days: 35, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৩৫)'] }
+        }
+    },
+    non_res: {
+        session: 'জানুয়ারী → জানুয়ারী',
+        terms: {
+            term1:  { name: '১ম সাময়িক', days: 90, decades: ['১ম মাস (জানু)', '২য় মাস (ফেব)', '৩য় মাস (মার্চ)'] },
+            term2:  { name: '২য় সাময়িক', days: 90, decades: ['৪র্থ মাস (এপ্রিল)', '৫ম মাস (মে)', '৬ষ্ঠ মাস (জুন)'] },
+            annual: { name: 'বার্ষিক পরীক্ষা', days: 90, decades: ['৭ম মাস (জুলাই)', '৮ম মাস (আগস্ট)', '৯ম মাস (সেপ্টে)'] }
+        }
+    },
+    noorani: {
+        session: 'শাওয়াল → রমযান',
+        terms: {
+            qurbani: { name: 'কুরবানী পর্ব (৪৫ দিন)', days: 45, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৪০)', '৫ম দশক (৪১-৪৫)'] },
+            term1:   { name: '১ম সাময়িক (৩৫ দিন)', days: 35, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৩৫)'] },
+            term2:   { name: '২য় সাময়িক (৬৫ দিন)', days: 65, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৪০)', '৫ম দশক (৪১-৫০)', '৬ষ্ঠ দশক (৫১-৬০)', '৭ম দশক (৬১-৬৫)'] },
+            annual:  { name: 'বার্ষিক (৬০ দিন)', days: 60, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-৩০)', '৪র্থ দশক (৩১-৪০)', '৫ম দশক (৪১-৫০)', '৬ষ্ঠ দশক (৫১-৬০)'] },
+            ramadan: { name: 'রমযান (২৫ দিন)', days: 25, decades: ['১ম দশক (১-১০)', '২য় দশক (১১-২০)', '৩য় দশক (২১-২৫)'] }
+        }
+    }
+};
+
+const CLASS_CONFIG = {
+    shariah: ['تكميل (তাকমীল)', 'مشكاة (মেশকাত)', 'جلالين (জালালাইন)', 'شرح الوقاية (শরহে বেকায়া)', 'كافيه وشرح جامي (কাফিয়া)', 'هداية النحو (হেদায়েতুন্নাহু)', 'نحو مير (নাহবেমীর)', 'ميزان (মীযান)', 'تيسير (তাইসীর)', 'صف رابع (৪র্থ শ্রেণী)'],
+    non_res: ['প্লে', 'নার্সারী', '১ম শ্রেণী', '২য় শ্রেণী', '৩য় শ্রেণী', '৪র্থ শ্রেণী', '৫ম শ্রেণী'],
+    noorani: ['নূরানী ১ম', 'নূরানী ২য়', 'নূরানী ৩য়', 'নাযেরা ১ম', 'নাযেরা ২য়']
+};
+
+// ═══════════════════ কিতাব ডাটাবেস (বিভাগ + জামাত অনুযায়ী) ═══════════════════
+const BOOK_CONFIG = {
+    // ── শরীয়াহ বিভাগ ──
+    'تكميل (তাকমীল)': [
+        'صحيح البخاري (সহীহ বুখারী)',
+        'صحيح مسلم (সহীহ মুসলিম)',
+        'سنن النسائي (সুনানে নাসায়ী)',
+        'سنن أبي داود (সুনানে আবূ দাঊদ)',
+        'سنن الترمذي (সুনানে তিরমিযী)',
+        'موطأ مالك (মুয়াত্তা মালিক)',
+        'موطأ محمد (মুয়াত্তা মুহাম্মদ)',
+        'سنن ابن ماجه (সুনানে ইবনে মাজাহ)',
+        'شرح معاني الآثار (শরহু মাআনিল আছার)',
+        'المسائل الخلافية (আল-মাসাইলুল খিলাফিয়্যাহ)'
+    ],
+    'مشكاة (মেশকাত)': [
+        'مشكاة المصابيح (মিশকাতুল মাসাবীহ)',
+        'تفسير البيضاوي (তাফসীরে বায়যাবী)',
+        'الهداية - أخيرين (হেদায়া - শেষ দুই খণ্ড)',
+        'شرح العقائد (শরহুল আকাইদ)',
+        'الفرق الباطلة (আল-ফিরাকুল বাতলাহ)',
+        'نزهة النظر (নুযহাতুন নাযার)',
+        'تحريك دار العلوم ديوبند (তাহরীকে দারুল উলূম দেওবন্দ)'
+    ],
+    'جلالين (জালালাইন)': [
+        'تفسير الجلالين (তাফসীরে জালালাইন)',
+        'الهداية - أولين (হেদায়া - প্রথম দুই খণ্ড)',
+        'العقيدة الطحاوية (আকীদাতুত তাহাবিয়্যাহ)',
+        'نور الأنوار - كتاب السنة (নূরুল আনওয়ার - কিতাবুস সুন্নাহ)',
+        'رياض الصالحين (রিয়াদুস সালেহীন)',
+        'البلاغة الواضحة (আল-বালাগাতুল ওয়াদিহাহ)',
+        'الفوز الكبير (আল-ফাউযুল কাবীর)',
+        'ديوان المتنبي (দেওয়ানে মুতানাব্বী)',
+        'المختارات (আল-মুখতারাত)',
+        'إسلام اور جديد معيشت وتجارت (ইসলাম আওর জাদীদ মাঈশাত ও তিজারাত)'
+    ],
+    'شرح الوقاية (শরহে বেকায়া)': [
+        'القرآن الكريم ترجمة - النصف الأول (কুরআন মাজীদ তরজমা - ১ম অর্ধেক)',
+        'شرح الوقاية (শরহুল বেকায়া)',
+        'مختصر المعاني (মুখতাসারুল মাআনী)',
+        'نور الأنوار - كتاب الله (নূরুল আনওয়ার - কিতাবুল্লাহ)',
+        'مقامات الحريري (মাকামাতে হারীরী)',
+        'الفرائض السراجية (আল-ফারাইজুস সিরাজিয়্যাহ)',
+        'الطريق إلى الإنشاء - ثالث (আত-তারীকু ইলাল ইনশা - ৩য় খণ্ড)'
+    ],
+    'كافيه وشرح جامي (কাফিয়া)': [
+        'القرآن الكريم ترجمة - الثلث الأخير (কুরআন মাজীদ তরজমা - শেষ এক-তৃতীয়াংশ)',
+        'الكافية (আল-কাফিয়া)',
+        'مختصر القدوري (মুখতাসারুল কুদূরী)',
+        'أصول الشاشي (উসূলুশ শাশী)',
+        'مبادئ الأصول (মাবাদিউল উসূল)',
+        'دروس البلاغة (দুরুসুল বালাগাহ)',
+        'مرقات (মিরকাত)',
+        'مشكاة الآثار (মিশকাতুল আছার)',
+        'نفحة الأدب (নাফহাতুল আদাব)',
+        'معلم الإنشاء (মুয়াল্লিমুল ইনশা)',
+        'تعليم المتعلم (তালিমুল মুতাআল্লিম)',
+        'تاريخ ملت - بنو أمية (তারীখে মিল্লাত - বনু উমাইয়্যা)'
+    ],
+    'هداية النحو (হেদায়েতুন্নাহু)': [
+        'القرآن الكريم ترجمة - السدس الرابع (কুরআন মাজীদ তরজমা - ৪র্থ ষষ্ঠাংশ)',
+        'هداية النحو (হেদায়াতুন্নাহু)',
+        'نور الإيضاح (নূরুল ইযাহ)',
+        'علم الصيغة (ইলমুস সীগাহ)',
+        'فصول أكبري (ফুসূলে আকবরী)',
+        'زاد الطالبين (যাদুত তালেবীন)',
+        'قصص النبيين (কাসাসুন্নাবিয়্যীন)',
+        'القراءة الراشدة (আল-কিরাআতুর রাশিদাহ)',
+        'الطريق إلى الإنشاء - أول (আত-তারীকু ইলাল ইনশা - ১ম খণ্ড)',
+        'خلافت راشده (খিলাফতে রাশেদা)'
+    ],
+    'نحو مير (নাহবেমীর)': [
+        'النحو الميسر (আন-নাহবুল মুয়াসসার)',
+        'قصص النبيين - أول للتمرين (কাসাসুন্নাবিয়্যীন - ১ম খণ্ড অনুশীলনী)',
+        'شرح مئة عامل (শরহু মিআতে আমিল)',
+        'الفقه الميسر (আল-ফিকহুল মুয়াসসার)',
+        'علم الصرف - ثالث (ইলমুস সারফ - ৩য় খণ্ড)',
+        'روضة الأدب (রাওযাতুল আদাব)',
+        'سيرت خاتم الأنبياء (সীরাতে খাতামুল আম্বিয়া)',
+        'كلستان (গুলিস্তা)',
+        'বাংলা - সপ্তম শ্রেণী',
+        'القرآن الكريم ناظرة وحفظا (কুরআন মাজীদ নাযেরা ও হিফজ)'
+    ],
+    'ميزان (মীযান)': [
+        'ميزان الصرف (মিযানুস সারফ)',
+        'صفوة المصادر (সাফওয়াতুল মাসাদির)',
+        'بهشتي زيور (বেহেশতী জেওর)',
+        'بهشتي گوهر (বেহেশতী গওহর)',
+        'تاريخ الإسلام (তারীখুল ইসলাম)',
+        'الطريق إلى العربية (আত-তারীকু ইলাল আরাবিয়্যাহ)',
+        'التمرين الكتابي (আত-তামরীনুল কিতাবী)',
+        'বাংলা - ষষ্ঠ শ্রেণী',
+        'ইংরেজি - ষষ্ঠ শ্রেণী',
+        'গণিত - ষষ্ঠ শ্রেণী',
+        'القرآن الكريم ناظرة وحفظا (কুরআন মাজীদ নাযেরা ও হিফজ)'
+    ],
+    'تيسير (তাইসীর)': [
+        'تيسير المبتدي (তৈসীরুল মুবতার্দী)',
+        'فارسي بهلي (ফারসী পহলী)',
+        'اردو قاعده (উর্দু কায়দা)',
+        'اردو بهلي (উর্দু পহলী)',
+        'اردو تيسري (উর্দু তিসরী)',
+        'تعليم الإسلام - أول (তালিমুল ইসলাম - ১ম)',
+        'تعليم الإسلام - رابع (তালিমুল ইসলাম - ৪র্থ)',
+        'বাংলা - পঞ্চম শ্রেণী',
+        'গণিত - পঞ্চম শ্রেণী',
+        'ইতিহাস - পঞ্চম শ্রেণী',
+        'ভূগোল - পঞ্চম শ্রেণী',
+        'ইংরেজি - পঞ্চম শ্রেণী',
+        'ইংরেজি ব্যাকরণ - পঞ্চম শ্রেণী',
+        'القرآن الكريم ناظرة وحفظا (কুরআন মাজীদ নাযেরা ও হিফজ)'
+    ],
+    'صف رابع (৪র্থ শ্রেণী)': [
+        'اردو قاعده (উর্দু কায়দা)',
+        'اردو بهلي (উর্দু পহলী)',
+        'اردو دوسري (উর্দু দুসরী)',
+        'تعليم الإسلام - أول (তালিমুল ইসলাম - ১ম)',
+        'تعليم الإسلام - ثاني (তালিমুল ইসলাম - ২য়)',
+        'تعليم الإسلام - ثالث (তালিমুল ইসলাম - ৩য়)',
+        'বাংলা - চতুর্থ শ্রেণী',
+        'গণিত - চতুর্থ শ্রেণী',
+        'ইতিহাস - চতুর্থ শ্রেণী',
+        'ভূগোল - চতুর্থ শ্রেণী',
+        'ইংরেজি - চতুর্থ শ্রেণী',
+        'ইংরেজি ব্যাকরণ - চতুর্থ শ্রেণী',
+        'القرآن الكريم ناظرة وحفظا (কুরআন মাজীদ নাযেরা ও হিফজ)'
+    ],
+    // ── অনাবাসিক ──
+    'প্লে': ['কালিমা', 'মাসায়েল', 'হাদীস', 'আরবী', 'লেখা', 'বাংলা', 'ইংরেজি', 'গণিত'],
+    'নার্সারী': ['ইংরেজি', 'বাংলা', 'গণিত', 'লেখা', 'আরবী', 'হাদীস', 'কালিমা', 'মাসায়েল', 'হাতের লেখা'],
+    '১ম শ্রেণী': ['ইংরেজি', 'গণিত', 'আরবী', 'হাদীস', 'কালিমা', 'মশক', 'হাতের লেখা', 'মাসায়েল', 'বাংলা', 'আরবী লেখা', 'দুআ'],
+    '২য় শ্রেণী': ['হাদীস', 'কালিমা', 'আরবী', 'মশক', 'ইংরেজি', 'গণিত', 'বাংলা', 'মাসায়েল', 'সমাজ বিজ্ঞান', 'দুআ', 'আরবী হাতের লেখা'],
+    '৩য় শ্রেণী': ['হাদীস', 'কালিমা', 'আরবী', 'মশক', 'হাতের লেখা', 'সমাজ বিজ্ঞান', 'বাংলা', 'মাসায়েল', 'দুআ'],
+    '৪র্থ শ্রেণী': ['হাদীস', 'দুআ', 'গণিত', 'ইংরেজি', 'মাসায়েল', 'আরবী', 'মশক', 'সমাজ বিজ্ঞান', 'ধর্ম ও সমাজ'],
+    '৫ম শ্রেণী': ['ইংরেজি', 'গণিত', 'সমাজ বিজ্ঞান', 'বাংলা', 'আরবী', 'মশক', 'হাদীস', 'দুআ', 'মাসায়েল', 'বিজ্ঞান'],
+    // ── নূরানী ও নাযেরা ──
+    'নূরানী ১ম': ['পূর্ণ কায়েদাহ ও আমপারা', 'ইংরেজি ১ম', 'গণিত ১ম', 'বাংলা ও ব্যাকরণ ১ম'],
+    'নূরানী ২য়': ['১২ পারা কুরআন কারীম', 'ইংরেজি ২য়', 'গণিত ২য়', 'বাংলা ও ব্যাকরণ ২য়'],
+    'নূরানী ৩য়': ['পূর্ণ কুরআন কারীম', 'ইংরেজি ৩য়', 'গণিত ৩য়', 'বাংলা ও ব্যাকরণ ৩য়']
+};
+
+const STORAGE_KEY = 'madrasa_asbaq_records_v3';
+const SETTINGS_KEY = 'madrasa_asbaq_settings_v3';
+
+let records = [];
+let settings = { madrasaName: '', madrasaNameAr: '', address: '', year: '২০২৪-২০২৫', logo: '' };
+
+// ═══════════════════ INIT ═══════════════════
+window.onload = function() {
+    loadSettings();
+    loadTeachers();       // ★ নতুন
+    loadRecords();
+    populateClassFilters();
+    updateStats();
+};
+
+function loadSettings() {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    if (saved) {
+        try { settings = JSON.parse(saved); } catch(e) {}
+    }
+    document.getElementById('set-madrasa-bn').value = settings.madrasaName || '';
+    document.getElementById('set-madrasa-ar').value = settings.madrasaNameAr || '';
+    document.getElementById('set-address').value = settings.address || '';
+    document.getElementById('set-year').value = settings.year || '২০২৪-২০২৫';
+    if (settings.logo) {
+        document.getElementById('logo-preview').src = settings.logo;
+        document.getElementById('logo-preview-wrap').classList.remove('hidden');
+    }
+    applySettingsToUI();
+}
+
+// ═══════════════════ শিক্ষক ম্যানেজমেন্ট ═══════════════════
+let teachers = [];
+
+function loadTeachers() {
+    const saved = localStorage.getItem(TEACHERS_STORAGE_KEY);
+    if (saved) {
+        try { teachers = JSON.parse(saved); } catch(e) { teachers = [...SEED_TEACHERS]; }
+    } else {
+        teachers = [...SEED_TEACHERS];
+        localStorage.setItem(TEACHERS_STORAGE_KEY, JSON.stringify(teachers));
+    }
+    renderTeacherMasterList();
+    populateTeacherFilters();
+    populateTeacherFilterDropdown();
+    populateTeacherDatalist();
+}
+
+function saveTeachers() {
+    localStorage.setItem(TEACHERS_STORAGE_KEY, JSON.stringify(teachers));
+    populateTeacherFilters();
+    populateTeacherFilterDropdown();
+    populateTeacherDatalist();
+    renderTeacherMasterList();
+}
+
+// রিপোর্টে শিক্ষকের নাম → সম্পূর্ণ তথ্য খুঁজে বের করা
+function findTeacherByName(name) {
+    if (!name) return null;
+    return teachers.find(t => t.name === name) || null;
+}
+
+// নাম দিয়ে card/post/mobile বের করা
+function getTeacherMeta(name) {
+    const t = findTeacherByName(name);
+    if (!t) return { card: '-', post: '-', mobile: '-', dept: '-', joinDate: '-' };
+    return t;
+}
+
+function applySettingsToUI() {
+    document.getElementById('header-madrasa-name').textContent = settings.madrasaName || 'পাঠ পরিমাণ ট্র্যাকিং সিস্টেম';
+    document.getElementById('year-badge').textContent = 'শিক্ষাবর্ষ: ' + (settings.year || '২০২৪-২০২৫');
+}
+
+function saveSettings(e) {
+    e.preventDefault();
+    settings.madrasaName = document.getElementById('set-madrasa-bn').value.trim();
+    settings.madrasaNameAr = document.getElementById('set-madrasa-ar').value.trim();
+    settings.address = document.getElementById('set-address').value.trim();
+    settings.year = document.getElementById('set-year').value.trim() || '২০২৪-২০২৫';
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    applySettingsToUI();
+    showToast('✅ সেটিংস সফলভাবে সংরক্ষিত হয়েছে', 'success');
+}
+
+function onTeacherNameInput() {
+    const name = document.getElementById('teacher-name').value.trim();
+    const info = document.getElementById('teacher-info-display');
+    const dept = document.getElementById('dept-select').value;
+    const t = findTeacherByName(name);
+
+    const DEPT_MAP = {
+        shariah: 'শরীয়াহ',
+        non_res: 'অনাবাসিক',
+        noorani: 'নূরানী-নাযেরা'
+    };
+    const allowedDept = DEPT_MAP[dept];
+
+    if (t) {
+        if (allowedDept && t.dept !== allowedDept) {
+            info.innerHTML = `<i class="fa-solid fa-exclamation-triangle"></i> এই শিক্ষক "${t.dept}" বিভাগের — বর্তমান বিভাগের সাথে মিলছে না`;
+            info.className = 'text-[10px] text-red-600 mt-1 font-semibold';
+        } else {
+            info.innerHTML = `<i class="fa-solid fa-check-circle"></i> ${t.post} | ${t.dept} | কার্ড: ${t.card} | ${t.mobile}`;
+            info.className = 'text-[10px] text-emerald-700 mt-1 font-semibold';
+        }
+    } else if (name) {
+        info.innerHTML = `<i class="fa-solid fa-info-circle"></i> নতুন শিক্ষক (তালিকায় নেই)`;
+        info.className = 'text-[10px] text-amber-600 mt-1 font-semibold';
+    } else {
+        info.innerHTML = '';
+    }
+}
+
+function handleLogoUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 500 * 1024) { showToast('⚠️ লোগো ৫০০KB এর কম হতে হবে', 'warn'); return; }
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        settings.logo = ev.target.result;
+        document.getElementById('logo-preview').src = settings.logo;
+        document.getElementById('logo-preview-wrap').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+}
+
+function renderTeacherMasterList() {
+    const tbody = document.getElementById('teacher-master-tbody');
+    if (!tbody) return;
+    const search = (document.getElementById('teacher-master-search')?.value || '').toLowerCase();
+    
+    let list = teachers.slice();
+    if (search) {
+        list = list.filter(t => 
+            (t.name + t.card + t.mobile + t.post + t.dept).toLowerCase().includes(search)
+        );
+    }
+    
+    document.getElementById('teacher-master-count').textContent = `${list.length} জন`;
+    tbody.innerHTML = '';
+    
+    if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">কোন শিক্ষক পাওয়া যায়নি</td></tr>`;
+        return;
+    }
+    
+    list.forEach((t, idx) => {
+        const realIdx = teachers.indexOf(t);
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50';
+        tr.innerHTML = `
+            <td class="p-2 text-[11px]"><span class="badge bg-emerald-100 text-emerald-800">${t.dept}</span></td>
+            <td class="p-2 font-semibold">${t.name}</td>
+            <td class="p-2 font-mono text-[11px]">${t.card}</td>
+            <td class="p-2 text-[11px]">${t.post}</td>
+            <td class="p-2 text-[11px]">${t.joinDate}</td>
+            <td class="p-2 text-[11px] font-mono">${t.mobile}</td>
+            <td class="p-2 text-center whitespace-nowrap">
+                <button onclick="editTeacher(${realIdx})" class="text-blue-500 hover:text-blue-700 p-1" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="deleteTeacher(${realIdx})" class="text-red-500 hover:text-red-700 p-1" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function editTeacher(idx) {
+    const t = teachers[idx];
+    const newName = prompt('নাম:', t.name);
+    if (newName === null) return;
+    const newCard = prompt('কার্ড নং:', t.card);
+    if (newCard === null) return;
+    const newPost = prompt('পদবী:', t.post);
+    if (newPost === null) return;
+    const newJoin = prompt('যোগদানের তারিখ:', t.joinDate);
+    if (newJoin === null) return;
+    const newMobile = prompt('মোবাইল:', t.mobile);
+    if (newMobile === null) return;
+    const newDept = prompt('বিভাগ:', t.dept);
+    if (newDept === null) return;
+    
+    teachers[idx] = { ...t, name: newName, card: newCard, post: newPost, joinDate: newJoin, mobile: newMobile, dept: newDept };
+    saveTeachers();
+    showToast('✅ শিক্ষক তথ্য আপডেট হয়েছে', 'success');
+}
+
+function deleteTeacher(idx) {
+    if (!confirm(`"${teachers[idx].name}" কে মুছবেন?`)) return;
+    teachers.splice(idx, 1);
+    saveTeachers();
+    showToast('🗑️ শিক্ষক মুছে ফেলা হয়েছে', 'info');
+}
+
+function exportTeachers() {
+    const blob = new Blob([JSON.stringify(teachers, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `teachers_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ শিক্ষক তালিকা export হয়েছে', 'success');
+}
+
+function loadRecords() {
+    // LocalStorage cache থেকে দ্রুত লোড
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try { 
+            records = JSON.parse(saved); 
+            records = records.map(r => migrateRecord(r));
+        } catch(e) { 
+            records = []; 
+        }
+    } else {
+        records = [];
+    }
+    renderSavedDataTable();
+    updateStats();
+}
+
+// Firestore থেকে records লোড
+window.loadRecordsFromFirestore = async function() {
+    if (!currentUser) return;
+    try {
+        const { collection, getDocs, query, where, orderBy } = window.fbFuncs;
+        
+        let q;
+        if (currentUserData?.role === 'admin') {
+            // এডমিন সব records দেখবে
+            q = collection(window.fbDB, 'records');
+        } else {
+            // শিক্ষক শুধু নিজের বানানো records
+            q = query(collection(window.fbDB, 'records'), where('createdBy', '==', currentUser.uid));
+        }
+        
+        const snap = await getDocs(q);
+        const fbRecords = [];
+        snap.forEach(d => {
+            fbRecords.push({ id: d.id, ...d.data() });
+        });
+        
+        // Sort by createdAt desc
+        fbRecords.sort((a, b) => {
+            const ta = a.createdAt?.seconds || 0;
+            const tb = b.createdAt?.seconds || 0;
+            return tb - ta;
+        });
+        
+        records = fbRecords;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        renderSavedDataTable();
+        updateStats();
+        console.log('☁️ Records loaded from Firestore:', records.length);
+    } catch (err) {
+        console.error('❌ loadRecordsFromFirestore error:', err);
+        // cache থেকে যা আছে তাই চলবে
+    }
+};
+
+// ★★★ নতুন মাইগ্রেশন ফাংশন ★★★
+function migrateRecord(r) {
+    // যদি ইতিমধ্যেই v3 ফরম্যাটে থাকে
+    if (r.decadesData && Array.isArray(r.decadesData)) {
+        return r;
+    }
+    
+    // পুরনো v2 ফরম্যাট → v3 ফরম্যাট
+    const decadesData = [];
+    const startPage = r.startPage || 0;
+    const endPage = r.endPage || 0;
+    const total = (r.decadeTotalPages != null) ? r.decadeTotalPages : 
+                  (endPage >= startPage && startPage > 0 ? (endPage - startPage + 1) : 0);
+    
+    const oldDecades = r.decades || [];
+    oldDecades.forEach(dec => {
+        decadesData.push({
+            decade: dec,
+            start: startPage,
+            end: endPage,
+            startCh: r.startChapter || '',
+            endCh: r.endChapter || '',
+            total: total
+        });
+    });
+    
+    return {
+        id: r.id || Date.now().toString() + Math.random(),
+        term: r.term || '',
+        dept: r.dept || '',
+        className: r.className || '',
+        section: r.section || 'নাই',
+        bookName: r.bookName || '',
+        publisher: r.publisher || '---',
+        teacherName: r.teacherName || '',
+        totalBookPages: r.totalBookPages || 0,
+        termNisabPages: r.termNisabPages || 0,
+        decadeNisabPages: r.decadeNisabPages || 0,
+        decadesData: decadesData,
+        totalPages: decadesData.reduce((a, c) => a + c.total, 0),
+        createdAt: r.createdAt || new Date().toISOString()
+    };
+}
+
+function saveRecordsToStorage() {
+    // LocalStorage cache
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    updateStats();
+}
+
+// Firestore-এ একটি record সেভ/আপডেট
+window.saveRecordToFirestore = async function(record) {
+    if (!currentUser) { showToast('❌ লগইন করুন', 'error'); return false; }
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        const recId = record.id || doc(collection(window.fbDB, 'records')).id;
+        const ref = doc(window.fbDB, 'records', recId);
+        
+        const payload = {
+            ...record,
+            id: recId,
+            createdBy: record.createdBy || currentUser.uid,
+            createdByEmail: record.createdByEmail || currentUser.email,
+            updatedAt: serverTimestamp()
+        };
+        
+        // createdAt timestamp conversion
+        if (typeof payload.createdAt === 'string') {
+            payload.createdAt = new Date(payload.createdAt);
+        }
+        
+        await setDoc(ref, payload, { merge: true });
+        return true;
+    } catch (err) {
+        console.error('❌ saveRecordToFirestore error:', err);
+        showToast('❌ Firestore সেভ ব্যর্থ: ' + err.message, 'error');
+        return false;
+    }
+};
+
+// Firestore থেকে একটি record মুছুন
+window.deleteRecordFromFirestore = async function(recordId) {
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'records', recordId));
+        return true;
+    } catch (err) {
+        console.error('❌ deleteRecordFromFirestore error:', err);
+        return false;
+    }
+};
+
+// ═══════════════════ TOAST ═══════════════════
+function showToast(msg, type = 'success') {
+    const colors = { success: 'bg-emerald-600', error: 'bg-red-600', warn: 'bg-amber-600', info: 'bg-blue-600' };
+    const icons = { success: 'fa-check-circle', error: 'fa-times-circle', warn: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+    const div = document.createElement('div');
+    div.className = `toast ${colors[type]} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 text-sm font-semibold min-w-[250px]`;
+    div.innerHTML = `<i class="fa-solid ${icons[type]}"></i><span>${msg}</span>`;
+    document.getElementById('toast-container').appendChild(div);
+    setTimeout(() => { div.style.opacity = '0'; div.style.transition = 'opacity .3s'; setTimeout(() => div.remove(), 300); }, 3000);
+}
+
+// ═══════════════════ TAB SWITCH ═══════════════════
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-white', 'shadow-md');
+        btn.classList.add('text-emerald-100');
+    });
+    document.getElementById('tab-' + tabId).classList.remove('hidden');
+    const btn = document.getElementById('tab-btn-' + tabId);
+    btn.classList.add('bg-amber-500', 'text-white', 'shadow-md');
+    btn.classList.remove('text-emerald-100');
+
+    if (tabId === 'jamat-report') renderJamatReport();
+    if (tabId === 'teacher-report') renderTeacherReport();
+    if (tabId === 'data-list') { renderSavedDataTable(); populateTeacherFilterDropdown(); }
+    if (tabId === 'settings') updateStats();
+    if (tabId === 'admin') switchAdminSub('dept');
+}
+
+function onDeptChange() {
+    const dept = document.getElementById('dept-select').value;
+    const termSel = document.getElementById('term-select');
+    const sessEl = document.getElementById('session-display');
+
+    termSel.innerHTML = '<option value="">-- পর্ব নির্বাচন করুন --</option>';
+    sessEl.textContent = '';
+
+    if (!dept || !TERM_CONFIG[dept]) {
+        termSel.innerHTML = '<option value="">-- পূর্বে বিভাগ নির্বাচন করুন --</option>';
+        updateClasses();
+        return;
+    }
+
+    const cfg = TERM_CONFIG[dept];
+    sessEl.innerHTML = `<i class="fa-solid fa-info-circle"></i> সেশন: ${cfg.session}`;
+
+    Object.keys(cfg.terms).forEach(key => {
+        const t = cfg.terms[key];
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = t.name;
+        termSel.appendChild(opt);
+    });
+
+    // দশক ও ক্লাস রিসেট
+    document.getElementById('decades-checkbox-container').innerHTML = '<span class="text-xs text-slate-400 italic">পূর্বে পর্ব নির্বাচন করুন</span>';
+    document.getElementById('per-decade-inputs').innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>';
+    document.getElementById('decade-summary').textContent = 'মোট: ০ পৃষ্ঠা';
+
+    updateClasses();
+    populateTeacherDatalist(dept);
+
+    const tName = document.getElementById('teacher-name');
+    const tInfo = document.getElementById('teacher-info-display');
+    if (tName) tName.value = '';
+    if (tInfo) tInfo.innerHTML = '';
+}
+
+// ═══════════════════ DECADE UI ═══════════════════
+function onTermChange() {
+    const dept = document.getElementById('dept-select').value;
+    const term = document.getElementById('term-select').value;
+    const container = document.getElementById('decades-checkbox-container');
+    container.innerHTML = '';
+    document.getElementById('per-decade-inputs').innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>';
+    document.getElementById('decade-summary').textContent = 'মোট: ০ পৃষ্ঠা';
+
+    if (dept && term && TERM_CONFIG[dept] && TERM_CONFIG[dept].terms[term]) {
+        TERM_CONFIG[dept].terms[term].decades.forEach(dec => {
+            const label = document.createElement('label');
+            label.className = "flex items-center gap-2 text-xs font-semibold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200 cursor-pointer hover:bg-emerald-50 hover:border-emerald-300 transition";
+            label.innerHTML = `<input type="checkbox" name="decade-checkbox" value="${dec}" onchange="renderPerDecadeInputs()" class="decade-chk rounded text-emerald-600 w-4 h-4"><span>${dec}</span>`;
+            container.appendChild(label);
+        });
+    } else {
+        container.innerHTML = '<span class="text-xs text-slate-400 italic">পূর্বে পর্ব নির্বাচন করুন</span>';
+    }
+}
+
+function toggleSelectAllDecades() {
+    const chks = document.querySelectorAll('.decade-chk');
+    const allChecked = Array.from(chks).every(c => c.checked);
+    chks.forEach(c => c.checked = !allChecked);
+    renderPerDecadeInputs();
+}
+
+// ★★★ NEW: Per-Decade Input Renderer ★★★
+function renderPerDecadeInputs() {
+    const selected = Array.from(document.querySelectorAll('.decade-chk:checked')).map(cb => cb.value);
+    const container = document.getElementById('per-decade-inputs');
+    const existingData = collectPerDecadeData(); // preserve user input
+
+    container.innerHTML = '';
+
+    if (selected.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>';
+        document.getElementById('decade-summary').textContent = 'মোট: ০ পৃষ্ঠা';
+        return;
+    }
+
+    selected.forEach((dec, idx) => {
+        const prev = existingData[dec] || { start: '', end: '', startCh: '', endCh: '' };
+        const row = document.createElement('div');
+        row.className = 'decade-input-row rounded-lg p-3 grid grid-cols-1 md:grid-cols-6 gap-2 items-end';
+        row.innerHTML = `
+            <div class="md:col-span-1">
+                <label class="text-[10px] font-bold text-amber-900 block mb-1">দশক</label>
+                <div class="text-xs font-bold text-amber-900 bg-amber-100 rounded px-2 py-1.5">${dec}</div>
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
+                <input type="text" data-dec="${dec}" data-field="startCh" value="${prev.startCh || ''}" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা *</label>
+                <input type="number" data-dec="${dec}" data-field="start" value="${prev.start || ''}" min="1" required placeholder="১" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
+                <input type="text" data-dec="${dec}" data-field="endCh" value="${prev.endCh || ''}" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা *</label>
+                <input type="number" data-dec="${dec}" data-field="end" value="${prev.end || ''}" min="1" required placeholder="১০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
+            </div>
+            <div>
+                <label class="text-[10px] font-semibold text-slate-600 block mb-1">মোট পৃষ্ঠা</label>
+                <div class="text-xs font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-2 py-1.5 text-center" data-total-for="${dec}">০</div>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+
+    container.querySelectorAll('.decade-page-input').forEach(inp => {
+        inp.addEventListener('input', () => { recalcDecadeTotals(); updateDecadeSummary(); });
+    });
+
+    recalcDecadeTotals();
+    updateDecadeSummary();
+}
+
+function collectPerDecadeData() {
+    const data = {};
+    document.querySelectorAll('#per-decade-inputs input[data-dec]').forEach(inp => {
+        const dec = inp.dataset.dec;
+        if (!data[dec]) data[dec] = {};
+        data[dec][inp.dataset.field] = inp.value;
+    });
+    return data;
+}
+
+function recalcDecadeTotals() {
+    document.querySelectorAll('#per-decade-inputs input[data-field="start"], #per-decade-inputs input[data-field="end"]').forEach(inp => {
+        const dec = inp.dataset.dec;
+        const start = parseInt(document.querySelector(`#per-decade-inputs input[data-dec="${dec}"][data-field="start"]`).value) || 0;
+        const end = parseInt(document.querySelector(`#per-decade-inputs input[data-dec="${dec}"][data-field="end"]`).value) || 0;
+        const totalEl = document.querySelector(`[data-total-for="${dec}"]`);
+        if (totalEl) {
+            if (start > 0 && end >= start) {
+                totalEl.textContent = (end - start + 1);
+                totalEl.classList.remove('text-red-600');
+            } else if (end > 0 && end < start) {
+                totalEl.textContent = 'ভুল!';
+                totalEl.classList.add('text-red-600');
+            } else {
+                totalEl.textContent = '০';
+                totalEl.classList.remove('text-red-600');
+            }
+        }
+    });
+}
+
+function updateDecadeSummary() {
+    let total = 0;
+    document.querySelectorAll('[data-total-for]').forEach(el => {
+        const v = parseInt(el.textContent);
+        if (!isNaN(v)) total += v;
+    });
+    document.getElementById('decade-summary').textContent = `মোট: ${total} পৃষ্ঠা`;
+}
+
+// ═══════════════════ CLASS DROPDOWN ═══════════════════
+function updateClasses() {
+    const dept = document.getElementById('dept-select').value;
+    const sel = document.getElementById('class-select');
+    sel.innerHTML = '<option value="">-- জামাত নির্বাচন করুন --</option>';
+    if (dept && CLASS_CONFIG[dept]) {
+        CLASS_CONFIG[dept].forEach(cls => {
+            const opt = document.createElement('option');
+            opt.value = cls; opt.textContent = cls;
+            sel.appendChild(opt);
+        });
+    }
+    updateBooks();
+}
+
+// ★★★ NEW: জামাত অনুযায়ী কিতাব পপুলেট ★★★
+function updateBooks() {
+    const className = document.getElementById('class-select').value;
+    const bookSel = document.getElementById('book-name');
+    if (!bookSel) return;
+
+    bookSel.innerHTML = '<option value="">-- কিতাব নির্বাচন করুন --</option>';
+
+    if (className && BOOK_CONFIG[className]) {
+        BOOK_CONFIG[className].forEach(book => {
+            const opt = document.createElement('option');
+            opt.value = book;
+            opt.textContent = book;
+            bookSel.appendChild(opt);
+        });
+    } else if (className) {
+        bookSel.innerHTML = '<option value="">-- এই জামাতের জন্য কিতাব লিস্ট নেই --</option>';
+    }
+}
+
+// ═══════════════════ FORM SUBMIT (CREATE + UPDATE) ═══════════════════
+async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const selectedDecades = Array.from(document.querySelectorAll('.decade-chk:checked')).map(cb => cb.value);
+    if (selectedDecades.length === 0) { showToast('⚠️ কমপক্ষে একটি দশক নির্বাচন করুন', 'warn'); return; }
+
+    // Validate per-decade data
+    const decadesData = [];
+    let validationError = null;
+
+    for (const dec of selectedDecades) {
+        const start = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="start"]`)?.value) || 0;
+        const end = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="end"]`)?.value) || 0;
+        const startCh = document.querySelector(`input[data-dec="${dec}"][data-field="startCh"]`)?.value || '';
+        const endCh = document.querySelector(`input[data-dec="${dec}"][data-field="endCh"]`)?.value || '';
+
+        if (start <= 0) { validationError = `${dec}: শুরুর পৃষ্ঠা দিন`; break; }
+        if (end <= 0) { validationError = `${dec}: শেষ পৃষ্ঠা দিন`; break; }
+        if (end < start) { validationError = `${dec}: শেষ পৃষ্ঠা শুরুর চেয়ে ছোট`; break; }
+
+        decadesData.push({ decade: dec, start, end, startCh, endCh, total: end - start + 1 });
+    }
+
+    if (validationError) { showToast('⚠️ ' + validationError, 'error'); return; }
+
+    const totalPages = decadesData.reduce((a, c) => a + c.total, 0);
+    // ★ Role-based: শিক্ষক শুধু নিজের assigned জামাতের ডাটা এন্ট্রি করতে পারবেন
+    if (currentUserData?.role === 'teacher') {
+        const myName = currentUserData.teacherName || currentUserData.name;
+        const selDept = document.getElementById('dept-select').value;
+        const selClass = document.getElementById('class-select').value;
+        const classKey = selDept + '::' + selClass;
+        const assignedList = (configData?.assignments || {})[classKey] || [];
+        if (!assignedList.includes(myName)) {
+            showToast(`⚠️ আপনি "${selClass}" জামাতের দায়িত্বশীল নন। এখানে ডাটা এন্ট্রি করতে পারবেন না।`, 'error');
+            return;
+        }
+    }
+    // শিক্ষকের বিভাগ ভ্যালিডেশন
+    const dept = document.getElementById('dept-select').value;
+    const teacherName = document.getElementById('teacher-name').value.trim();
+    const teacherMeta = findTeacherByName(teacherName);
+    const DEPT_MAP = {
+        shariah: 'শরীয়াহ',
+        non_res: 'অনাবাসিক',
+        noorani: 'নূরানী-নাযেরা'
+    };
+    if (teacherMeta && DEPT_MAP[dept] && teacherMeta.dept !== DEPT_MAP[dept]) {
+        showToast(`⚠️ "${teacherName}" শিক্ষক "${teacherMeta.dept}" বিভাগের — এই বিভাগের জন্য অনুমোদিত নয়`, 'error');
+        return;
+    }
+
+    const recordData = {
+        term: document.getElementById('term-select').value,
+        dept: document.getElementById('dept-select').value,
+        className: document.getElementById('class-select').value,
+        section: document.getElementById('section-select').value,
+        bookName: document.getElementById('book-name').value.trim(),
+        publisher: document.getElementById('publisher-name').value.trim() || '---',
+        teacherName: document.getElementById('teacher-name').value.trim(),
+        totalBookPages: parseInt(document.getElementById('total-book-pages').value) || 0,
+        termNisabPages: parseInt(document.getElementById('term-nisab-pages').value) || 0,
+        decadeNisabPages: parseInt(document.getElementById('decade-nisab-pages').value) || 0,
+        decadesData: decadesData,
+        totalPages: totalPages,
+        createdAt: new Date().toISOString()
+    };
+
+    const editingId = document.getElementById('editing-id').value;
+
+    if (editingId) {
+        const idx = records.findIndex(r => r.id === editingId);
+        if (idx >= 0) {
+            const updated = { ...records[idx], ...recordData, updatedAt: new Date().toISOString() };
+            records[idx] = updated;
+            
+            // Firestore-এ সেভ
+            const ok = await saveRecordToFirestore(updated);
+            if (ok) showToast('✅ ডাটা আপডেট হয়েছে', 'success');
+        }
+    } else {
+        recordData.id = Date.now().toString();
+        recordData.createdBy = currentUser?.uid || 'unknown';
+        recordData.createdByEmail = currentUser?.email || 'unknown';
+        records.push(recordData);
+        
+        // Firestore-এ সেভ
+        const ok = await saveRecordToFirestore(recordData);
+        if (ok) showToast('✅ নতুন ডাটা সংরক্ষিত হয়েছে (Firestore-এ)', 'success');
+    }
+
+    saveRecordsToStorage();
+    resetForm();
+    populateTeacherFilters();
+    populateTeacherFilterDropdown();
+    renderSavedDataTable();
+}
+
+function resetForm() {
+    document.getElementById('asbaq-form').reset();
+    document.getElementById('editing-id').value = '';
+    document.getElementById('form-title').textContent = 'নতুন পাঠ বিবরণী এন্ট্রি করুন';
+    document.getElementById('submit-btn-text').textContent = 'সংরক্ষণ করুন';
+    document.getElementById('submit-btn').classList.remove('bg-amber-600');
+    document.getElementById('submit-btn').classList.add('bg-emerald-800');
+    document.getElementById('decades-checkbox-container').innerHTML = '<span class="text-xs text-slate-400 italic">পূর্বে পর্ব নির্বাচন করুন</span>';
+    document.getElementById('per-decade-inputs').innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>';
+    document.getElementById('decade-summary').textContent = 'মোট: ০ পৃষ্ঠা';
+    document.getElementById('class-select').innerHTML = '<option value="">-- বিভাগ নির্বাচন করুন --</option>';
+    document.getElementById('book-name').innerHTML = '<option value="">-- পূর্বে জামাত নির্বাচন করুন --</option>';
+    const infoEl = document.getElementById('teacher-info-display');
+    if (infoEl) infoEl.innerHTML = '';
+}
+
+// ═══════════════════ EDIT ★★★ ═══════════════════
+function editRecord(id) {
+    const rec = records.find(r => r.id === id);
+    if (!rec) return;
+
+    document.getElementById('editing-id').value = id;
+    document.getElementById('form-title').textContent = '✏️ পাঠ বিবরণী সম্পাদনা করুন';
+    document.getElementById('submit-btn-text').textContent = 'আপডেট করুন';
+    document.getElementById('submit-btn').classList.remove('bg-emerald-800');
+    document.getElementById('submit-btn').classList.add('bg-amber-600');
+
+    document.getElementById('dept-select').value = rec.dept;
+    onDeptChange();
+    document.getElementById('term-select').value = rec.term;
+    onTermChange();
+
+    // Restore checkboxes
+    setTimeout(() => {
+        document.querySelectorAll('.decade-chk').forEach(cb => {
+            cb.checked = rec.decadesData.some(d => d.decade === cb.value);
+        });
+        renderPerDecadeInputs();
+
+        // Fill per-decade inputs
+        rec.decadesData.forEach(d => {
+            const s = document.querySelector(`input[data-dec="${d.decade}"][data-field="start"]`);
+            const e = document.querySelector(`input[data-dec="${d.decade}"][data-field="end"]`);
+            const sc = document.querySelector(`input[data-dec="${d.decade}"][data-field="startCh"]`);
+            const ec = document.querySelector(`input[data-dec="${d.decade}"][data-field="endCh"]`);
+            if (s) s.value = d.start;
+            if (e) e.value = d.end;
+            if (sc) sc.value = d.startCh || '';
+            if (ec) ec.value = d.endCh || '';
+        });
+        recalcDecadeTotals();
+        updateDecadeSummary();
+    }, 50);
+
+    setTimeout(() => { 
+        document.getElementById('class-select').value = rec.className;
+        updateBooks(); // ★ কিতাব dropdown পপুলেট
+        setTimeout(() => {
+            document.getElementById('book-name').value = rec.bookName;
+            // যদি পুরনো কিতাব লিস্টে না থাকে, option যোগ করে সিলেক্ট
+            const bookSel = document.getElementById('book-name');
+            if (bookSel.value !== rec.bookName && rec.bookName) {
+                const opt = document.createElement('option');
+                opt.value = rec.bookName;
+                opt.textContent = rec.bookName + ' (পুরনো)';
+                bookSel.appendChild(opt);
+                bookSel.value = rec.bookName;
+            }
+        }, 30);
+    }, 30);
+    document.getElementById('section-select').value = rec.section;
+    document.getElementById('publisher-name').value = rec.publisher === '---' ? '' : rec.publisher;
+    document.getElementById('teacher-name').value = rec.teacherName;
+    onTeacherNameInput();
+    document.getElementById('total-book-pages').value = rec.totalBookPages || '';
+    document.getElementById('term-nisab-pages').value = rec.termNisabPages || '';
+    document.getElementById('decade-nisab-pages').value = rec.decadeNisabPages || '';
+
+    switchTab('entry');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('✏️ সম্পাদনা মোডে লোড হয়েছে', 'info');
+}
+
+function onJamatDeptChange() {
+    const dept = document.getElementById('jamat-filter-dept').value;
+    const termSel = document.getElementById('jamat-filter-term');
+    termSel.innerHTML = '<option value="year">পুরো বছর</option>';
+
+    if (dept && TERM_CONFIG[dept]) {
+        Object.keys(TERM_CONFIG[dept].terms).forEach(key => {
+            const t = TERM_CONFIG[dept].terms[key];
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = t.name;
+            termSel.appendChild(opt);
+        });
+    }
+    renderJamatReport();
+}
+
+// ═══════════════════ REPORTS ═══════════════════
+function renderJamatReport() {
+    const selectedDept = document.getElementById('jamat-filter-dept').value;
+    const selectedTerm = document.getElementById('jamat-filter-term').value;
+    const selectedClass = document.getElementById('jamat-filter-class').value;
+    const selectedSection = document.getElementById('jamat-filter-section').value;
+
+    document.getElementById('rep-jamat-name').textContent = selectedClass || 'সকল জামাত';
+    document.getElementById('rep-jamat-term').textContent = selectedTerm === 'year' ? 'পুরো বছর' : getTermName(selectedTerm);
+    document.getElementById('rep-jamat-year').textContent = settings.year || '২০২৪-২০২৫';
+    document.getElementById('rep-jamat-dept').textContent = getDeptName(selectedDept);
+
+    // ★ মাদরাসা হেডার পপুলেট
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
+    const setSrc = (id, val) => { const el = document.getElementById(id); if (el) el.src = val || ''; };
+
+    setTxt('print-arabic-name-jamat', settings.madrasaNameAr || 'جامعة إسلامية');
+    setTxt('print-bn-name-jamat', settings.madrasaName || 'মাদরাসার নাম');
+    setTxt('print-addr-jamat', settings.address || '');
+    setTxt('print-year-jamat', settings.year || '২০২৪-২০২৫');
+    setSrc('print-logo-jamat', settings.logo || '');
+
+    const today = new Date();
+    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
+    setTxt('print-date-jamat', dateStr);
+
+    let sessionStr = '---';
+    if (selectedDept === 'shariah') sessionStr = 'শাওয়াল → শাবান';
+    else if (selectedDept === 'non_res') sessionStr = 'জানুয়ারী → জানুয়ারী';
+    else if (selectedDept === 'noorani') sessionStr = 'শাওয়াল → রমযান';
+    setTxt('print-session-jamat', sessionStr);
+    setTxt('footer-year-jamat', settings.year || '২০২৪-২০২৫');
+    setTxt('footer-date-jamat', dateStr);
+
+    let filtered = records.filter(r => r.dept === selectedDept && r.className === selectedClass);
+    if (selectedTerm !== 'year') filtered = filtered.filter(r => r.term === selectedTerm);
+    if (selectedSection) filtered = filtered.filter(r => r.section === selectedSection);
+
+    const thead = document.getElementById('jamat-report-thead');
+    const tbody = document.getElementById('jamat-report-table-body');
+    thead.innerHTML = ''; tbody.innerHTML = '';
+
+    if (selectedTerm === 'year') {
+        // ★ পুরো বছর ভিউ: বিভাগের সব পর্ব একসাথে
+        const deptTerms = TERM_CONFIG[selectedDept]?.terms || {};
+        const termKeys = Object.keys(deptTerms);
+        const termNames = termKeys.map(k => deptTerms[k].name);
+
+        let h = `<th class="border border-black p-1">رقم</th><th class="border border-black p-1">اسم الكتاب</th><th class="border border-black p-1">المكتبة</th><th class="border border-black p-1">الأستاذ</th>`;
+        let sh = `<th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th>`;
+        termKeys.forEach(k => {
+            h += `<th class="border border-black p-1" colspan="3">${deptTerms[k].name}</th>`;
+            sh += `<th class="border border-black p-1">من</th><th class="border border-black p-1">إلى</th><th class="border border-black p-1 bg-amber-50">م</th>`;
+        });
+        h += `<th class="border border-black p-1">المجموع</th>`;
+        sh += `<th class="border border-black"></th>`;
+        thead.innerHTML = `<tr class="bg-slate-100 font-bold">${h}</tr><tr class="bg-slate-50 text-[10px] font-semibold">${sh}</tr>`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${termKeys.length * 3 + 5}" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
+            return;
+        }
+
+        const grouped = groupByBook(filtered);
+        let i = 1;
+        Object.values(grouped).forEach(b => {
+            let html = `<td class="border border-black p-1">${i++}</td><td class="border border-black p-1 font-bold">${b.bookName}</td><td class="border border-black p-1">${b.publisher}</td><td class="border border-black p-1">${b.teacher}<br><span class="text-[9px] font-sans text-slate-600">${getTeacherMeta(b.teacher).post}</span></td>`;
+            let grand = 0;
+            termKeys.forEach(tk => {
+                const s = termSummary(b.records, tk);
+                html += `<td class="border border-black p-1">${s.start || '-'}</td><td class="border border-black p-1">${s.end || '-'}</td><td class="border border-black p-1 font-bold bg-amber-50">${s.total || '-'}</td>`;
+                grand += s.total || 0;
+            });
+            html += `<td class="border border-black p-1 font-bold text-emerald-800">${grand}</td>`;
+            const tr = document.createElement('tr');
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+    } else {
+        const decadesList = getTermDecades(selectedTerm);
+        let h = `<th class="border border-black p-1">رقم</th><th class="border border-black p-1">اسم الكتاب</th><th class="border border-black p-1">المكتبة</th><th class="border border-black p-1">الأستاذ</th>`;
+        let sh = `<th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th>`;
+        decadesList.forEach(d => { h += `<th class="border border-black p-1" colspan="3">${d}</th>`; sh += `<th class="border border-black p-1">من</th><th class="border border-black p-1">إلى</th><th class="border border-black p-1 bg-amber-50">م</th>`; });
+        h += `<th class="border border-black p-1">المجموع</th>`; sh += `<th class="border border-black"></th>`;
+        thead.innerHTML = `<tr class="bg-slate-100 font-bold">${h}</tr><tr class="bg-slate-50 text-[10px] font-semibold">${sh}</tr>`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="${decadesList.length * 3 + 5}" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
+            return;
+        }
+
+        const grouped = groupByBook(filtered);
+        let i = 1;
+        Object.values(grouped).forEach(b => {
+            let html = `<td class="border border-black p-1">${i++}</td><td class="border border-black p-1 font-bold">${b.bookName}</td><td class="border border-black p-1">${b.publisher}</td><td class="border border-black p-1">${b.teacher}<br><span class="text-[9px] font-sans text-slate-600">${getTeacherMeta(b.teacher).post}</span></td>`;
+            let sum = 0;
+            decadesList.forEach(dec => {
+                let found = null;
+                b.records.forEach(r => { const d = (r.decadesData || []).find(x => x.decade === dec); if (d) found = d; });
+                if (found) {
+                    html += `<td class="border border-black p-1">${found.start}</td><td class="border border-black p-1">${found.end}</td><td class="border border-black p-1 font-bold bg-amber-50">${found.total}</td>`;
+                    sum += found.total;
+                } else {
+                    html += `<td class="border border-black p-1">-</td><td class="border border-black p-1">-</td><td class="border border-black p-1 bg-amber-50">-</td>`;
+                }
+            });
+            html += `<td class="border border-black p-1 font-bold text-emerald-800">${sum}</td>`;
+            const tr = document.createElement('tr');
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+    }
+}
+
+function renderTeacherReport() {
+    const teacher = document.getElementById('teacher-filter-name').value;
+    const term = document.getElementById('teacher-filter-term').value;
+
+    const meta = getTeacherMeta(teacher);
+
+    // ★ মাদরাসা হেডার পপুলেট
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
+    const setSrc = (id, val) => { const el = document.getElementById(id); if (el) el.src = val || ''; };
+
+    setTxt('print-arabic-name-teacher', settings.madrasaNameAr || 'جامعة إسلامية');
+    setTxt('print-bn-name-teacher', settings.madrasaName || 'মাদরাসার নাম');
+    setTxt('print-addr-teacher', settings.address || '');
+    setTxt('print-year-teacher', settings.year || '২০২৪-২০২৫');
+    setSrc('print-logo-teacher', settings.logo || '');
+
+    // আজকের তারিখ
+    const today = new Date();
+    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
+    setTxt('print-date-teacher', dateStr);
+
+    // সেশন (বিভাগ অনুযায়ী)
+    const teacherDept = meta.dept || '';
+    let sessionStr = '---';
+    if (teacherDept === 'শরীয়াহ') sessionStr = 'শাওয়াল → শাবান';
+    else if (teacherDept === 'অনাবাসিক') sessionStr = 'জানুয়ারী → জানুয়ারী';
+    else if (teacherDept === 'নূরানী-নাযেরা') sessionStr = 'শাওয়াল → রমযান';
+    setTxt('print-session-teacher', sessionStr);
+    setTxt('footer-year-teacher', settings.year || '২০২৪-২০২৫');
+    setTxt('footer-date-teacher', dateStr);
+
+    document.getElementById('rep-teacher-name').textContent = teacher || '---';
+    document.getElementById('rep-teacher-year').textContent = settings.year || '২০২৪-২০২৫';
+    setTxt('rep-teacher-post', meta.post || '---');
+    setTxt('rep-teacher-card', meta.card || '---');
+    setTxt('rep-teacher-dept', meta.dept || '---');
+    setTxt('rep-teacher-mobile', meta.mobile || '---');
+
+    let filtered = records.filter(r => r.teacherName === teacher);
+    if (term !== 'year') filtered = filtered.filter(r => r.term === term);
+
+    const thead = document.getElementById('teacher-report-thead');
+    const tbody = document.getElementById('teacher-report-table-body');
+    thead.innerHTML = ''; tbody.innerHTML = '';
+
+    thead.innerHTML = `
+        <tr class="bg-slate-100 font-bold">
+            <th class="border border-black p-1">رقم</th>
+            <th class="border border-black p-1">الكتاب</th>
+            <th class="border border-black p-1">الصف</th>
+            <th class="border border-black p-1">الفترة</th>
+            <th class="border border-black p-1">الدشك</th>
+            <th class="border border-black p-1">الأبواب</th>
+            <th class="border border-black p-1">الصفحات</th>
+            <th class="border border-black p-1">المقروء</th>
+            <th class="border border-black p-1">النصاب</th>
+            <th class="border border-black p-1">الفرق</th>
+        </tr>`;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
+        document.getElementById('teacher-nisab-summary').innerHTML = '';
+        return;
+    }
+
+    let i = 1, totalRead = 0, totalNisab = 0;
+        filtered.forEach(rec => {
+    const decadesList = rec.decadesData || [];
+    if (decadesList.length === 0) {
+        // পুরনো ডাটা হলে একটাই সারি দেখাই
+        const nisab = rec.decadeNisabPages || 0;
+        const total = rec.totalPages || rec.decadeTotalPages || 0;
+        const diff = total - nisab;
+        const diffClass = diff >= 0 ? 'text-emerald-700' : 'text-red-600';
+        totalRead += total;
+        totalNisab += nisab;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="border border-black p-1">${i++}</td>
+            <td class="border border-black p-1 font-bold">${rec.bookName || '-'}</td>
+            <td class="border border-black p-1">${rec.className || '-'}</td>
+            <td class="border border-black p-1">${getTermName(rec.term) || '-'}</td>
+            <td class="border border-black p-1">⚠️ পুরনো ডাটা</td>
+            <td class="border border-black p-1">${rec.startChapter || '-'} → ${rec.endChapter || '-'}</td>
+            <td class="border border-black p-1">${rec.startPage || '-'} - ${rec.endPage || '-'}</td>
+            <td class="border border-black p-1 font-bold bg-amber-50">${total}</td>
+            <td class="border border-black p-1">${nisab || '-'}</td>
+            <td class="border border-black p-1 font-bold ${diffClass}">${nisab ? (diff >= 0 ? '+' : '') + diff : '-'}</td>`;
+        tbody.appendChild(tr);
+        return;
+    }
+    
+    decadesList.forEach(d => {
+            const nisab = rec.decadeNisabPages || 0;
+            const diff = d.total - nisab;
+            const diffClass = diff >= 0 ? 'text-emerald-700' : 'text-red-600';
+            const diffSign = diff >= 0 ? '+' : '';
+            totalRead += d.total;
+            totalNisab += nisab;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="border border-black p-1">${i++}</td>
+                <td class="border border-black p-1 font-bold">${rec.bookName}</td>
+                <td class="border border-black p-1">${rec.className}</td>
+                <td class="border border-black p-1">${getTermName(rec.term)}</td>
+                <td class="border border-black p-1">${d.decade}</td>
+                <td class="border border-black p-1">${d.startCh || '-'} → ${d.endCh || '-'}</td>
+                <td class="border border-black p-1">${d.start} - ${d.end}</td>
+                <td class="border border-black p-1 font-bold bg-amber-50">${d.total}</td>
+                <td class="border border-black p-1">${nisab || '-'}</td>
+                <td class="border border-black p-1 font-bold ${diffClass}">${nisab ? diffSign + diff : '-'}</td>`;
+            tbody.appendChild(tr);
+        });
+    });
+
+    const pct = totalNisab ? Math.round((totalRead / totalNisab) * 100) : 0;
+    document.getElementById('teacher-nisab-summary').innerHTML = `
+        <div class="grid grid-cols-4 gap-2 text-center">
+            <div><strong>মোট পঠিত:</strong> ${totalRead}</div>
+            <div><strong>মোট নিসাব:</strong> ${totalNisab}</div>
+            <div><strong>সম্পন্ন:</strong> <span class="${pct >= 100 ? 'text-emerald-700' : 'text-red-600'} font-bold">${pct}%</span></div>
+            <div><strong>অবস্থা:</strong> ${pct >= 100 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ'}</div>
+        </div>`;
+}
+
+// ═══════════════════ DATA LIST ═══════════════════
+function renderSavedDataTable() {
+    const tbody = document.getElementById('saved-data-tbody');
+    const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+    const fTerm = document.getElementById('filter-term')?.value || '';
+    const fDept = document.getElementById('filter-dept')?.value || '';
+    const fTeacher = document.getElementById('filter-teacher')?.value || '';
+
+    let list = records.slice().reverse();
+    if (search) list = list.filter(r => (r.bookName + r.teacherName + r.className).toLowerCase().includes(search));
+    if (fTerm) list = list.filter(r => r.term === fTerm);
+    if (fDept) list = list.filter(r => r.dept === fDept);
+    if (fTeacher) list = list.filter(r => r.teacherName === fTeacher);
+
+    document.getElementById('record-count').textContent = `${list.length} রেকর্ড`;
+
+    tbody.innerHTML = '';
+    if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">কোন তথ্য পাওয়া যায়নি</td></tr>`;
+        return;
+    }
+
+    list.forEach(rec => {
+        const decStr = (rec.decadesData || []).map(d => 
+            `${d.decade}: ${d.start}-${d.end}`
+        ).join('<br>') || '<span class="text-red-500 text-xs">⚠️ পুরনো ডাটা — Edit করে সেভ করুন</span>';
+        const tr = document.createElement('tr');
+        tr.className = 'border-b hover:bg-slate-50';
+        tr.innerHTML = `
+            <td class="p-3 text-xs font-semibold text-emerald-800">${getTermName(rec.term)}</td>
+            <td class="p-3 text-sm font-bold font-arabic">${rec.className}${rec.section !== 'নাই' ? ' - ' + rec.section : ''}</td>
+            <td class="p-3 text-sm font-arabic font-semibold">${rec.bookName}<br><span class="text-xs text-slate-500">${rec.publisher}</span></td>
+            <td class="p-3 text-xs">${rec.teacherName}</td>
+            <td class="p-3 text-xs font-arabic">${decStr}</td>
+            <td class="p-3 text-xs font-bold text-amber-700">${rec.totalPages}</td>
+            <td class="p-3 text-center whitespace-nowrap">
+                <button onclick="editRecord('${rec.id}')" class="text-blue-500 hover:text-blue-700 p-1.5"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="deleteRecord('${rec.id}')" class="text-red-500 hover:text-red-700 p-1.5"><i class="fa-solid fa-trash"></i></button>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+async function deleteRecord(id) {
+    if (!confirm('আপনি কি সত্যিই এই তথ্যটি মুছে ফেলতে চান?')) return;
+    
+    // Firestore থেকে মুছুন
+    const ok = await deleteRecordFromFirestore(id);
+    if (!ok) {
+        showToast('⚠️ Firestore থেকে মুছতে সমস্যা — LocalStorage থেকে মুছে ফেলা হচ্ছে', 'warn');
+    }
+    
+    records = records.filter(r => r.id !== id);
+    saveRecordsToStorage();
+    renderSavedDataTable();
+    populateTeacherFilters();
+    populateTeacherFilterDropdown();
+    showToast('🗑️ রেকর্ড মুছে ফেলা হয়েছে', 'info');
+}
+
+function clearAllData() {
+    if (!confirm('সতর্কতা! সকল তথ্য মুছে যাবে। আপনি কি নিশ্চিত?')) return;
+    records = [];
+    saveRecordsToStorage();
+    renderSavedDataTable();
+    populateTeacherFilters();
+    populateTeacherFilterDropdown();
+    showToast('🗑️ সব ডাটা মুছে ফেলা হয়েছে', 'info');
+}
+
+// ═══════════════════ EXPORT / IMPORT ═══════════════════
+function exportData() {
+    const data = { records, settings, version: 3, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `asbaq_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ ডাটা export হয়েছে', 'success');
+}
+
+function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        try {
+            const data = JSON.parse(ev.target.result);
+            if (data.records && Array.isArray(data.records)) {
+                if (!confirm(`${data.records.length}টি রেকর্ড পাওয়া গেছে। বর্তমান ডাটার সাথে merge করতে চান?`)) return;
+                const existingIds = new Set(records.map(r => r.id));
+                data.records.forEach(r => { if (!existingIds.has(r.id)) records.push(r); });
+                saveRecordsToStorage();
+                renderSavedDataTable();
+                populateTeacherFilters();
+                populateTeacherFilterDropdown();
+                showToast('✅ ডাটা import হয়েছে', 'success');
+            } else {
+                showToast('⚠️ ভুল ফাইল ফরম্যাট', 'error');
+            }
+        } catch (err) {
+            showToast('❌ ফাইল পড়া যায়নি', 'error');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+// ═══════════════════ HELPERS ═══════════════════
+function populateClassFilters() {
+    const sel = document.getElementById('jamat-filter-class');
+    sel.innerHTML = '';
+    let all = [];
+    Object.keys(CLASS_CONFIG).forEach(k => all = all.concat(CLASS_CONFIG[k]));
+    all.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+}
+
+function populateTeacherFilters() {
+    const sel = document.getElementById('teacher-filter-name');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- শিক্ষক নির্বাচন করুন --</option>';
+
+    const deptOrder = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const grouped = {};
+    deptOrder.forEach(d => grouped[d] = []);
+    teachers.forEach(t => {
+        if (!grouped[t.dept]) grouped[t.dept] = [];
+        grouped[t.dept].push(t);
+    });
+
+    Object.keys(grouped).forEach(dept => {
+        if (grouped[dept].length === 0) return;
+        const og = document.createElement('optgroup');
+        og.label = `── ${dept} বিভাগ (${grouped[dept].length} জন) ──`;
+        grouped[dept].forEach(t => {
+            const o = document.createElement('option');
+            o.value = t.name;
+            o.textContent = `${t.name} (${t.post})`;
+            og.appendChild(o);
+        });
+        sel.appendChild(og);
+    });
+
+    if (cur) sel.value = cur;
+}
+
+function populateTeacherFilterDropdown() {
+    const sel = document.getElementById('filter-teacher');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">সব শিক্ষক</option>';
+    teachers.forEach(t => {
+        const o = document.createElement('option');
+        o.value = t.name;
+        o.textContent = t.name;
+        sel.appendChild(o);
+    });
+    sel.value = cur;
+}
+
+function populateTeacherDatalist(deptFilter) {
+    let dl = document.getElementById('teacher-names-datalist');
+    if (!dl) {
+        dl = document.createElement('datalist');
+        dl.id = 'teacher-names-datalist';
+        document.body.appendChild(dl);
+    }
+    dl.innerHTML = '';
+
+    const DEPT_MAP = {
+        shariah: 'শরীয়াহ',
+        non_res: 'অনাবাসিক',
+        noorani: 'নূরানী-নাযেরা'
+    };
+
+    const allowedDept = deptFilter && DEPT_MAP[deptFilter] ? DEPT_MAP[deptFilter] : null;
+
+    teachers.forEach(t => {
+        if (allowedDept && t.dept !== allowedDept) return;
+        const o = document.createElement('option');
+        o.value = t.name;
+        o.label = `${t.post} | ${t.dept} | ${t.mobile}`;
+        dl.appendChild(o);
+    });
+}
+
+function updateStats() {
+    document.getElementById('stat-total-records').textContent = records.length;
+    document.getElementById('stat-total-teachers').textContent = new Set(records.map(r => r.teacherName)).size;
+    document.getElementById('stat-total-pages').textContent = records.reduce((a, r) => 
+        a + (r.totalPages || r.decadeTotalPages || 0), 0);
+}
+
+function groupByBook(recs) {
+    const g = {};
+    recs.forEach(r => {
+        if (!g[r.bookName]) g[r.bookName] = { bookName: r.bookName, publisher: r.publisher, teacher: r.teacherName, records: [] };
+        g[r.bookName].records.push(r);
+    });
+    return g;
+}
+
+function termSummary(recs, termKey) {
+    const tr = recs.filter(r => r.term === termKey);
+    if (tr.length === 0) return { start: '-', end: '-', total: 0 };
+    let minStart = Infinity, maxEnd = 0, total = 0;
+    tr.forEach(r => {
+        const decadesArr = r.decadesData || [];
+        if (decadesArr.length === 0) {
+            const s = r.startPage || 0;
+            const e = r.endPage || 0;
+            if (s > 0 && s < minStart) minStart = s;
+            if (e > maxEnd) maxEnd = e;
+            total += r.decadeTotalPages || r.totalPages || 0;
+        } else {
+            decadesArr.forEach(d => {
+                if (d.start < minStart) minStart = d.start;
+                if (d.end > maxEnd) maxEnd = d.end;
+                total += d.total;
+            });
+        }
+    });
+    return { start: minStart === Infinity ? '-' : minStart, end: maxEnd || '-', total };
+}
+
+function getTermName(termKey) {
+    if (!termKey) return '---';
+    for (const dept in TERM_CONFIG) {
+        const t = TERM_CONFIG[dept].terms[termKey];
+        if (t) return t.name;
+    }
+    return termKey;
+}
+
+function getTermDecades(termKey) {
+    if (!termKey) return [];
+    for (const dept in TERM_CONFIG) {
+        const t = TERM_CONFIG[dept].terms[termKey];
+        if (t) return t.decades;
+    }
+    return [];
+}
+
+function getDeptName(k) {
+    const map = { shariah: 'শরীয়াহ বিভাগ', non_res: 'অনাবাসিক', noorani: 'নূরানী ও নাযেরা' };
+    return map[k] || (k ? k : '---');
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        const form = document.getElementById('asbaq-form');
+        if (!document.getElementById('tab-entry').classList.contains('hidden')) {
+            form.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+    }
+});
+// ═══════════════════ LOGIN SYSTEM ═══════════════════
+let currentUser = null;
+let currentUserData = null;
+
+window.doLogin = async function() {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
+
+    if (!email || !pass) {
+        errEl.textContent = 'Email ও Password দিন';
+        errEl.classList.remove('hidden');
+        return;
+    }
+
+    errEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> লগইন হচ্ছে...';
+
+    try {
+        const { signInWithEmailAndPassword } = window.fbFuncs;
+        await signInWithEmailAndPassword(window.fbAuth, email, pass);
+    } catch (err) {
+        console.error('❌ Login error:', err.code, err.message);
+        let msg = 'লগইন ব্যর্থ হয়েছে';
+        if (err.code === 'auth/user-not-found') msg = 'এই Email দিয়ে কোনো অ্যাকাউন্ট নেই';
+        else if (err.code === 'auth/wrong-password') msg = 'Password ভুল';
+        else if (err.code === 'auth/invalid-email') msg = 'Email ফরম্যাট ভুল';
+        else if (err.code === 'auth/invalid-credential') msg = 'Email বা Password ভুল';
+        else msg = err.message;
+        errEl.textContent = msg;
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>';
+    }
+};
+
+document.addEventListener('keydown', e => {
+    const ls = document.getElementById('login-screen');
+    if (e.key === 'Enter' && ls && !ls.classList.contains('hidden')) {
+        const el = document.activeElement;
+        if (el && (el.id === 'login-email' || el.id === 'login-password')) {
+            doLogin();
+        }
+    }
+});
+
+window.doLogout = async function() {
+    if (!confirm('লগআউট করতে চান?')) return;
+    const { signOut } = window.fbFuncs;
+    await signOut(window.fbAuth);
+};
+
+window.addEventListener('load', () => {
+    const checkFb = setInterval(() => {
+        if (window.fbAuth && window.fbFuncs) {
+            clearInterval(checkFb);
+            const { onAuthStateChanged } = window.fbFuncs;
+            onAuthStateChanged(window.fbAuth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadUserData(user.uid);
+                    await loadConfigFromFirestore();
+                    await loadRecordsFromFirestore();  // ★ Records লোড
+                    showApp();
+                } else {
+                    currentUser = null;
+                    currentUserData = null;
+                    showLogin();
+                }
+            });
+        }
+    }, 100);
+});
+
+async function loadUserData(uid) {
+    try {
+        const { doc, getDoc } = window.fbFuncs;
+        const ref = doc(window.fbDB, 'users', uid);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+            currentUserData = snap.data();
+        } else {
+            currentUserData = { role: 'pending', email: currentUser.email };
+        }
+    } catch (err) {
+        console.error('❌ loadUserData error:', err);
+        currentUserData = null;
+    }
+}
+
+function showLogin() {
+    document.getElementById('login-screen').classList.remove('hidden');
+    const btn = document.getElementById('login-btn');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>লগইন</span>'; }
+    const errEl = document.getElementById('login-error');
+    if (errEl) errEl.classList.add('hidden');
+}
+
+function showApp() {
+    document.getElementById('login-screen').classList.add('hidden');
+
+    // হেডারে ইউজারের নাম ও role
+    const nameEl = document.getElementById('header-user-name');
+    const roleEl = document.getElementById('header-user-role');
+    if (nameEl) nameEl.textContent = currentUserData?.name || currentUser?.email || '---';
+    if (roleEl) {
+        const roleMap = { admin: 'এডমিন', teacher: 'শিক্ষক', pending: 'অপেক্ষমান' };
+        roleEl.textContent = roleMap[currentUserData?.role] || (currentUserData?.role || '---');
+    }
+
+    // পুরনো হেডার নাম
+    const madrasaEl = document.getElementById('header-madrasa-name');
+    if (madrasaEl && settings.madrasaName) {
+        madrasaEl.textContent = settings.madrasaName;
+    }
+
+    // এডমিন বাটন শুধু এডমিনের জন্য দেখান
+    const admBtn = document.getElementById('tab-btn-admin');
+    if (admBtn) {
+        if (currentUserData?.role === 'admin') {
+            admBtn.classList.remove('hidden');
+        } else {
+            admBtn.classList.add('hidden');
+        }
+    }
+
+    // ★ শিক্ষকদের জন্য সেটিংস বাটন লুকান
+    const setBtn = document.getElementById('tab-btn-settings');
+    if (setBtn) {
+        if (currentUserData?.role === 'admin') {
+            setBtn.classList.remove('hidden');
+        } else {
+            setBtn.classList.add('hidden');
+        }
+    }
+
+    // ★ শিক্ষক হলে: শুধু তার assign করা জামাত dropdown-এ দেখান
+    if (currentUserData?.role === 'teacher') {
+        setTimeout(() => applyTeacherRestrictions(), 500);
+    }
+}
+
+// শিক্ষকের জন্য dropdown-এ শুধু assign করা জামাত দেখান
+window.applyTeacherRestrictions = function() {
+    const myName = currentUserData?.teacherName || currentUserData?.name;
+    if (!myName) return;
+
+    // শিক্ষকের বিভাগ নির্ণয়
+    const tMeta = findTeacherByName(myName);
+    const teacherDeptMap = {
+        'শরীয়াহ': 'shariah',
+        'নূরানী-নাযেরা': 'noorani',
+        'অনাবাসিক': 'non_res'
+    };
+    const myDept = tMeta ? teacherDeptMap[tMeta.dept] : null;
+
+    // Dept dropdown: শুধু নিজের বিভাগ
+    const deptSel = document.getElementById('dept-select');
+    if (deptSel && myDept) {
+        Array.from(deptSel.options).forEach(opt => {
+            if (opt.value && opt.value !== myDept) {
+                opt.disabled = true;
+                opt.textContent += ' (প্রতিবন্ধক)';
+            }
+        });
+        deptSel.value = myDept;
+        onDeptChange();
+    }
+
+    // Class dropdown: শুধু assign করা জামাত
+    setTimeout(() => {
+        const classSel = document.getElementById('class-select');
+        if (classSel && myDept) {
+            const assignments = configData?.assignments || {};
+            Array.from(classSel.options).forEach(opt => {
+                if (!opt.value) return;
+                const classKey = myDept + '::' + opt.value;
+                const assignedList = assignments[classKey] || [];
+                if (!assignedList.includes(myName)) {
+                    opt.disabled = true;
+                    opt.textContent += ' (আপনার না)';
+                }
+            });
+        }
+    }, 200);
+
+    console.log('🔒 Teacher restrictions applied for:', myName, '| Dept:', myDept);
+};
+
+function sharePDF(elementId, fileName) {
+    const el = document.getElementById(elementId);
+    if (!el) { showToast('❌ এলিমেন্ট পাওয়া যায়নি', 'error'); return; }
+
+    // প্রিন্ট ফুটার সাময়িকভাবে দেখান
+    const footer = el.querySelector('.print-footer');
+    if (footer) footer.classList.remove('hidden');
+
+    showToast('📄 PDF তৈরি হচ্ছে...', 'info');
+
+    const opt = {
+        margin: [5, 5, 12, 5],
+        filename: fileName + '_' + new Date().toISOString().split('T')[0] + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(el).save().then(() => {
+        if (footer) footer.classList.add('hidden');
+        showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
+    }).catch(err => {
+        if (footer) footer.classList.add('hidden');
+        showToast('❌ PDF তৈরিতে সমস্যা', 'error');
+        console.error(err);
+    });
+}
+// ═══════════════════ ADMIN PANEL ═══════════════════
+window.switchAdminSub = function(sub) {
+    document.querySelectorAll('.adm-sub-btn').forEach(b => {
+        b.classList.remove('bg-emerald-700', 'text-white', 'shadow');
+        b.classList.add('text-slate-600', 'hover:bg-slate-100');
+    });
+    const active = document.getElementById('adm-sub-' + sub);
+    if (active) {
+        active.classList.add('bg-emerald-700', 'text-white', 'shadow');
+        active.classList.remove('text-slate-600', 'hover:bg-slate-100');
+    }
+    
+    if (sub === 'dept') renderAdminDept();
+    else if (sub === 'term') renderAdminTerm();
+    else if (sub === 'class') renderAdminClass();
+    else if (sub === 'teacher') renderAdminTeacher();
+    else if (sub === 'assign') renderAdminAssign();
+    else if (sub === 'users') renderAdminUsers();
+    else {
+        const content = document.getElementById('adm-content');
+        content.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-screwdriver-wrench text-4xl mb-3"></i><p class="text-sm">"${sub}" সেকশন পরের ধাপে যোগ হবে</p></div>`;
+    }
+};
+// ═══════════════════ ADMIN: বিভাগ ম্যানেজমেন্ট ═══════════════════
+window.renderAdminDept = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const depts = configData?.departments || [];
+
+    let rows = '';
+    if (depts.length === 0) {
+        rows = `<tr><td colspan="4" class="p-6 text-center text-slate-400">কোন বিভাগ নেই</td></tr>`;
+    } else {
+        depts.forEach((d, i) => {
+            rows += `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="p-3 font-mono text-xs">${d.key}</td>
+                    <td class="p-3 font-bold text-sm">${d.name}</td>
+                    <td class="p-3 text-xs">${d.session || '-'}</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="editDepartment(${i})" class="text-blue-500 hover:text-blue-700 p-1.5" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteDepartment(${i})" class="text-red-500 hover:text-red-700 p-1.5" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-layer-group text-emerald-600"></i> বিভাগ তালিকা
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">${depts.length} টি</span>
+                </h3>
+                <button onclick="addDepartment()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> নতুন বিভাগ যোগ
+                </button>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="p-3 font-bold text-xs">Key</th>
+                            <th class="p-3 font-bold text-xs">নাম</th>
+                            <th class="p-3 font-bold text-xs">সেশন</th>
+                            <th class="p-3 font-bold text-xs text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+// ═══════════════════ FIRESTORE CONFIG SYSTEM ═══════════════════
+const CONFIG_DOC_PATH = 'config';
+const CONFIG_DOC_ID = 'main';
+let configData = null;
+let configLoadedFrom = 'none'; // 'firestore' | 'cache' | 'seed'
+
+// Seed: বর্তমান hardcoded ডাটা Firestore-এ সেভ
+window.seedConfigToFirestore = async function() {
+    if (!currentUser) { showToast('❌ আগে লগইন করুন', 'error'); return; }
+    if (currentUserData?.role !== 'admin') { showToast('❌ শুধু এডমিন এই কাজ করতে পারবেন', 'error'); return; }
+
+    if (!confirm('আপনি কি Firestore-এ বর্তমান সব কনফিগ সেভ করতে চান? এটা একবারই লাগবে।')) return;
+
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+
+        const payload = {
+            departments: [
+                { key: 'shariah',  name: 'শরীয়াহ (৪র্থ - তাকমীল)',  session: 'শাওয়াল → শাবান' },
+                { key: 'non_res',  name: 'অনাবাসিক (প্লে - ৫ম)',     session: 'জানুয়ারী → জানুয়ারী' },
+                { key: 'noorani',  name: 'নূরানী ও নাযেরা',           session: 'শাওয়াল → রমযান' }
+            ],
+            terms: TERM_CONFIG,
+            classes: CLASS_CONFIG,
+            books: BOOK_CONFIG,
+            teachers: SEED_TEACHERS,
+            assignments: {}, // শুরুতে খালি
+            version: 1,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser.uid
+        };
+
+        const ref = doc(window.fbDB, CONFIG_DOC_PATH, CONFIG_DOC_ID);
+        await setDoc(ref, payload);
+        showToast('✅ Firestore-এ কনফিগ সেভ হয়েছে', 'success');
+        console.log('✅ Config seeded to Firestore');
+    } catch (err) {
+        console.error('❌ Seed error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+// Firestore থেকে কনফিগ লোড (cache সহ)
+window.loadConfigFromFirestore = async function() {
+    const CACHE_KEY = 'madrasa_config_cache_v3';
+    try {
+        const { doc, getDoc } = window.fbFuncs;
+        const ref = doc(window.fbDB, CONFIG_DOC_PATH, CONFIG_DOC_ID);
+
+        // প্রথমে cache থেকে দেখি (দ্রুত লোড)
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+            try {
+                const c = JSON.parse(cached);
+                applyConfig(c);
+                configLoadedFrom = 'cache';
+                console.log('📦 Config loaded from cache');
+            } catch(e) {}
+        }
+
+        // তারপর Firestore থেকে sync (background)
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+            const data = snap.data();
+            applyConfig(data);
+            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            configLoadedFrom = 'firestore';
+            console.log('☁️ Config loaded from Firestore');
+        } else {
+            console.warn('⚠️ Firestore-এ config/main নেই — আগে seed করুন');
+            if (!cached) showToast('⚠️ কনফিগ ডাটা নেই — Settings থেকে seed করুন', 'warn');
+        }
+    } catch (err) {
+        console.error('❌ loadConfigFromFirestore error:', err);
+        // cache থাকলে সেটাই চলবে
+    }
+};
+
+function applyConfig(data) {
+    configData = data;
+    
+    // Global config variables আপডেট
+    if (data.terms) {
+        // পুরনো TERM_CONFIG মুছে নতুন দিয়ে replace
+        Object.keys(TERM_CONFIG).forEach(k => delete TERM_CONFIG[k]);
+        Object.assign(TERM_CONFIG, data.terms);
+    }
+    if (data.classes) {
+        Object.keys(CLASS_CONFIG).forEach(k => delete CLASS_CONFIG[k]);
+        Object.assign(CLASS_CONFIG, data.classes);
+    }
+    if (data.books) {
+        Object.keys(BOOK_CONFIG).forEach(k => delete BOOK_CONFIG[k]);
+        Object.assign(BOOK_CONFIG, data.books);
+    }
+    if (data.teachers) {
+        teachers = data.teachers.slice();
+        localStorage.setItem(TEACHERS_STORAGE_KEY, JSON.stringify(teachers));
+        renderTeacherMasterList();
+        populateTeacherFilters();
+        populateTeacherFilterDropdown();
+        populateTeacherDatalist();
+    }
+
+    // UI রিফ্রেশ
+    populateClassFilters();
+    if (typeof onJamatDeptChange === 'function') onJamatDeptChange();
+}
+window.addDepartment = async function() {
+    const key = prompt('নতুন বিভাগের key (ইংরেজি, ছোট হাতে, কোনো স্পেস নেই):\nযেমন: shariah, non_res, hifz');
+    if (!key) return;
+    const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '_');
+    
+    if ((configData?.departments || []).some(d => d.key === cleanKey)) {
+        showToast('⚠️ এই key ইতিমধ্যে আছে', 'warn');
+        return;
+    }
+    
+    const name = prompt('বিভাগের নাম (বাংলা):');
+    if (!name) return;
+    const session = prompt('সেশন (যেমন: শাওয়াল → শাবান):', '') || '';
+    
+    if (!configData) configData = {};
+    if (!configData.departments) configData.departments = [];
+    configData.departments.push({ key: cleanKey, name: name.trim(), session: session.trim() });
+    
+    await saveAdminConfig();
+    renderAdminDept();
+};
+
+window.editDepartment = async function(idx) {
+    const d = configData.departments[idx];
+    if (!d) return;
+    
+    const name = prompt('বিভাগের নাম:', d.name);
+    if (name === null) return;
+    const session = prompt('সেশন:', d.session || '');
+    if (session === null) return;
+    
+    configData.departments[idx] = { ...d, name: name.trim(), session: session.trim() };
+    await saveAdminConfig();
+    renderAdminDept();
+};
+
+window.deleteDepartment = async function(idx) {
+    const d = configData.departments[idx];
+    if (!d) return;
+    
+    // চেক: এই বিভাগের কোনো জামাত বা শিক্ষক আছে কিনা
+    const hasClasses = (configData.classes || {})[d.key];
+    const hasTerms = (configData.terms || {})[d.key];
+    
+    if (hasClasses || hasTerms) {
+        if (!confirm(`⚠️ "${d.name}" বিভাগে জামাত/পর্ব আছে। ডিলিট করলে সেগুলোও মুছে যাবে। আপনি কি নিশ্চিত?`)) return;
+    } else {
+        if (!confirm(`"${d.name}" বিভাগটি মুছে ফেলবেন?`)) return;
+    }
+    
+    configData.departments.splice(idx, 1);
+    if (configData.classes) delete configData.classes[d.key];
+    if (configData.terms) delete configData.terms[d.key];
+    
+    await saveAdminConfig();
+    renderAdminDept();
+    populateClassFilters();
+};
+
+window.saveAdminConfig = async function() {
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        const ref = doc(window.fbDB, CONFIG_DOC_PATH, CONFIG_DOC_ID);
+        await setDoc(ref, { ...configData, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'unknown' });
+        
+        // Cache আপডেট
+        localStorage.setItem('madrasa_config_cache_v3', JSON.stringify(configData));
+        
+        // Local variables আপডেট
+        applyConfig(configData);
+        
+        showToast('✅ সেভ হয়েছে', 'success');
+    } catch (err) {
+        console.error('❌ saveAdminConfig error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+// ═══════════════════ ADMIN: সেশন ও পর্ব ═══════════════════
+let adminTermSelectedDept = '';
+
+window.renderAdminTerm = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const depts = configData?.departments || [];
+    if (depts.length === 0) {
+        content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-info-circle text-4xl mb-3"></i><p>প্রথমে বিভাগ যোগ করুন</p></div>`;
+        return;
+    }
+
+    if (!adminTermSelectedDept || !depts.some(d => d.key === adminTermSelectedDept)) {
+        adminTermSelectedDept = depts[0].key;
+    }
+
+    const deptOptions = depts.map(d => 
+        `<option value="${d.key}" ${d.key === adminTermSelectedDept ? 'selected' : ''}>${d.name}</option>`
+    ).join('');
+
+    const dept = depts.find(d => d.key === adminTermSelectedDept);
+    const termsObj = (configData?.terms || {})[adminTermSelectedDept]?.terms || {};
+    const sessionName = (configData?.terms || {})[adminTermSelectedDept]?.session || '';
+
+    const termKeys = Object.keys(termsObj);
+
+    let rows = '';
+    if (termKeys.length === 0) {
+        rows = `<tr><td colspan="5" class="p-6 text-center text-slate-400">এই বিভাগে কোনো পর্ব নেই</td></tr>`;
+    } else {
+        termKeys.forEach(k => {
+            const t = termsObj[k];
+            rows += `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="p-3 font-mono text-xs">${k}</td>
+                    <td class="p-3 font-bold text-sm">${t.name}</td>
+                    <td class="p-3 text-xs">${t.days || '-'} দিন</td>
+                    <td class="p-3 text-xs">${(t.decades || []).length} টি</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="editTerm('${k}')" class="text-blue-500 hover:text-blue-700 p-1.5" title="Edit">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteTerm('${k}')" class="text-red-500 hover:text-red-700 p-1.5" title="Delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <label class="text-sm font-bold text-slate-700">বিভাগ:</label>
+                    <select id="adm-term-dept" onchange="onAdminTermDeptChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                        ${deptOptions}
+                    </select>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-semibold">
+                        সেশন: ${sessionName || '---'}
+                    </span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="editSessionName()" class="px-3 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg text-xs font-semibold transition flex items-center gap-2">
+                        <i class="fa-solid fa-pen"></i> সেশন নাম এডিট
+                    </button>
+                    <button onclick="addTerm()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> নতুন পর্ব যোগ
+                    </button>
+                </div>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="p-3 font-bold text-xs">Key</th>
+                            <th class="p-3 font-bold text-xs">পর্বের নাম</th>
+                            <th class="p-3 font-bold text-xs">দিন</th>
+                            <th class="p-3 font-bold text-xs">দশক</th>
+                            <th class="p-3 font-bold text-xs text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+
+window.onAdminTermDeptChange = function() {
+    adminTermSelectedDept = document.getElementById('adm-term-dept').value;
+    renderAdminTerm();
+};
+window.editSessionName = async function() {
+    const deptKey = adminTermSelectedDept;
+    const cur = (configData?.terms || {})[deptKey]?.session || '';
+    const name = prompt('সেশনের নাম:', cur);
+    if (name === null) return;
+    
+    if (!configData.terms) configData.terms = {};
+    if (!configData.terms[deptKey]) configData.terms[deptKey] = { session: '', terms: {} };
+    configData.terms[deptKey].session = name.trim();
+    
+    await saveAdminConfig();
+    renderAdminTerm();
+};
+
+window.addTerm = async function() {
+    const deptKey = adminTermSelectedDept;
+    const key = prompt('পর্বের key (ইংরেজি, ছোট হাতে):\nযেমন: qurbani, term1, ramadan');
+    if (!key) return;
+    const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '_');
+    
+    const curTerms = (configData?.terms || {})[deptKey]?.terms || {};
+    if (curTerms[cleanKey]) { showToast('⚠️ এই key ইতিমধ্যে আছে', 'warn'); return; }
+    
+    const name = prompt('পর্বের নাম (বাংলা):\nযেমন: কুরবানী পর্ব (৪০ দিন)');
+    if (!name) return;
+    
+    const days = parseInt(prompt('দিন সংখ্যা:', '40') || '0');
+    if (!days || days <= 0) { showToast('⚠️ দিন সংখ্যা সঠিক নয়', 'warn'); return; }
+    
+    // ডিফল্ট দশক জেনারেট
+    const decades = [];
+    let remaining = days;
+    let dayStart = 1;
+    let dNum = 1;
+    const banglaNums = ['১','২','৩','৪','৫','৬','৭','৮','৯','১০','১১','১২','১৩'];
+    while (remaining > 0) {
+        const size = Math.min(10, remaining);
+        const dayEnd = dayStart + size - 1;
+        decades.push(`${banglaNums[dNum-1] || dNum}ম দশক (${dayStart}-${dayEnd})`);
+        dayStart = dayEnd + 1;
+        remaining -= size;
+        dNum++;
+    }
+    
+    const finalDecadesStr = prompt('দশক তালিকা (কমা দিয়ে আলাদা করুন):', decades.join(', '));
+    if (finalDecadesStr === null) return;
+    const finalDecades = finalDecadesStr.split(',').map(s => s.trim()).filter(Boolean);
+    
+    if (!configData.terms) configData.terms = {};
+    if (!configData.terms[deptKey]) configData.terms[deptKey] = { session: '', terms: {} };
+    configData.terms[deptKey].terms[cleanKey] = {
+        name: name.trim(),
+        days: days,
+        decades: finalDecades
+    };
+    
+    await saveAdminConfig();
+    renderAdminTerm();
+    showToast('✅ নতুন পর্ব যোগ হয়েছে', 'success');
+};
+
+window.editTerm = async function(termKey) {
+    const deptKey = adminTermSelectedDept;
+    const t = configData.terms[deptKey].terms[termKey];
+    if (!t) return;
+    
+    const name = prompt('পর্বের নাম:', t.name);
+    if (name === null) return;
+    
+    const days = parseInt(prompt('দিন সংখ্যা:', t.days || 0) || '0');
+    if (!days || days <= 0) { showToast('⚠️ দিন সংখ্যা সঠিক নয়', 'warn'); return; }
+    
+    const decadesStr = prompt('দশক তালিকা (কমা দিয়ে আলাদা):', (t.decades || []).join(', '));
+    if (decadesStr === null) return;
+    const decades = decadesStr.split(',').map(s => s.trim()).filter(Boolean);
+    
+    configData.terms[deptKey].terms[termKey] = {
+        ...t,
+        name: name.trim(),
+        days: days,
+        decades: decades
+    };
+    
+    await saveAdminConfig();
+    renderAdminTerm();
+    showToast('✅ পর্ব আপডেট হয়েছে', 'success');
+};
+
+window.deleteTerm = async function(termKey) {
+    const deptKey = adminTermSelectedDept;
+    const t = configData.terms[deptKey]?.terms?.[termKey];
+    if (!t) return;
+    
+    if (!confirm(`"${t.name}" পর্বটি মুছে ফেলবেন?`)) return;
+    
+    delete configData.terms[deptKey].terms[termKey];
+    await saveAdminConfig();
+    renderAdminTerm();
+    showToast('🗑️ পর্ব মুছে ফেলা হয়েছে', 'info');
+};
+// ═══════════════════ ADMIN: জামাত ও কিতাব ═══════════════════
+let adminClassSelectedDept = '';
+let adminClassSelectedClass = '';
+
+window.renderAdminClass = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const depts = configData?.departments || [];
+    if (depts.length === 0) {
+        content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-info-circle text-4xl mb-3"></i><p>প্রথমে বিভাগ যোগ করুন</p></div>`;
+        return;
+    }
+
+    if (!adminClassSelectedDept || !depts.some(d => d.key === adminClassSelectedDept)) {
+        adminClassSelectedDept = depts[0].key;
+    }
+
+    const deptOptions = depts.map(d => 
+        `<option value="${d.key}" ${d.key === adminClassSelectedDept ? 'selected' : ''}>${d.name}</option>`
+    ).join('');
+
+    const classesArr = (configData?.classes || {})[adminClassSelectedDept] || [];
+
+    if (!adminClassSelectedClass || !classesArr.includes(adminClassSelectedClass)) {
+        adminClassSelectedClass = classesArr[0] || '';
+    }
+
+    // জামাতের তালিকা (বাঁ দিক)
+    let classList = '';
+    if (classesArr.length === 0) {
+        classList = `<div class="p-4 text-center text-slate-400 text-xs">কোন জামাত নেই</div>`;
+    } else {
+        classesArr.forEach(c => {
+            const active = c === adminClassSelectedClass;
+            classList += `
+                <div class="flex items-center justify-between p-2 border-b cursor-pointer hover:bg-slate-50 ${active ? 'bg-emerald-50 border-l-4 border-l-emerald-600' : ''}" onclick="selectAdminClass('${c.replace(/'/g, "\\'")}')">
+                    <span class="text-sm font-arabic ${active ? 'font-bold text-emerald-800' : 'text-slate-700'}">${c}</span>
+                    <div class="flex gap-1">
+                        <button onclick="event.stopPropagation(); editClassName('${c.replace(/'/g, "\\'")}')" class="text-blue-500 hover:text-blue-700 p-1 text-xs" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="event.stopPropagation(); deleteClassName('${c.replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 p-1 text-xs" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // কিতাবের তালিকা (ডান দিক)
+    const booksArr = (configData?.books || {})[adminClassSelectedClass] || [];
+    let bookRows = '';
+    if (!adminClassSelectedClass) {
+        bookRows = `<tr><td colspan="3" class="p-6 text-center text-slate-400">প্রথমে বাঁ দিক থেকে একটি জামাত নির্বাচন করুন</td></tr>`;
+    } else if (booksArr.length === 0) {
+        bookRows = `<tr><td colspan="3" class="p-6 text-center text-slate-400">এই জামাতের কোনো কিতাব নেই</td></tr>`;
+    } else {
+        booksArr.forEach((b, i) => {
+            bookRows += `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="p-2 text-xs text-slate-500">${i + 1}</td>
+                    <td class="p-2 text-sm font-arabic">${b}</td>
+                    <td class="p-2 text-center whitespace-nowrap">
+                        <button onclick="editBook(${i})" class="text-blue-500 hover:text-blue-700 p-1 text-xs"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteBook(${i})" class="text-red-500 hover:text-red-700 p-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <label class="text-sm font-bold text-slate-700">বিভাগ:</label>
+                    <select id="adm-class-dept" onchange="onAdminClassDeptChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                        ${deptOptions}
+                    </select>
+                </div>
+                <button onclick="addClassName()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> নতুন জামাত যোগ
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- জামাত তালিকা -->
+                <div class="md:col-span-1 border border-slate-200 rounded-lg overflow-hidden">
+                    <div class="bg-slate-100 p-3 border-b">
+                        <h4 class="text-sm font-bold text-slate-700"><i class="fa-solid fa-graduation-cap text-emerald-600"></i> জামাত তালিকা</h4>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto">${classList}</div>
+                </div>
+
+                <!-- কিতাব তালিকা -->
+                <div class="md:col-span-2 border border-slate-200 rounded-lg overflow-hidden">
+                    <div class="bg-slate-100 p-3 border-b flex justify-between items-center">
+                        <h4 class="text-sm font-bold text-slate-700">
+                            <i class="fa-solid fa-book text-amber-600"></i> কিতাব তালিকা
+                            ${adminClassSelectedClass ? `— <span class="font-arabic text-emerald-700">${adminClassSelectedClass}</span>` : ''}
+                        </h4>
+                        ${adminClassSelectedClass ? `<button onclick="addBook()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> নতুন কিতাব</button>` : ''}
+                    </div>
+                    <div class="max-h-96 overflow-y-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead class="bg-slate-50 sticky top-0">
+                                <tr>
+                                    <th class="p-2 font-bold text-xs w-10">#</th>
+                                    <th class="p-2 font-bold text-xs">কিতাবের নাম</th>
+                                    <th class="p-2 font-bold text-xs text-center w-24">অ্যাকশন</th>
+                                </tr>
+                            </thead>
+                            <tbody>${bookRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+window.onAdminClassDeptChange = function() {
+    adminClassSelectedDept = document.getElementById('adm-class-dept').value;
+    adminClassSelectedClass = '';
+    renderAdminClass();
+};
+
+window.selectAdminClass = function(className) {
+    adminClassSelectedClass = className;
+    renderAdminClass();
+};
+window.addClassName = async function() {
+    const deptKey = adminClassSelectedDept;
+    const className = prompt('জামাতের নাম (আরবি + বাংলা):\nযেমন: مشكاة (মেশকাত)');
+    if (!className) return;
+    const cleanName = className.trim();
+    
+    if (!configData.classes) configData.classes = {};
+    if (!configData.classes[deptKey]) configData.classes[deptKey] = [];
+    
+    if (configData.classes[deptKey].includes(cleanName)) {
+        showToast('⚠️ এই জামাত ইতিমধ্যে আছে', 'warn');
+        return;
+    }
+    
+    configData.classes[deptKey].push(cleanName);
+    if (!configData.books) configData.books = {};
+    if (!configData.books[cleanName]) configData.books[cleanName] = [];
+    
+    await saveAdminConfig();
+    adminClassSelectedClass = cleanName;
+    renderAdminClass();
+    showToast('✅ নতুন জামাত যোগ হয়েছে', 'success');
+};
+
+window.editClassName = async function(oldName) {
+    const deptKey = adminClassSelectedDept;
+    const newName = prompt('নতুন নাম:', oldName);
+    if (newName === null || !newName.trim()) return;
+    const cleanNew = newName.trim();
+    if (cleanNew === oldName) return;
+    
+    const arr = configData.classes[deptKey];
+    const idx = arr.indexOf(oldName);
+    if (idx < 0) return;
+    
+    arr[idx] = cleanNew;
+    
+    // কিতাব ট্রান্সফার
+    if (configData.books && configData.books[oldName] !== undefined) {
+        configData.books[cleanNew] = configData.books[oldName];
+        delete configData.books[oldName];
+    }
+    
+    // রেকর্ডে className আপডেট
+    records.forEach(r => { if (r.className === oldName) r.className = cleanNew; });
+    
+    await saveAdminConfig();
+    if (adminClassSelectedClass === oldName) adminClassSelectedClass = cleanNew;
+    renderAdminClass();
+    showToast('✅ জামাত আপডেট হয়েছে', 'success');
+};
+
+window.deleteClassName = async function(className) {
+    const deptKey = adminClassSelectedDept;
+    const hasBooks = (configData.books?.[className] || []).length > 0;
+    
+    let msg = `"${className}" জামাতটি মুছে ফেলবেন?`;
+    if (hasBooks) msg = `⚠️ "${className}" জামাতের ${configData.books[className].length}টি কিতাব আছে। সব মুছে যাবে। আপনি কি নিশ্চিত?`;
+    if (!confirm(msg)) return;
+    
+    const arr = configData.classes[deptKey];
+    const idx = arr.indexOf(className);
+    if (idx >= 0) arr.splice(idx, 1);
+    
+    if (configData.books?.[className]) delete configData.books[className];
+    
+    await saveAdminConfig();
+    if (adminClassSelectedClass === className) adminClassSelectedClass = '';
+    renderAdminClass();
+    showToast('🗑️ জামাত মুছে ফেলা হয়েছে', 'info');
+};
+
+window.addBook = async function() {
+    if (!adminClassSelectedClass) { showToast('⚠️ প্রথমে জামাত নির্বাচন করুন', 'warn'); return; }
+    const bookName = prompt('কিতাবের নাম (আরবি + বাংলা):\nযেমন: مشكاة المصابيح (মিশকাতুল মাসাবীহ)');
+    if (!bookName) return;
+    const cleanName = bookName.trim();
+    
+    if (!configData.books) configData.books = {};
+    if (!configData.books[adminClassSelectedClass]) configData.books[adminClassSelectedClass] = [];
+    
+    if (configData.books[adminClassSelectedClass].includes(cleanName)) {
+        showToast('⚠️ এই কিতাব ইতিমধ্যে আছে', 'warn');
+        return;
+    }
+    
+    configData.books[adminClassSelectedClass].push(cleanName);
+    await saveAdminConfig();
+    renderAdminClass();
+    showToast('✅ কিতাব যোগ হয়েছে', 'success');
+};
+
+window.editBook = async function(idx) {
+    const arr = configData.books[adminClassSelectedClass];
+    const oldName = arr[idx];
+    const newName = prompt('নতুন কিতাবের নাম:', oldName);
+    if (newName === null || !newName.trim()) return;
+    const cleanNew = newName.trim();
+    if (cleanNew === oldName) return;
+    
+    arr[idx] = cleanNew;
+    await saveAdminConfig();
+    renderAdminClass();
+    showToast('✅ কিতাব আপডেট হয়েছে', 'success');
+};
+
+window.deleteBook = async function(idx) {
+    const arr = configData.books[adminClassSelectedClass];
+    const name = arr[idx];
+    if (!confirm(`"${name}" কিতাবটি মুছে ফেলবেন?`)) return;
+    
+    arr.splice(idx, 1);
+    await saveAdminConfig();
+    renderAdminClass();
+    showToast('🗑️ কিতাব মুছে ফেলা হয়েছে', 'info');
+};
+// ═══════════════════ ADMIN: শিক্ষক ম্যানেজমেন্ট ═══════════════════
+let adminTeacherSearch = '';
+
+window.renderAdminTeacher = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const allTeachers = configData?.teachers || [];
+    const search = adminTeacherSearch.toLowerCase();
+    
+    let list = allTeachers;
+    if (search) {
+        list = list.filter(t => 
+            (t.name + t.card + t.mobile + t.dept + t.post).toLowerCase().includes(search)
+        );
+    }
+
+    let rows = '';
+    if (list.length === 0) {
+        rows = `<tr><td colspan="7" class="p-6 text-center text-slate-400">কোন শিক্ষক নেই</td></tr>`;
+    } else {
+        list.forEach((t) => {
+            const realIdx = allTeachers.indexOf(t);
+            rows += `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="p-2 text-[11px]"><span class="badge bg-emerald-100 text-emerald-800">${t.dept}</span></td>
+                    <td class="p-2 font-semibold text-sm">${t.name}</td>
+                    <td class="p-2 font-mono text-[11px]">${t.card}</td>
+                    <td class="p-2 text-[11px]">${t.post}</td>
+                    <td class="p-2 text-[11px]">${t.joinDate}</td>
+                    <td class="p-2 text-[11px] font-mono">${t.mobile}</td>
+                    <td class="p-2 text-center whitespace-nowrap">
+                        <button onclick="editAdminTeacher(${realIdx})" class="text-blue-500 hover:text-blue-700 p-1" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteAdminTeacher(${realIdx})" class="text-red-500 hover:text-red-700 p-1" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-users text-emerald-600"></i> শিক্ষক তালিকা
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">${allTeachers.length} জন</span>
+                </h3>
+                <div class="flex gap-2">
+                    <input type="text" id="adm-teacher-search" oninput="onAdminTeacherSearch()" value="${adminTeacherSearch}" placeholder="🔍 নাম/কার্ড/মোবাইল" class="rounded-lg border-slate-300 border p-2 text-xs w-48">
+                    <button onclick="addAdminTeacher()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> নতুন শিক্ষক
+                    </button>
+                </div>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-2 font-bold text-xs">বিভাগ</th>
+                            <th class="p-2 font-bold text-xs">নাম</th>
+                            <th class="p-2 font-bold text-xs">কার্ড</th>
+                            <th class="p-2 font-bold text-xs">পদবী</th>
+                            <th class="p-2 font-bold text-xs">যোগদান</th>
+                            <th class="p-2 font-bold text-xs">মোবাইল</th>
+                            <th class="p-2 font-bold text-xs text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+
+window.onAdminTeacherSearch = function() {
+    adminTeacherSearch = document.getElementById('adm-teacher-search').value;
+    renderAdminTeacher();
+};
+window.addAdminTeacher = async function() {
+    const depts = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const dept = prompt('বিভাগ (' + depts.join(' / ') + '):', depts[0]);
+    if (!dept || !depts.includes(dept.trim())) { showToast('⚠️ বিভাগ সঠিক নয়', 'warn'); return; }
+    
+    const name = prompt('শিক্ষকের নাম:');
+    if (!name || !name.trim()) return;
+    
+    const card = prompt('কার্ড নম্বর:', '') || '-';
+    const post = prompt('পদবী:', 'সহ. শিক্ষক') || 'সহ. শিক্ষক';
+    const joinDate = prompt('যোগদানের তারিখ (DD-MM-YYYY):', '') || '-';
+    const mobile = prompt('মোবাইল:', '') || '-';
+    
+    if (!configData.teachers) configData.teachers = [];
+    configData.teachers.push({
+        dept: dept.trim(),
+        name: name.trim(),
+        card: card.trim() || '-',
+        post: post.trim() || 'সহ. শিক্ষক',
+        joinDate: joinDate.trim() || '-',
+        mobile: mobile.trim() || '-'
+    });
+    
+    await saveAdminConfig();
+    renderAdminTeacher();
+    showToast('✅ নতুন শিক্ষক যোগ হয়েছে', 'success');
+};
+
+window.editAdminTeacher = async function(idx) {
+    const t = configData.teachers[idx];
+    if (!t) return;
+    
+    const depts = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const dept = prompt('বিভাগ (' + depts.join(' / ') + '):', t.dept);
+    if (dept === null) return;
+    if (!depts.includes(dept.trim())) { showToast('⚠️ বিভাগ সঠিক নয়', 'warn'); return; }
+    
+    const name = prompt('নাম:', t.name);
+    if (name === null) return;
+    const card = prompt('কার্ড নম্বর:', t.card);
+    if (card === null) return;
+    const post = prompt('পদবী:', t.post);
+    if (post === null) return;
+    const joinDate = prompt('যোগদানের তারিখ:', t.joinDate);
+    if (joinDate === null) return;
+    const mobile = prompt('মোবাইল:', t.mobile);
+    if (mobile === null) return;
+    
+    configData.teachers[idx] = {
+        ...t,
+        dept: dept.trim(),
+        name: name.trim(),
+        card: card.trim() || '-',
+        post: post.trim() || 'সহ. শিক্ষক',
+        joinDate: joinDate.trim() || '-',
+        mobile: mobile.trim() || '-'
+    };
+    
+    await saveAdminConfig();
+    renderAdminTeacher();
+    showToast('✅ শিক্ষক তথ্য আপডেট হয়েছে', 'success');
+};
+
+window.deleteAdminTeacher = async function(idx) {
+    const t = configData.teachers[idx];
+    if (!t) return;
+    if (!confirm(`"${t.name}" শিক্ষককে মুছে ফেলবেন?`)) return;
+    
+    configData.teachers.splice(idx, 1);
+    await saveAdminConfig();
+    renderAdminTeacher();
+    showToast('🗑️ শিক্ষক মুছে ফেলা হয়েছে', 'info');
+};
+// ═══════════════════ ADMIN: দায়িত্বশীল (Assignment) ═══════════════════
+let adminAssignDept = '';
+let adminAssignClass = '';
+
+window.renderAdminAssign = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const depts = configData?.departments || [];
+    if (depts.length === 0) {
+        content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-info-circle text-4xl mb-3"></i><p>প্রথমে বিভাগ যোগ করুন</p></div>`;
+        return;
+    }
+
+    if (!adminAssignDept || !depts.some(d => d.key === adminAssignDept)) {
+        adminAssignDept = depts[0].key;
+    }
+
+    const deptOptions = depts.map(d => 
+        `<option value="${d.key}" ${d.key === adminAssignDept ? 'selected' : ''}>${d.name}</option>`
+    ).join('');
+
+    const classesArr = (configData?.classes || {})[adminAssignDept] || [];
+    
+    if (!adminAssignClass || !classesArr.includes(adminAssignClass)) {
+        adminAssignClass = classesArr[0] || '';
+    }
+
+    const classOptions = classesArr.length === 0 
+        ? `<option value="">-- এই বিভাগে কোন জামাত নেই --</option>`
+        : classesArr.map(c => `<option value="${c}" ${c === adminAssignClass ? 'selected' : ''}>${c}</option>`).join('');
+
+    // এই জামাতের জন্য দায়িত্বশীল শিক্ষকদের তালিকা
+    const assignments = configData?.assignments || {};
+    const classKey = adminAssignDept + '::' + adminAssignClass;
+    const assignedTeachers = assignments[classKey] || [];
+
+    // সব শিক্ষক (এই বিভাগের)
+    const deptMap = { shariah: 'শরীয়াহ', non_res: 'অনাবাসিক', noorani: 'নূরানী-নাযেরা' };
+    const deptName = deptMap[adminAssignDept];
+    const deptTeachers = (configData?.teachers || []).filter(t => t.dept === deptName);
+
+    let teacherCheckboxes = '';
+    if (deptTeachers.length === 0) {
+        teacherCheckboxes = `<p class="text-sm text-slate-400 text-center py-4">এই বিভাগে কোন শিক্ষক নেই</p>`;
+    } else {
+        deptTeachers.forEach((t, i) => {
+            const checked = assignedTeachers.includes(t.name);
+            teacherCheckboxes += `
+                <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-emerald-50 transition">
+                    <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleTeacherAssignment('${t.name.replace(/'/g, "\\'")}', this.checked)" class="w-4 h-4 rounded text-emerald-600">
+                    <div class="flex-1">
+                        <p class="text-sm font-bold">${t.name}</p>
+                        <p class="text-[10px] text-slate-500">${t.post} | কার্ড: ${t.card}</p>
+                    </div>
+                </label>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex flex-wrap gap-3 items-center">
+                <div>
+                    <label class="text-xs font-bold text-slate-600 block mb-1">বিভাগ:</label>
+                    <select id="adm-assign-dept" onchange="onAdminAssignDeptChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                        ${deptOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600 block mb-1">জামাত:</label>
+                    <select id="adm-assign-class" onchange="onAdminAssignClassChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-arabic" ${classesArr.length === 0 ? 'disabled' : ''}>
+                        ${classOptions}
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-xs text-amber-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    যেসব শিক্ষককে চেক করবেন, তারাই এই জামাতের ডাটা এন্ট্রি করতে পারবেন। বাকিরা শুধু দেখতে পারবেন।
+                </p>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg p-4">
+                <h4 class="text-sm font-bold text-slate-700 mb-3">
+                    <i class="fa-solid fa-users-check text-emerald-600"></i> দায়িত্বশীল শিক্ষক নির্বাচন করুন
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">${assignedTeachers.length} জন নির্বাচিত</span>
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-96 overflow-y-auto">
+                    ${teacherCheckboxes}
+                </div>
+            </div>
+        </div>
+    `;
+};
+
+window.onAdminAssignDeptChange = function() {
+    adminAssignDept = document.getElementById('adm-assign-dept').value;
+    adminAssignClass = '';
+    renderAdminAssign();
+};
+
+window.onAdminAssignClassChange = function() {
+    adminAssignClass = document.getElementById('adm-assign-class').value;
+    renderAdminAssign();
+};
+
+window.toggleTeacherAssignment = async function(teacherName, isChecked) {
+    if (!adminAssignDept || !adminAssignClass) return;
+    
+    const classKey = adminAssignDept + '::' + adminAssignClass;
+    if (!configData.assignments) configData.assignments = {};
+    if (!configData.assignments[classKey]) configData.assignments[classKey] = [];
+    
+    const arr = configData.assignments[classKey];
+    const idx = arr.indexOf(teacherName);
+    
+    if (isChecked && idx < 0) {
+        arr.push(teacherName);
+    } else if (!isChecked && idx >= 0) {
+        arr.splice(idx, 1);
+    }
+    
+    await saveAdminConfig();
+    renderAdminAssign();
+};
+// ═══════════════════ ADMIN: ইউজার অ্যাকাউন্ট ═══════════════════
+let adminUsersList = [];
+
+window.renderAdminUsers = async function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i><p>ইউজার লোড হচ্ছে...</p></div>`;
+
+    try {
+        const { collection, getDocs } = window.fbFuncs;
+        const snap = await getDocs(collection(window.fbDB, 'users'));
+        adminUsersList = [];
+        snap.forEach(d => adminUsersList.push({ uid: d.id, ...d.data() }));
+        adminUsersList.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    } catch (err) {
+        console.error('❌ renderAdminUsers error:', err);
+        content.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle text-3xl mb-3"></i><p>ইউজার লোড ব্যর্থ: ${err.message}</p></div>`;
+        return;
+    }
+
+    const teachersArr = configData?.teachers || [];
+
+    let rows = '';
+    if (adminUsersList.length === 0) {
+        rows = `<tr><td colspan="5" class="p-6 text-center text-slate-400">কোন ইউজার নেই</td></tr>`;
+    } else {
+        adminUsersList.forEach(u => {
+            const roleBadge = u.role === 'admin' 
+                ? '<span class="badge bg-amber-100 text-amber-800">এডমিন</span>'
+                : u.role === 'teacher'
+                ? '<span class="badge bg-emerald-100 text-emerald-800">শিক্ষক</span>'
+                : '<span class="badge bg-slate-100 text-slate-600">অপেক্ষমান</span>';
+            rows += `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="p-3 text-sm font-semibold">${u.name || '---'}</td>
+                    <td class="p-3 text-xs font-mono">${u.email || '---'}</td>
+                    <td class="p-3 text-xs">${roleBadge}</td>
+                    <td class="p-3 text-xs">${u.teacherName || '-'}</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="editAdminUser('${u.uid}')" class="text-blue-500 hover:text-blue-700 p-1" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteAdminUser('${u.uid}','${(u.name || '').replace(/'/g, "\\'")}')" class="text-red-500 hover:text-red-700 p-1" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-user-gear text-emerald-600"></i> ইউজার অ্যাকাউন্ট
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">${adminUsersList.length} জন</span>
+                </h3>
+                <button onclick="addAdminUser()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i> নতুন ইউজার তৈরি
+                </button>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs text-blue-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <strong>নতুন ইউজার তৈরি করলে:</strong> Firebase-এ লগইন অ্যাকাউন্ট তৈরি হবে। শিক্ষকের সাথে লিংক করে দিলে তিনি সেই জামাতের ডাটা এন্ট্রি করতে পারবেন।
+                </p>
+            </div>
+
+            <div class="border border-slate-200 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-3 font-bold text-xs">নাম</th>
+                            <th class="p-3 font-bold text-xs">Email</th>
+                            <th class="p-3 font-bold text-xs">Role</th>
+                            <th class="p-3 font-bold text-xs">লিংকড শিক্ষক</th>
+                            <th class="p-3 font-bold text-xs text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+window.addAdminUser = async function() {
+    const teachersArr = configData?.teachers || [];
+    
+    const email = prompt('Email (লগইনের জন্য):\nযেমন: teacher1@gmail.com');
+    if (!email || !email.includes('@')) { showToast('⚠️ সঠিক Email দিন', 'warn'); return; }
+    
+    const password = prompt('Password (কমপক্ষে ৬ অক্ষর):');
+    if (!password || password.length < 6) { showToast('⚠️ Password কমপক্ষে ৬ অক্ষর', 'warn'); return; }
+    
+    const name = prompt('ইউজারের নাম (হেডারে দেখানোর জন্য):');
+    if (!name) return;
+    
+    const role = prompt('Role (admin / teacher):', 'teacher');
+    if (!role || !['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
+    
+    // শিক্ষকের সাথে লিংক (teacher হলে)
+    let teacherName = '';
+    if (role.trim() === 'teacher') {
+        const teacherListStr = teachersArr.map((t, i) => `${i + 1}. ${t.name} (${t.dept})`).join('\n');
+        const idxStr = prompt('শিক্ষকের নম্বর নির্বাচন করুন:\n\n' + teacherListStr);
+        if (idxStr === null) return;
+        const idx = parseInt(idxStr) - 1;
+        if (idx < 0 || idx >= teachersArr.length) { showToast('⚠️ ভুল নম্বর', 'warn'); return; }
+        teacherName = teachersArr[idx].name;
+    }
+    
+    try {
+        showToast('⏳ ইউজার তৈরি হচ্ছে...', 'info');
+        
+        // Firebase SDK থেকে secondary app দিয়ে user তৈরি (primary app logout হবে না)
+        const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const { getAuth, createUserWithEmailAndPassword, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        
+        // Secondary app নাম চেক
+        const secAppName = 'secondary-' + Date.now();
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbE1avpXXb7tNSTnOEPYepcjA04Nrrg0Q",
+            authDomain: "madrasa-syllabus.firebaseapp.com",
+            projectId: "madrasa-syllabus",
+            storageBucket: "madrasa-syllabus.firebasestorage.app",
+            messagingSenderId: "835893307104",
+            appId: "1:835893307104:web:457c20ec2182027d561285"
+        };
+        
+        const secApp = initializeApp(firebaseConfig, secAppName);
+        const secAuth = getAuth(secApp);
+        
+        const cred = await createUserWithEmailAndPassword(secAuth, email.trim(), password);
+        const newUid = cred.user.uid;
+        
+        // Firestore-এ users ডকুমেন্ট তৈরি
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        await setDoc(doc(window.fbDB, 'users', newUid), {
+            name: name.trim(),
+            email: email.trim(),
+            role: role.trim(),
+            teacherName: teacherName,
+            createdAt: serverTimestamp(),
+            createdBy: currentUser?.uid || 'admin'
+        });
+        
+        // Secondary app signOut
+        await signOut(secAuth);
+        
+        showToast('✅ ইউজার তৈরি হয়েছে: ' + email.trim(), 'success');
+        renderAdminUsers();
+    } catch (err) {
+        console.error('❌ addAdminUser error:', err);
+        let msg = err.message;
+        if (err.code === 'auth/email-already-in-use') msg = 'এই Email ইতিমধ্যে ব্যবহৃত';
+        else if (err.code === 'auth/weak-password') msg = 'Password দুর্বল';
+        else if (err.code === 'auth/invalid-email') msg = 'Email ভুল';
+        showToast('❌ ' + msg, 'error');
+    }
+};
+
+window.editAdminUser = async function(uid) {
+    const u = adminUsersList.find(x => x.uid === uid);
+    if (!u) return;
+    
+    const teachersArr = configData?.teachers || [];
+    
+    const name = prompt('নাম:', u.name || '');
+    if (name === null) return;
+    
+    const role = prompt('Role (admin / teacher):', u.role || 'teacher');
+    if (role === null) return;
+    if (!['admin', 'teacher'].includes(role.trim())) { showToast('⚠️ Role admin বা teacher হতে হবে', 'warn'); return; }
+    
+    let teacherName = u.teacherName || '';
+    if (role.trim() === 'teacher') {
+        const teacherListStr = teachersArr.map((t, i) => `${i + 1}. ${t.name} (${t.dept})${t.name === teacherName ? ' ← বর্তমান' : ''}`).join('\n');
+        const idxStr = prompt('শিক্ষকের নম্বর (খালি রাখলে লিংক মুছে যাবে):\n\n' + teacherListStr, teacherName ? String(teachersArr.findIndex(t => t.name === teacherName) + 1) : '');
+        if (idxStr === null) return;
+        if (idxStr.trim() === '') { teacherName = ''; }
+        else {
+            const idx = parseInt(idxStr) - 1;
+            if (idx >= 0 && idx < teachersArr.length) teacherName = teachersArr[idx].name;
+        }
+    } else {
+        teacherName = '';
+    }
+    
+    try {
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+        await updateDoc(doc(window.fbDB, 'users', uid), {
+            name: name.trim(),
+            role: role.trim(),
+            teacherName: teacherName,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser?.uid || 'admin'
+        });
+        showToast('✅ ইউজার আপডেট হয়েছে', 'success');
+        renderAdminUsers();
+    } catch (err) {
+        console.error('❌ editAdminUser error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
+window.deleteAdminUser = async function(uid, name) {
+    if (uid === currentUser?.uid) {
+        showToast('⚠️ নিজের অ্যাকাউন্ট মুছতে পারবেন না', 'warn');
+        return;
+    }
+    if (!confirm(`"${name}" এর Firestore ডাটা মুছে ফেলবেন?\n\n⚠️ Firebase Auth অ্যাকাউন্ট মুছতে Firebase Console-এ যেতে হবে। এখানে শুধু Firestore ডকুমেন্ট মুছে যাবে।`)) return;
+    
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'users', uid));
+        showToast('🗑️ ইউজার ডাটা মুছে ফেলা হয়েছে', 'info');
+        renderAdminUsers();
+    } catch (err) {
+        console.error('❌ deleteAdminUser error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+</script>
+</body>
+</html>
