@@ -2742,28 +2742,36 @@ window.addEventListener('load', () => {
 });
 
 async function handleUserLogin(user) {
-    // users কালেকশনে এই UID আছে কিনা
+    console.log('🔍 handleUserLogin শুরু — UID:', user.uid);
+    currentUser = user;
+
+    // users কালেকশনে UID আছে কিনা
     let userData = null;
     try {
         const { doc, getDoc } = window.fbFuncs;
         const snap = await getDoc(doc(window.fbDB, 'users', user.uid));
         if (snap.exists()) {
             userData = { uid: snap.id, ...snap.data() };
+            console.log('✅ userData পাওয়া গেছে:', userData);
+        } else {
+            console.log('⚠️ users ডকুমেন্ট নেই');
         }
     } catch (err) {
         console.error('❌ userDoc error:', err);
     }
 
-    // Case 1: User doc নেই → কার্ড verification modal দেখাও
+    // Case 1: user doc নেই → কার্ড verification
     if (!userData) {
+        console.log('→ Case 1: কার্ড verification');
         _pendingUid = user.uid;
         showLoginHidden();
         showCardVerifyModal();
         return;
     }
 
-    // Case 2: user doc আছে কিন্তু role pending
+    // Case 2: pending
     if (userData.role === 'pending') {
+        console.log('→ Case 2: pending approval');
         _pendingUid = user.uid;
         _pendingCard = userData.cardNumber || '';
         await loadConfigFromFirestore();
@@ -2775,16 +2783,31 @@ async function handleUserLogin(user) {
         return;
     }
 
-    // Case 3: role = 'admin' বা 'teacher'
+    // Case 3: admin / teacher
     if (userData.role === 'admin' || userData.role === 'teacher') {
+        console.log('→ Case 3: admin/teacher ঢুকছে');
         currentUserData = userData;
-        await loadConfigFromFirestore();
-        await loadRecordsFromFirestore();
+        
+        try {
+            console.log('📦 Config load...');
+            await loadConfigFromFirestore();
+            console.log('✅ Config loaded');
+            
+            console.log('📦 Records load...');
+            await loadRecordsFromFirestore();
+            console.log('✅ Records loaded');
+        } catch (err) {
+            console.error('❌ Load error (এটাই silent fail ছিল):', err);
+        }
+        
+        console.log('🚀 showApp কল করছি');
         showApp();
+        console.log('✅ showApp শেষ');
         return;
     }
 
-    // Case 4: অজানা role
+    // Case 4: unknown role
+    console.log('→ Case 4: unknown role:', userData.role);
     _pendingUid = user.uid;
     showLoginHidden();
     document.getElementById('denied-message').textContent = 'আপনার অ্যাকাউন্টে ভুল role সেট করা আছে। এডমিনের সাথে যোগাযোগ করুন।';
