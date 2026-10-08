@@ -207,6 +207,17 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
         </div>
     </div>
 </div>
+<!-- ═══════════════════ LOADING SCREEN ═══════════════════ -->
+<div id="loading-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[500] flex items-center justify-center">
+    <div class="text-center">
+        <div class="w-20 h-20 mx-auto bg-amber-500/20 rounded-2xl border-2 border-amber-400/40 flex items-center justify-center text-amber-400 text-4xl mb-4">
+            <i class="fa-solid fa-book-open-reader"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-white font-arabic mb-2">مقادير الأسباق</h1>
+        <p class="text-sm text-emerald-200 mb-4">লোড হচ্ছে...</p>
+        <i class="fa-solid fa-circle-notch fa-spin text-amber-400 text-2xl"></i>
+    </div>
+</div>
 <div id="login-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[200] items-center justify-center p-4" style="display:flex; width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-emerald-900 text-white p-6 text-center">
@@ -2723,11 +2734,15 @@ window.doLogout = async function() {
 };
 
 window.addEventListener('load', () => {
+    let authCheckDone = false;
+    
     const checkFb = setInterval(() => {
         if (window.fbAuth && window.fbFuncs) {
             clearInterval(checkFb);
             const { onAuthStateChanged } = window.fbFuncs;
+            
             onAuthStateChanged(window.fbAuth, async (user) => {
+                authCheckDone = true;
                 if (user) {
                     currentUser = user;
                     await handleUserLogin(user);
@@ -2737,6 +2752,14 @@ window.addEventListener('load', () => {
                     showLogin();
                 }
             });
+            
+            // ★ Fallback: ৩ সেকেন্ডেও Firebase respond না করলে login screen দেখাও
+            setTimeout(() => {
+                if (!authCheckDone) {
+                    console.warn('⚠️ Firebase auth check timeout — showing login');
+                    showLogin();
+                }
+            }, 3000);
         }
     }, 100);
 });
@@ -2908,6 +2931,8 @@ window.verifyCardNumber = async function() {
 };
 
 function showLogin() {
+    const loadScreen = document.getElementById('loading-screen');
+    if (loadScreen) loadScreen.classList.add('hidden');
     showLoginHidden();
     document.getElementById('login-screen').classList.remove('hidden');
     
@@ -2945,6 +2970,8 @@ function showLogin() {
 }
 
 function showApp() {
+    const loadScreen = document.getElementById('loading-screen');
+    if (loadScreen) loadScreen.classList.add('hidden');
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('login-screen').style.display = 'none';
 
