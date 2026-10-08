@@ -207,7 +207,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
         </div>
     </div>
 </div>
-<div id="login-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[200] flex items-center justify-center p-4">
+<div id="login-screen" class="fixed inset-0 bg-gradient-to-br from-emerald-900 via-emerald-800 to-emerald-900 z-[200] items-center justify-center p-4" style="display:flex; width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-emerald-900 text-white p-6 text-center">
             <div class="w-16 h-16 mx-auto bg-amber-500/20 rounded-2xl border-2 border-amber-400/40 flex items-center justify-center text-amber-400 text-3xl mb-3">
@@ -262,8 +262,54 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     </div>
 </div>
 
+<!-- ═══════════════════ APPROVE MODAL ═══════════════════ -->
+<div id="approve-modal" class="fixed inset-0 modal-backdrop z-[350] items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col modal-enter">
+        <div class="bg-emerald-900 text-white p-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-user-check"></i> শিক্ষক অনুমোদন
+            </h3>
+            <button onclick="closeApproveModal()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+        </div>
+        
+        <div class="p-5 border-b bg-emerald-50">
+            <div class="grid grid-cols-3 gap-3 text-sm">
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold">নাম</p>
+                    <p id="ap-user-name" class="font-bold text-emerald-900">---</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold">কার্ড নম্বর</p>
+                    <p id="ap-user-card" class="font-mono font-bold">---</p>
+                </div>
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold">বিভাগ</p>
+                    <p id="ap-user-dept" class="font-bold">---</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-5 overflow-y-auto flex-1">
+            <p class="text-sm font-bold text-slate-700 mb-3">
+                <i class="fa-solid fa-graduation-cap text-emerald-600"></i> কোন কোন জামাতের দায়িত্ব দেবেন?
+            </p>
+            <p class="text-xs text-slate-500 mb-3">একাধিক জামাত নির্বাচন করা যাবে।</p>
+            <div id="ap-class-list" class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-80 overflow-y-auto"></div>
+        </div>
+        
+        <div class="p-4 border-t bg-slate-50 flex justify-end gap-2 rounded-b-2xl">
+            <button onclick="closeApproveModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition">
+                বাতিল
+            </button>
+            <button onclick="confirmApprove()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-check-double"></i> অনুমোদন দিন
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══════════════════ CARD VERIFICATION MODAL ═══════════════════ -->
-<div id="card-verify-modal" class="fixed inset-0 modal-backdrop z-[250] items-center justify-center p-4 hidden">
+<div id="card-verify-modal" class="fixed inset-0 modal-backdrop z-[250] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden modal-enter">
         <div class="bg-amber-600 text-white p-4 text-center">
             <i class="fa-solid fa-id-card text-3xl mb-2"></i>
@@ -289,7 +335,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 </div>
 
 <!-- ═══════════════════ PENDING APPROVAL SCREEN ═══════════════════ -->
-<div id="pending-screen" class="fixed inset-0 bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 z-[240] items-center justify-center p-4 hidden">
+<div id="pending-screen" class="fixed inset-0 bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 z-[240] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-amber-600 text-white p-6 text-center">
             <i class="fa-solid fa-hourglass-half text-5xl mb-3"></i>
@@ -316,7 +362,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 </div>
 
 <!-- ═══════════════════ ACCESS DENIED SCREEN ═══════════════════ -->
-<div id="denied-screen" class="fixed inset-0 bg-gradient-to-br from-red-900 via-red-800 to-red-900 z-[240] items-center justify-center p-4 hidden">
+<div id="denied-screen" class="fixed inset-0 bg-gradient-to-br from-red-900 via-red-800 to-red-900 z-[240] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
         <div class="bg-red-600 text-white p-6 text-center">
             <i class="fa-solid fa-ban text-5xl mb-3"></i>
@@ -964,6 +1010,10 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </button>
             <button onclick="switchAdminSub('assign')" id="adm-sub-assign" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-user-shield"></i> দায়িত্বশীল
+            </button>
+            <button onclick="switchAdminSub('approvals')" id="adm-sub-approvals" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 relative">
+                <i class="fa-solid fa-user-clock"></i> অনুমোদন
+                <span id="approval-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] hidden">0</span>
             </button>
             <button onclick="switchAdminSub('users')" id="adm-sub-users" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-user-gear"></i> ইউজার অ্যাকাউন্ট
@@ -3037,6 +3087,7 @@ window.switchAdminSub = function(sub) {
     else if (sub === 'teacher') renderAdminTeacher();
     else if (sub === 'assign') renderAdminAssign();
     else if (sub === 'users') renderAdminUsers();
+    else if (sub === 'approvals') renderAdminApprovals();
     else {
         const content = document.getElementById('adm-content');
         content.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-screwdriver-wrench text-4xl mb-3"></i><p class="text-sm">"${sub}" সেকশন পরের ধাপে যোগ হবে</p></div>`;
@@ -4823,6 +4874,225 @@ window.tpFinalizeSave = async function() {
         await tpSaveEdit();
     } else {
         await tpSaveNewUser();
+    }
+};
+// ═══════════════════ ADMIN: Pending Approvals ═══════════════════
+let adminPendingUsers = [];
+
+window.renderAdminApprovals = async function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i><p>অনুমোদনের তালিকা লোড হচ্ছে...</p></div>`;
+
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        const q = query(collection(window.fbDB, 'users'), where('role', '==', 'pending'));
+        const snap = await getDocs(q);
+        
+        adminPendingUsers = [];
+        snap.forEach(d => adminPendingUsers.push({ uid: d.id, ...d.data() }));
+        
+        adminPendingUsers.sort((a, b) => {
+            const ta = a.requestedAt?.seconds || 0;
+            const tb = b.requestedAt?.seconds || 0;
+            return tb - ta;
+        });
+    } catch (err) {
+        console.error('❌ renderAdminApprovals error:', err);
+        content.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle text-3xl mb-3"></i><p>লোড ব্যর্থ: ${err.message}</p></div>`;
+        return;
+    }
+
+    // ব্যাজ আপডেট
+    const badge = document.getElementById('approval-badge');
+    if (badge) {
+        if (adminPendingUsers.length > 0) {
+            badge.textContent = adminPendingUsers.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    let rows = '';
+    if (adminPendingUsers.length === 0) {
+        rows = `<tr><td colspan="6" class="p-8 text-center text-slate-400">
+            <i class="fa-solid fa-check-circle text-4xl mb-2 text-emerald-500"></i>
+            <p>কোন অনুমোদনের অপেক্ষায় নেই</p>
+        </td></tr>`;
+    } else {
+        adminPendingUsers.forEach((u, i) => {
+            const reqDate = u.requestedAt?.seconds 
+                ? new Date(u.requestedAt.seconds * 1000).toLocaleString('bn-BD')
+                : '---';
+            rows += `
+                <tr class="hover:bg-amber-50 border-b">
+                    <td class="p-3 text-sm font-bold">${u.name || '---'}</td>
+                    <td class="p-3 text-xs font-mono">${u.cardNumber || '---'}</td>
+                    <td class="p-3 text-xs font-mono">${u.email || '---'}</td>
+                    <td class="p-3 text-xs">${u.dept || '---'}</td>
+                    <td class="p-3 text-[10px] text-slate-500">${reqDate}</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="approveUser(${i})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition mr-1">
+                            <i class="fa-solid fa-check"></i> অনুমোদন
+                        </button>
+                        <button onclick="rejectUser(${i})" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-lg transition">
+                            <i class="fa-solid fa-xmark"></i> বাতিল
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-user-clock text-amber-600"></i> অনুমোদনের অপেক্ষায়
+                    <span class="badge bg-amber-100 text-amber-800 ml-2">${adminPendingUsers.length} জন</span>
+                </h3>
+                <button onclick="renderAdminApprovals()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> রিফ্রেশ
+                </button>
+            </div>
+
+            ${adminPendingUsers.length > 0 ? `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-xs text-amber-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    শিক্ষকরা Google দিয়ে sign-in করে কার্ড নম্বর দিয়েছেন। <strong>অনুমোদন</strong> করলে তাদের বিভাগ ও জামাত নির্ধারণ করে দিতে হবে।
+                </p>
+            </div>` : ''}
+
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="p-3 font-bold text-xs">নাম</th>
+                            <th class="p-3 font-bold text-xs">কার্ড নম্বর</th>
+                            <th class="p-3 font-bold text-xs">Email</th>
+                            <th class="p-3 font-bold text-xs">বিভাগ</th>
+                            <th class="p-3 font-bold text-xs">অনুরোধের সময়</th>
+                            <th class="p-3 font-bold text-xs text-center">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+};
+// ═══════════════════ APPROVE / REJECT ═══════════════════
+let _approveTargetUser = null;
+
+window.approveUser = function(idx) {
+    const u = adminPendingUsers[idx];
+    if (!u) return;
+    _approveTargetUser = u;
+    
+    // Approve Modal খুলি
+    const modal = document.getElementById('approve-modal');
+    if (!modal) { showToast('❌ Approve Modal পাওয়া যায়নি', 'error'); return; }
+    
+    // Modal-এ ইউজারের তথ্য দেখাও
+    document.getElementById('ap-user-name').textContent = u.name || '---';
+    document.getElementById('ap-user-card').textContent = u.cardNumber || '---';
+    document.getElementById('ap-user-dept').textContent = u.dept || '---';
+    
+    // বিভাগ থেকে dept key বের করি
+    const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+    const deptKey = deptKeyMap[u.dept] || 'shariah';
+    
+    // জামাতের তালিকা populate
+    const classList = document.getElementById('ap-class-list');
+    classList.innerHTML = '';
+    
+    const classes = (configData?.classes || {})[deptKey] || [];
+    if (classes.length === 0) {
+        classList.innerHTML = '<p class="text-center text-slate-400 text-sm py-4">এই বিভাগে কোন জামাত নেই</p>';
+    } else {
+        classes.forEach(c => {
+            const div = document.createElement('label');
+            div.className = 'p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-emerald-50 transition flex items-center gap-3';
+            div.innerHTML = `
+                <input type="checkbox" value="${c}" class="ap-class-cb w-4 h-4 rounded text-emerald-600">
+                <span class="text-sm font-arabic font-bold">${c}</span>
+            `;
+            classList.appendChild(div);
+        });
+    }
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+};
+
+window.closeApproveModal = function() {
+    const modal = document.getElementById('approve-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    _approveTargetUser = null;
+};
+
+window.confirmApprove = async function() {
+    if (!_approveTargetUser) return;
+    
+    const selected = Array.from(document.querySelectorAll('.ap-class-cb:checked')).map(cb => cb.value);
+    if (selected.length === 0) {
+        showToast('⚠️ কমপক্ষে একটি জামাত নির্বাচন করুন', 'warn');
+        return;
+    }
+    
+    const u = _approveTargetUser;
+    const deptKeyMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+    const deptKey = deptKeyMap[u.dept] || 'shariah';
+    
+    try {
+        showToast('⏳ অনুমোদন করা হচ্ছে...', 'info');
+        
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+        await updateDoc(doc(window.fbDB, 'users', u.uid), {
+            role: 'teacher',
+            approvedAt: serverTimestamp(),
+            approvedBy: currentUser?.uid || 'admin'
+        });
+        
+        // Assignments আপডেট
+        if (!configData.assignments) configData.assignments = {};
+        selected.forEach(cls => {
+            const key = deptKey + '::' + cls;
+            if (!configData.assignments[key]) configData.assignments[key] = [];
+            if (!configData.assignments[key].includes(u.name)) {
+                configData.assignments[key].push(u.name);
+            }
+        });
+        await saveAdminConfig();
+        
+        showToast(`✅ ${u.name} অনুমোদিত হয়েছেন`, 'success');
+        closeApproveModal();
+        renderAdminApprovals();
+    } catch (err) {
+        console.error('❌ confirmApprove error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
+window.rejectUser = async function(idx) {
+    const u = adminPendingUsers[idx];
+    if (!u) return;
+    
+    if (!confirm(`"${u.name}" (কার্ড: ${u.cardNumber}) এর অনুরোধ বাতিল করবেন?\n\nতিনি আবার চেষ্টা করলে আবার আবেদন করতে পারবেন।`)) return;
+    
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'users', u.uid));
+        showToast('🗑️ অনুরোধ বাতিল হয়েছে', 'info');
+        renderAdminApprovals();
+    } catch (err) {
+        console.error('❌ rejectUser error:', err);
+        showToast('❌ ' + err.message, 'error');
     }
 };
 </script>
