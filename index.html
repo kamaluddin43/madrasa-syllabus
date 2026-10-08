@@ -58,8 +58,8 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     .print-area { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
     .page-break { page-break-after: always; }
     @page {
-        size: A4 landscape;
-        margin: 8mm 8mm 20mm 8mm;
+        size: A4 portrait;
+        margin: 12mm 10mm 18mm 10mm;
         @bottom-center {
             content: "মাকাদীরে আসবাক | শিক্ষাবর্ষ " counter(page);
             font-family: 'Hind Siliguri', sans-serif;
@@ -90,6 +90,217 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     .print-page-num::after { content: "পৃষ্ঠা " counter(page); }
     .print-header { display: block !important; }
     .no-print-area { display: none !important; }
+}
+/* ═══════════════ রিপোর্ট পেজ স্টাইল ═══════════════ */
+.report-page {
+    page-break-after: always;
+    page-break-inside: avoid;
+    padding: 10mm 6mm;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: white;
+    position: relative;
+}
+.report-page:last-child {
+    page-break-after: auto;
+}
+
+.report-page-header {
+    border: 2px solid #065f46;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+.report-page-header .header-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: linear-gradient(to left, #ecfdf5, #fffbeb);
+}
+.report-page-header .header-top img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    background: white;
+    border: 2px solid #065f46;
+    border-radius: 50%;
+    padding: 2px;
+    flex-shrink: 0;
+}
+.report-page-header .header-info {
+    flex: 1;
+    text-align: center;
+}
+.report-page-header .header-info h2 {
+    font-size: 18px;
+    color: #064e3b;
+    font-weight: bold;
+    margin: 0;
+    font-family: 'Amiri', serif;
+}
+.report-page-header .header-info h3 {
+    font-size: 14px;
+    color: #065f46;
+    font-weight: bold;
+    margin: 2px 0 0;
+}
+.report-page-header .header-info p {
+    font-size: 10px;
+    color: #475569;
+    margin: 2px 0 0;
+}
+.report-page-header .header-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: #065f46;
+    color: white;
+    font-size: 10px;
+    text-align: center;
+}
+.report-page-header .header-bar > div {
+    padding: 4px;
+    border-right: 1px solid #047857;
+}
+.report-page-header .header-bar > div:last-child {
+    border-right: none;
+}
+
+.report-page-title {
+    background: #d97706;
+    color: white;
+    padding: 6px 10px;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+.report-page-title h4 {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    font-family: 'Amiri', serif;
+}
+.report-page-title p {
+    font-size: 10px;
+    margin: 2px 0 0;
+}
+
+.report-page-meta {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 11px;
+}
+.report-page-meta .meta-item {
+    display: flex;
+    gap: 4px;
+}
+.report-page-meta .meta-item strong {
+    color: #065f46;
+    min-width: 70px;
+}
+.report-page-meta .meta-item span {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.report-page-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.report-page-table th,
+.report-page-table td {
+    border: 1px solid #000;
+    padding: 4px 6px;
+    text-align: center;
+}
+.report-page-table th {
+    background: #ecfdf5;
+    color: #064e3b;
+    font-weight: bold;
+    font-size: 10.5px;
+}
+.report-page-table td.book-name {
+    font-family: 'Amiri', serif;
+    font-weight: bold;
+    background: #fffbeb;
+}
+.report-page-table td.teacher-cell {
+    font-size: 10px;
+}
+.report-page-table td.teacher-cell .teacher-post {
+    display: block;
+    font-size: 8.5px;
+    color: #64748b;
+    font-family: 'Hind Siliguri', sans-serif;
+}
+.report-page-table td.total-cell {
+    background: #fffbeb;
+    font-weight: bold;
+    color: #065f46;
+}
+
+.report-page-summary {
+    margin-top: 10px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 11px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.report-page-summary strong {
+    color: #065f46;
+}
+
+.report-page-signatures {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-around;
+    font-size: 11px;
+    font-weight: bold;
+}
+.report-page-signatures > div {
+    text-align: center;
+    border-top: 1px solid #000;
+    padding-top: 4px;
+    min-width: 120px;
+}
+
+/* স্ক্রিনে দেখানোর জন্য */
+@media screen {
+    .report-page {
+        max-width: 800px;
+        margin: 0 auto 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+}
+
+/* প্রিন্টে */
+@media print {
+    .report-page {
+        page-break-after: always;
+        padding: 0;
+        border: none;
+        margin: 0;
+        box-shadow: none;
+        max-width: 100%;
+    }
+    .report-page:last-child {
+        page-break-after: auto;
+    }
+    .report-page-signatures {
+        margin-top: 30px;
+    }
 }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -455,11 +666,31 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 
 <!-- ═══════════════════ TAB 1: DATA ENTRY ═══════════════════ -->
 <section id="tab-entry" class="tab-content space-y-6">
-    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6">
+    
+    <!-- ★ সাব-ট্যাব নেভিগেশন -->
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 p-3">
+        <div class="flex flex-wrap gap-2">
+            <button onclick="switchEntrySub('syllabus')" id="entry-sub-syllabus" class="entry-sub-btn flex-1 md:flex-none px-5 py-3 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 bg-emerald-700 text-white shadow-md">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>১. সিলেবাস নির্ধারণ</span>
+            </button>
+            <button onclick="switchEntrySub('reading')" id="entry-sub-reading" class="entry-sub-btn flex-1 md:flex-none px-5 py-3 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100 border border-slate-200">
+                <i class="fa-solid fa-book-reader"></i>
+                <span>২. পাঠ্য পরিমাণ যাচাই</span>
+            </button>
+        </div>
+        <p id="entry-sub-hint" class="text-[11px] text-slate-500 mt-2 flex items-center gap-2">
+            <i class="fa-solid fa-info-circle text-emerald-600"></i>
+            <span id="entry-sub-hint-text">শিক্ষাবর্ষের শুরুতে কোন জামাতের কোন পর্বে কত পৃষ্ঠা পড়ানো হবে তা এখানে এন্ট্রি করুন। এই ডাটা শিক্ষকদের কাছে শেয়ার করা হবে।</span>
+        </p>
+    </div>
+
+    <!-- ★ সিলেবাস নির্ধারণ ফর্ম (বর্তমান ফর্ম এখানে থাকবে) -->
+    <div id="entry-form-syllabus" class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6">
         <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
             <h2 class="text-lg font-bold text-emerald-900 flex items-center gap-3">
-                <i class="fa-solid fa-file-circle-plus text-emerald-600 text-xl"></i>
-                <span id="form-title">নতুন পাঠ বিবরণী এন্ট্রি করুন</span>
+                <i class="fa-solid fa-clipboard-list text-emerald-600 text-xl"></i>
+                <span id="form-title">নতুন সিলেবাস নির্ধারণ করুন</span>
             </h2>
             <span id="year-badge" class="text-xs px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-semibold">শিক্ষাবর্ষ: ২০২৪-২০২৫</span>
         </div>
@@ -510,6 +741,36 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 </div>
             </div>
 
+                        <!-- ★ সাময়িক/পর্ব-ভিত্তিক সিলেবাস সেকশন -->
+            <div id="term-syllabus-section" class="bg-amber-50/60 p-3.5 rounded-lg border border-amber-200 hidden">
+                <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
+                    <label class="block text-sm font-semibold text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-scroll text-amber-600"></i>
+                        <span id="term-syllabus-label">পর্বের সিলেবাস (সাময়িক ভিত্তিক)</span>
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-amber-700 italic">এই পর্বে মোট কত পৃষ্ঠা পড়ানো হবে</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
+                        <input type="text" id="term-start-chapter" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা</label>
+                        <input type="number" id="term-start-page" min="1" placeholder="১" class="w-full rounded border-slate-300 border p-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
+                        <input type="text" id="term-end-chapter" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা</label>
+                        <input type="number" id="term-end-page" min="1" placeholder="১০" class="w-full rounded border-slate-300 border p-2 text-xs">
+                    </div>
+                </div>
+            </div>
+
             <!-- Step 2: Class & Book -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
@@ -545,7 +806,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 <h3 class="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2">
                     <i class="fa-solid fa-user-chalkboard text-emerald-700"></i> শিক্ষক ও নিসাব তথ্য
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">শিক্ষক *</label>
                         <input type="text" id="teacher-name" required list="teacher-names-datalist" oninput="onTeacherNameInput()" placeholder="নাম লিখুন বা তালিকা থেকে বাছুন" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
@@ -556,25 +817,25 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                         <input type="number" id="total-book-pages" min="0" placeholder="৬০০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">পর্বের নিসাব পৃষ্ঠা</label>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">পর্বের মোট নিসাব পৃষ্ঠা</label>
                         <input type="number" id="term-nisab-pages" min="0" placeholder="১৫০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">দশকের নিসাব পৃষ্ঠা</label>
-                        <input type="number" id="decade-nisab-pages" min="0" placeholder="৪০" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm">
                     </div>
                 </div>
             </div>
 
-            <!-- Step 4: Per-Decade Inputs (NEW!) -->
+            <!-- Step 4: Per-Decade Syllabus (নতুন নাম) -->
             <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
                 <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
                     <h3 class="text-sm font-bold text-amber-900 flex items-center gap-2">
                         <i class="fa-solid fa-book-open text-amber-600"></i>
-                        <span>প্রতিটি দশকের পঠিত বিবরণী (আলাদা এন্ট্রি)</span>
+                        <span>দশকভিত্তিক সিলেবাস (আলাদা এন্ট্রি)</span>
                     </h3>
                     <span id="decade-summary" class="badge bg-amber-200 text-amber-900">মোট: ০ পৃষ্ঠা</span>
                 </div>
+                <p class="text-[11px] text-amber-800 mb-3 flex items-start gap-1.5">
+                    <i class="fa-solid fa-info-circle mt-0.5"></i>
+                    <span>প্রতিটি দশকে কোন অধ্যায় থেকে কোন অধ্যায়, কোন পৃষ্ঠা থেকে কোন পৃষ্ঠা পর্যন্ত পড়ানো হবে এবং ঐ দশকের নিসাব পৃষ্ঠা কত — তা এন্ট্রি করুন।</span>
+                </p>
                 <div id="per-decade-inputs" class="space-y-3">
                     <p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>
                 </div>
@@ -590,6 +851,145 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 </button>
             </div>
         </form>
+    </div>
+
+    <!-- ★ পাঠ্য পরিমাণ যাচাই ফর্ম -->
+    <div id="entry-form-reading" class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6 hidden">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+            <h2 class="text-lg font-bold text-emerald-900 flex items-center gap-3">
+                <i class="fa-solid fa-book-reader text-emerald-600 text-xl"></i>
+                <span>পাঠ্য পরিমাণ যাচাই</span>
+            </h2>
+            <span id="reading-year-badge" class="text-xs px-3 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold">শিক্ষাবর্ষ: ২০২৪-২০২৫</span>
+        </div>
+
+        <!-- ★ STEP 1: সিলেবাস সিলেক্ট -->
+        <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 mb-6">
+            <h3 class="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2 border-b border-amber-200 pb-2">
+                <i class="fa-solid fa-search text-amber-600"></i>
+                <span>ধাপ ১: সিলেবাস খুঁজুন</span>
+            </h3>
+            <p class="text-[11px] text-amber-800 mb-3 flex items-start gap-1.5">
+                <i class="fa-solid fa-info-circle mt-0.5"></i>
+                <span>নিচের ৫টি dropdown দিয়ে সিলেবাস খুঁজুন। সব সিলেক্ট করলে সংশ্লিষ্ট সিলেবাস অটো লোড হবে।</span>
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-700 mb-1">বিভাগ *</label>
+                    <select id="reading-dept" onchange="onReadingDeptChange()" class="w-full rounded-lg border-slate-300 border p-2 bg-white text-xs font-medium">
+                        <option value="">-- বিভাগ --</option>
+                        <option value="shariah">শরীয়াহ</option>
+                        <option value="non_res">অনাবাসিক</option>
+                        <option value="noorani">নূরানী</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-700 mb-1">পর্ব *</label>
+                    <select id="reading-term" onchange="onReadingTermChange()" class="w-full rounded-lg border-slate-300 border p-2 bg-white text-xs font-medium">
+                        <option value="">-- পর্ব --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-700 mb-1">জামাত *</label>
+                    <select id="reading-class" onchange="onReadingClassChange()" class="w-full rounded-lg border-slate-300 border p-2 bg-white text-xs font-arabic">
+                        <option value="">-- জামাত --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-700 mb-1">কিতাব *</label>
+                    <select id="reading-book" onchange="onReadingBookChange()" class="w-full rounded-lg border-slate-300 border p-2 bg-white text-xs font-arabic">
+                        <option value="">-- কিতাব --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-700 mb-1">শিক্ষক *</label>
+                    <select id="reading-teacher" onchange="onReadingTeacherChange()" class="w-full rounded-lg border-slate-300 border p-2 bg-white text-xs">
+                        <option value="">-- শিক্ষক --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ★ STEP 2: সিলেবাস Preview -->
+        <div id="reading-syllabus-preview" class="hidden mb-6">
+            <!-- JS dynamically ভরবে -->
+        </div>
+
+        <!-- ★ STEP 3: Reading Input (দশকভিত্তিক + সাময়িক) -->
+        <div id="reading-input-section" class="hidden">
+            <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 mb-4">
+                <h3 class="text-sm font-bold text-emerald-900 mb-3 flex items-center gap-2 border-b border-emerald-200 pb-2">
+                    <i class="fa-solid fa-pen-to-square text-emerald-600"></i>
+                    <span>ধাপ ৩: পঠিত পরিমাণ এন্ট্রি করুন</span>
+                </h3>
+                <p class="text-[11px] text-emerald-800 mb-3 flex items-start gap-1.5">
+                    <i class="fa-solid fa-info-circle mt-0.5"></i>
+                    <span>দশকভিত্তিক এন্ট্রি করলে সাময়িকের ঘর <strong>অটো-ফিল</strong> হবে (১ম দশকের শুরু + শেষ দশকের শেষ)। চাইলে সাময়িকের ঘর ম্যানুয়ালিও পূরণ করতে পারবেন।</span>
+                </p>
+
+                <!-- দশকভিত্তিক Reading -->
+                <div class="bg-white rounded-lg border border-slate-200 p-3 mb-4">
+                    <h4 class="text-xs font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-amber-600"></i>
+                        <span>দশকভিত্তিক পাঠ্য এন্ট্রি</span>
+                        <span class="text-[10px] text-slate-500 italic">(একাধিক দশকে কী পড়ানো হয়েছে)</span>
+                    </h4>
+                    <div id="reading-decades-inputs" class="space-y-3">
+                        <!-- JS dynamically ভরবে -->
+                    </div>
+                </div>
+
+                <!-- সাময়িক ভিত্তিক Reading -->
+                <div class="bg-amber-50 rounded-lg border border-amber-300 p-3">
+                    <h4 class="text-xs font-bold text-amber-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-scroll text-amber-700"></i>
+                        <span id="reading-term-label">সাময়িক ভিত্তিক পাঠ্য এন্ট্রি</span>
+                        <span class="text-[10px] text-amber-700 italic">(চাইলে ম্যানুয়ালি পূরণ করুন — নাহলে দশক থেকে অটো-fill হবে)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
+                            <input type="text" id="reading-term-start-ch" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic reading-term-field" dir="rtl">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা</label>
+                            <input type="number" id="reading-term-start-pg" min="1" placeholder="১" class="w-full rounded border-slate-300 border p-2 text-xs reading-term-field">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
+                            <input type="text" id="reading-term-end-ch" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic reading-term-field" dir="rtl">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা</label>
+                            <input type="number" id="reading-term-end-pg" min="1" placeholder="১০" class="w-full rounded border-slate-300 border p-2 text-xs reading-term-field">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="text-slate-600 font-semibold">এই পর্বে মোট পঠিত:</span>
+                            <span id="reading-term-total" class="font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-3 py-1">০</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-2 flex-wrap">
+                <button type="button" onclick="resetReadingForm()" class="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 text-sm transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> রিসেট
+                </button>
+                <button type="button" onclick="submitReading()" class="px-6 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-sm shadow-md transition flex items-center gap-2.5">
+                    <i class="fa-solid fa-floppy-disk"></i> সংরক্ষণ করুন
+                </button>
+            </div>
+        </div>
+
+        <!-- ★ কোনো সিলেবাস খুঁজে না পেলে -->
+        <div id="reading-not-found" class="hidden text-center py-10">
+            <i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i>
+            <p class="text-sm text-slate-600 font-semibold">এই সিলেকশনের জন্য কোনো সিলেবাস পাওয়া যায়নি</p>
+            <p class="text-xs text-slate-500 mt-1">ডাটা এন্ট্রি → সিলেবাস নির্ধারণে গিয়ে আগে সিলেবাস যোগ করুন।</p>
+        </div>
     </div>
 </section>
 
@@ -629,67 +1029,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <button onclick="window.print()" class="px-4 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900 transition flex items-center gap-2 shadow">
                 <i class="fa-solid fa-print"></i> প্রিন্ট
             </button>
-            <button onclick="sharePDF('teacher-print-container', 'teacher_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
+            <button onclick="sharePDF('jamat-print-container', 'jamat_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
                 <i class="fa-solid fa-file-pdf"></i> PDF শেয়ার
             </button>
         </div>
     </div>
 
-    <div id="jamat-print-container" class="bg-white p-6 md:p-10 rounded-xl shadow-lg border border-slate-200 print-area font-arabic" dir="rtl">
-        <!-- ★ নতুন হেডার -->
-        <div class="border-2 border-emerald-800 rounded-lg overflow-hidden mb-4">
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-l from-emerald-50 via-amber-50 to-emerald-50">
-                <div class="flex-shrink-0">
-                    <img id="print-logo-jamat" src="" alt="Logo" class="w-20 h-20 object-contain bg-white border-2 border-emerald-700 rounded-full p-1">
-                </div>
-                <div class="flex-1 text-center">
-                    <h1 id="print-arabic-name-jamat" class="text-2xl md:text-3xl font-bold text-emerald-900 font-arabic mb-1">جامعة الإسلامية دار العلوم</h1>
-                    <h2 id="print-bn-name-jamat" class="text-xl md:text-2xl font-bold text-emerald-800 font-bengali mb-1">জামিয়া ইসলামিয়া দারুল উলূম</h2>
-                    <p id="print-addr-jamat" class="text-xs text-slate-700 font-bengali">গ্রাম, উপজেলা, জেলা</p>
-                </div>
-                <div class="flex-shrink-0 w-20"></div>
+    <div id="jamat-print-container" class="bg-slate-100 p-4 md:p-6 rounded-xl print-area">
+        <!-- ★ এখানে JS dynamically report pages তৈরি করবে -->
+        <div id="jamat-report-pages">
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-file-lines text-4xl mb-3"></i>
+                <p>রিপোর্ট তৈরি হচ্ছে...</p>
             </div>
-            <div class="grid grid-cols-3 text-center text-xs bg-emerald-800 text-white font-bengali">
-                <div class="py-2 border-l border-emerald-600"><strong>তারিখ:</strong> <span id="print-date-jamat"></span></div>
-                <div class="py-2 border-l border-emerald-600"><strong>শিক্ষাবর্ষ:</strong> <span id="print-year-jamat">২০২৪-২০২৫</span></div>
-                <div class="py-2"><strong>সেশন:</strong> <span id="print-session-jamat">---</span></div>
-            </div>
-        </div>
-
-        <!-- ★ রিপোর্ট টাইটেল -->
-        <div class="bg-amber-600 text-white py-2 text-center mb-4 rounded-md">
-            <h3 class="text-lg md:text-xl font-bold font-arabic">تقرير المبلغ المقروء (مقادير الأسباق)</h3>
-            <p class="text-xs font-bengali mt-0.5">জামাত ভিত্তিক পাঠ পরিমাণ রিপোর্ট</p>
-        </div>
-
-        <!-- জামাত তথ্য ছক -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-xs border border-black p-2 bg-slate-50 font-sans">
-            <div class="text-right"><strong>জামাত:</strong> <span id="rep-jamat-name" class="font-arabic font-bold">---</span></div>
-            <div class="text-right"><strong>বিভাগ:</strong> <span id="rep-jamat-dept">---</span></div>
-            <div class="text-right"><strong>পর্ব:</strong> <span id="rep-jamat-term">---</span></div>
-            <div class="text-right"><strong>শিক্ষাবর্ষ:</strong> <span id="rep-jamat-year">---</span></div>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-center border-collapse border border-black text-xs">
-                <thead id="jamat-report-thead"></thead>
-                <tbody id="jamat-report-table-body"></tbody>
-            </table>
-        </div>
-
-        <div class="mt-16 pt-8 grid grid-cols-2 justify-between text-center font-bold text-xs">
-            <div><p class="border-t border-black inline-block px-10 pt-1">توقيع أمين التعليم</p></div>
-            <div><p class="border-t border-black inline-block px-10 pt-1">توقيع الرئيس</p></div>
-        </div>
-
-        <!-- ★ প্রিন্ট ফুটার -->
-        <div class="print-footer hidden">
-            <span class="print-footer-line">
-                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> | শিক্ষাবর্ষ: <span id="footer-year-jamat"></span> | প্রিন্টের তারিখ: <span id="footer-date-jamat"></span>
-            </span>
-            <span class="print-footer-line" style="font-size: 8pt; color: #047857;">
-                প্রস্তুতকৃত: মাকাদীরে আসবাক সিস্টেম — কওমী মাদরাসার জন্য
-            </span>
         </div>
     </div>
 </section>
@@ -718,93 +1070,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <button onclick="window.print()" class="px-4 py-2.5 bg-emerald-800 text-white rounded-lg text-sm font-semibold hover:bg-emerald-900 transition flex items-center gap-2 shadow">
                 <i class="fa-solid fa-print"></i> প্রিন্ট
             </button>
-            <button onclick="sharePDF('jamat-print-container', 'jamat_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
+            <button onclick="sharePDF('teacher-print-container', 'teacher_report')" class="px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition flex items-center gap-2 shadow">
                 <i class="fa-solid fa-file-pdf"></i> PDF শেয়ার
             </button>
         </div>
     </div>
 
-    <div id="teacher-print-container" class="bg-white p-6 md:p-10 rounded-xl shadow-lg border border-slate-200 print-area font-arabic" dir="rtl">
-        <!-- ★ নতুন হেডার: মাদরাসার নাম + লোগো + ঠিকানা -->
-        <div class="border-2 border-emerald-800 rounded-lg overflow-hidden mb-4">
-            <div class="flex items-center gap-4 p-4 bg-gradient-to-l from-emerald-50 via-amber-50 to-emerald-50">
-                <div class="flex-shrink-0">
-                    <img id="print-logo-teacher" src="" alt="Logo" class="w-20 h-20 object-contain bg-white border-2 border-emerald-700 rounded-full p-1">
-                </div>
-                <div class="flex-1 text-center">
-                    <h1 id="print-arabic-name-teacher" class="text-2xl md:text-3xl font-bold text-emerald-900 font-arabic mb-1">جامعة الإسلامية دار العلوم</h1>
-                    <h2 id="print-bn-name-teacher" class="text-xl md:text-2xl font-bold text-emerald-800 font-bengali mb-1">জামিয়া ইসলামিয়া দারুল উলূম</h2>
-                    <p id="print-addr-teacher" class="text-xs text-slate-700 font-bengali">গ্রাম, উপজেলা, জেলা</p>
-                </div>
-                <div class="flex-shrink-0 w-20"></div>
+    <div id="teacher-print-container" class="bg-slate-100 p-4 md:p-6 rounded-xl print-area">
+        <!-- ★ এখানে JS dynamically report pages তৈরি করবে -->
+        <div id="teacher-report-pages">
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-user-tie text-4xl mb-3"></i>
+                <p>শিক্ষক রিপোর্ট তৈরি হচ্ছে...</p>
             </div>
-            <!-- তথ্য বার -->
-            <div class="grid grid-cols-3 text-center text-xs bg-emerald-800 text-white font-bengali">
-                <div class="py-2 border-l border-emerald-600"><strong>তারিখ:</strong> <span id="print-date-teacher"></span></div>
-                <div class="py-2 border-l border-emerald-600"><strong>শিক্ষাবর্ষ:</strong> <span id="print-year-teacher">২০২৪-২০২৫</span></div>
-                <div class="py-2"><strong>সেশন:</strong> <span id="print-session-teacher">---</span></div>
-            </div>
-        </div>
-
-        <!-- ★ রিপোর্ট টাইটেল -->
-        <div class="bg-amber-600 text-white py-2 text-center mb-4 rounded-md">
-            <h3 class="text-lg md:text-xl font-bold font-arabic">تقرير المبلغ المقروء (خاص بالأستاذ - مقادير الأسباق)</h3>
-            <p class="text-xs font-bengali mt-0.5">শিক্ষকভিত্তিক পাঠ বিবরণী রিপোর্ট</p>
-        </div>
-
-        <!-- শিক্ষকের তথ্য ছক -->
-        <div class="mb-4 font-sans text-xs">
-            <table class="w-full border border-black text-right">
-                <tbody>
-                <tr>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold w-32">শিক্ষক:</td>
-                    <td class="p-2 border border-black font-bold text-sm" id="rep-teacher-name">---</td>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold w-28">পদবী:</td>
-                    <td class="p-2 border border-black" id="rep-teacher-post">---</td>
-                </tr>
-                <tr>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold">কার্ড নং:</td>
-                    <td class="p-2 border border-black font-mono" id="rep-teacher-card">---</td>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold">বিভাগ:</td>
-                    <td class="p-2 border border-black" id="rep-teacher-dept">---</td>
-                </tr>
-                <tr>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold">মোবাইল:</td>
-                    <td class="p-2 border border-black font-mono" id="rep-teacher-mobile">---</td>
-                    <td class="p-2 border border-black bg-emerald-100 font-bold">শিক্ষাবর্ষ:</td>
-                    <td class="p-2 border border-black" id="rep-teacher-year">---</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h3 class="text-center font-bold text-sm mb-2 underline">শিক্ষকভিত্তিক পাঠ বিবরণী ও নিসাব তুলনা</h3>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-center border-collapse border border-black text-xs">
-                <thead id="teacher-report-thead"></thead>
-                <tbody id="teacher-report-table-body"></tbody>
-            </table>
-        </div>
-
-        <div id="teacher-nisab-summary" class="mt-4 border border-black p-3 rounded-sm text-xs bg-slate-50 font-sans"></div>
-
-        <div class="mt-8 border border-black p-4 rounded-sm text-xs">
-            <p class="font-bold mb-2">পরিদর্শকের মন্তব্য:</p>
-            <div class="h-10 border-b border-dashed border-slate-400"></div>
-            <div class="mt-4 text-left font-bold">
-                <span>স্বাক্ষর: .......................................</span>
-            </div>
-        </div>
-
-        <!-- ★ প্রিন্ট ফুটার -->
-        <div class="print-footer hidden">
-            <span class="print-footer-line">
-                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> | শিক্ষাবর্ষ: <span id="footer-year-teacher"></span> | প্রিন্টের তারিখ: <span id="footer-date-teacher"></span>
-            </span>
-            <span class="print-footer-line" style="font-size: 8pt; color: #047857;">
-                প্রস্তুতকৃত: মাকাদীরে আসবাক সিস্টেম — কওমী মাদরাসার জন্য
-            </span>
         </div>
     </div>
 </section>
@@ -857,6 +1135,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <table class="w-full text-left text-sm border-collapse">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-semibold border-b text-xs">
+                        <th class="p-3">টাইপ</th>
                         <th class="p-3">পর্ব</th>
                         <th class="p-3">জামাত</th>
                         <th class="p-3">কিতাব</th>
@@ -1564,6 +1843,13 @@ window.loadRecordsFromFirestore = async function() {
 function migrateRecord(r) {
     // যদি ইতিমধ্যেই v3 ফরম্যাটে থাকে
     if (r.decadesData && Array.isArray(r.decadesData)) {
+        // ★ type ফিল্ড না থাকলে syllabus ধরে নাও (পুরনো সব ডাটা সিলেবাস ছিল)
+        if (!r.type) r.type = 'syllabus';
+        // ★ প্রতিটি decade-এ nisab ফিল্ড না থাকলে 0 বসাও
+        r.decadesData = r.decadesData.map(d => ({
+            ...d,
+            nisab: d.nisab || 0
+        }));
         return r;
     }
     
@@ -1582,12 +1868,14 @@ function migrateRecord(r) {
             end: endPage,
             startCh: r.startChapter || '',
             endCh: r.endChapter || '',
+            nisab: r.decadeNisabPages || 0,
             total: total
         });
     });
     
     return {
         id: r.id || Date.now().toString() + Math.random(),
+        type: 'syllabus',  // ★ পুরনো সব ডাটা syllabus
         term: r.term || '',
         dept: r.dept || '',
         className: r.className || '',
@@ -1597,7 +1885,12 @@ function migrateRecord(r) {
         teacherName: r.teacherName || '',
         totalBookPages: r.totalBookPages || 0,
         termNisabPages: r.termNisabPages || 0,
-        decadeNisabPages: r.decadeNisabPages || 0,
+        termSyllabus: {
+            startCh: '',
+            startPage: 0,
+            endCh: '',
+            endPage: 0
+        },
         decadesData: decadesData,
         totalPages: decadesData.reduce((a, c) => a + c.total, 0),
         createdAt: r.createdAt || new Date().toISOString()
@@ -1662,6 +1955,644 @@ function showToast(msg, type = 'success') {
     document.getElementById('toast-container').appendChild(div);
     setTimeout(() => { div.style.opacity = '0'; div.style.transition = 'opacity .3s'; setTimeout(() => div.remove(), 300); }, 3000);
 }
+
+// ═══════════════════ ডাটা এন্ট্রি সাব-ট্যাব ═══════════════════
+window.switchEntrySub = function(sub) {
+    // বাটন অ্যাক্টিভেশন
+    document.querySelectorAll('.entry-sub-btn').forEach(b => {
+        b.classList.remove('bg-emerald-700', 'text-white', 'shadow-md');
+        b.classList.add('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    });
+    const activeBtn = document.getElementById('entry-sub-' + sub);
+    if (activeBtn) {
+        activeBtn.classList.add('bg-emerald-700', 'text-white', 'shadow-md');
+        activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    }
+    
+    // ফর্ম show/hide
+    const syllabusForm = document.getElementById('entry-form-syllabus');
+    const readingForm = document.getElementById('entry-form-reading');
+    
+    if (sub === 'syllabus') {
+        syllabusForm.classList.remove('hidden');
+        readingForm.classList.add('hidden');
+        const hintEl = document.getElementById('entry-sub-hint-text');
+        if (hintEl) hintEl.textContent = 'শিক্ষাবর্ষের শুরুতে কোন জামাতের কোন পর্বে কত পৃষ্ঠা পড়ানো হবে তা এখানে এন্ট্রি করুন। এই ডাটা শিক্ষকদের কাছে শেয়ার করা হবে।';
+    } else if (sub === 'reading') {
+        syllabusForm.classList.add('hidden');
+        readingForm.classList.remove('hidden');
+        const hintEl = document.getElementById('entry-sub-hint-text');
+        if (hintEl) hintEl.textContent = 'পর্ব/সাময়িক শেষে শিক্ষক আসলে কতটুকু পড়িয়েছেন তা এখানে এন্ট্রি করুন। সিলেবাসের সাথে তুলনা করে অটো হিসাব হবে।';
+    }
+};
+
+// ═══════════════════ পাঠ্য পরিমাণ যাচাই — Dropdown Chain ═══════════════════
+let _readingSelectedSyllabus = null;
+
+window.onReadingDeptChange = function() {
+    const dept = document.getElementById('reading-dept').value;
+    const termSel = document.getElementById('reading-term');
+    termSel.innerHTML = '<option value="">-- পর্ব --</option>';
+    document.getElementById('reading-class').innerHTML = '<option value="">-- জামাত --</option>';
+    document.getElementById('reading-book').innerHTML = '<option value="">-- কিতাব --</option>';
+    document.getElementById('reading-teacher').innerHTML = '<option value="">-- শিক্ষক --</option>';
+    hideReadingSections();
+    
+    if (dept && TERM_CONFIG[dept]) {
+        Object.keys(TERM_CONFIG[dept].terms).forEach(key => {
+            const t = TERM_CONFIG[dept].terms[key];
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = t.name;
+            termSel.appendChild(opt);
+        });
+    }
+};
+
+window.onReadingTermChange = function() {
+    const dept = document.getElementById('reading-dept').value;
+    const term = document.getElementById('reading-term').value;
+    const classSel = document.getElementById('reading-class');
+    classSel.innerHTML = '<option value="">-- জামাত --</option>';
+    document.getElementById('reading-book').innerHTML = '<option value="">-- কিতাব --</option>';
+    document.getElementById('reading-teacher').innerHTML = '<option value="">-- শিক্ষক --</option>';
+    hideReadingSections();
+    
+    if (!dept || !term) return;
+    
+    // শুধু যেসব জামাতে এই বিভাগ + পর্বে সিলেবাস আছে সেগুলো দেখাও
+    const syllabusRecords = records.filter(r => 
+        r.dept === dept && 
+        r.term === term && 
+        (r.type === 'syllabus' || !r.type)
+    );
+    
+    // শিক্ষক হলে শুধু নিজের assign করা
+    let filtered = syllabusRecords;
+    if (currentUserData?.role === 'teacher') {
+        const myName = currentUserData.teacherName || currentUserData.name;
+        const assignments = configData?.assignments || {};
+        filtered = filtered.filter(r => {
+            const key = r.dept + '::' + r.className;
+            return (assignments[key] || []).includes(myName);
+        });
+    }
+    
+    // Unique জামাত
+    const uniqueClasses = [...new Set(filtered.map(r => r.className))];
+    
+    if (uniqueClasses.length === 0) {
+        classSel.innerHTML = '<option value="">-- এই সিলেকশনে কোনো সিলেবাস নেই --</option>';
+        return;
+    }
+    
+    uniqueClasses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        classSel.appendChild(opt);
+    });
+};
+
+window.onReadingClassChange = function() {
+    const dept = document.getElementById('reading-dept').value;
+    const term = document.getElementById('reading-term').value;
+    const className = document.getElementById('reading-class').value;
+    const bookSel = document.getElementById('reading-book');
+    bookSel.innerHTML = '<option value="">-- কিতাব --</option>';
+    document.getElementById('reading-teacher').innerHTML = '<option value="">-- শিক্ষক --</option>';
+    hideReadingSections();
+    
+    if (!dept || !term || !className) return;
+    
+    let syllabusRecords = records.filter(r => 
+        r.dept === dept && 
+        r.term === term && 
+        r.className === className &&
+        (r.type === 'syllabus' || !r.type)
+    );
+    
+    if (currentUserData?.role === 'teacher') {
+        const myName = currentUserData.teacherName || currentUserData.name;
+        const assignments = configData?.assignments || {};
+        syllabusRecords = syllabusRecords.filter(r => {
+            const key = r.dept + '::' + r.className;
+            return (assignments[key] || []).includes(myName);
+        });
+    }
+    
+    const uniqueBooks = [...new Set(syllabusRecords.map(r => r.bookName))];
+    
+    if (uniqueBooks.length === 0) {
+        bookSel.innerHTML = '<option value="">-- কোনো কিতাব নেই --</option>';
+        return;
+    }
+    
+    uniqueBooks.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.textContent = b;
+        bookSel.appendChild(opt);
+    });
+};
+
+window.onReadingBookChange = function() {
+    const dept = document.getElementById('reading-dept').value;
+    const term = document.getElementById('reading-term').value;
+    const className = document.getElementById('reading-class').value;
+    const bookName = document.getElementById('reading-book').value;
+    const teacherSel = document.getElementById('reading-teacher');
+    teacherSel.innerHTML = '<option value="">-- শিক্ষক --</option>';
+    hideReadingSections();
+    
+    if (!dept || !term || !className || !bookName) return;
+    
+    let syllabusRecords = records.filter(r => 
+        r.dept === dept && 
+        r.term === term && 
+        r.className === className &&
+        r.bookName === bookName &&
+        (r.type === 'syllabus' || !r.type)
+    );
+    
+    if (currentUserData?.role === 'teacher') {
+        const myName = currentUserData.teacherName || currentUserData.name;
+        const assignments = configData?.assignments || {};
+        syllabusRecords = syllabusRecords.filter(r => {
+            const key = r.dept + '::' + r.className;
+            return (assignments[key] || []).includes(myName);
+        });
+    }
+    
+    const uniqueTeachers = [...new Set(syllabusRecords.map(r => r.teacherName))];
+    
+    if (uniqueTeachers.length === 0) {
+        teacherSel.innerHTML = '<option value="">-- কোনো শিক্ষক নেই --</option>';
+        return;
+    }
+    
+    uniqueTeachers.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        teacherSel.appendChild(opt);
+    });
+};
+
+window.onReadingTeacherChange = function() {
+    const dept = document.getElementById('reading-dept').value;
+    const term = document.getElementById('reading-term').value;
+    const className = document.getElementById('reading-class').value;
+    const bookName = document.getElementById('reading-book').value;
+    const teacherName = document.getElementById('reading-teacher').value;
+    
+    hideReadingSections();
+    
+    if (!dept || !term || !className || !bookName || !teacherName) return;
+    
+    // ★ সংশ্লিষ্ট সিলেবাস খুঁজি
+    const syllabus = records.find(r => 
+        r.dept === dept && 
+        r.term === term && 
+        r.className === className &&
+        r.bookName === bookName &&
+        r.teacherName === teacherName &&
+        (r.type === 'syllabus' || !r.type)
+    );
+    
+    if (!syllabus) {
+        showReadingNotFound();
+        return;
+    }
+    
+    _readingSelectedSyllabus = syllabus;
+    showReadingSyllabus(syllabus);
+};
+
+function hideReadingSections() {
+    document.getElementById('reading-syllabus-preview')?.classList.add('hidden');
+    document.getElementById('reading-input-section')?.classList.add('hidden');
+    document.getElementById('reading-not-found')?.classList.add('hidden');
+}
+
+function showReadingNotFound() {
+    document.getElementById('reading-not-found')?.classList.remove('hidden');
+}
+
+function showReadingSyllabus(syllabus) {
+    const previewEl = document.getElementById('reading-syllabus-preview');
+    if (!previewEl) return;
+    
+    const termName = getTermName(syllabus.term);
+    const deptName = getDeptName(syllabus.dept);
+    const teacherMeta = getTeacherMeta(syllabus.teacherName);
+    
+    // ★ সিলেবাস preview
+    previewEl.innerHTML = `
+        <div class="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-4">
+            <div class="flex items-center justify-between mb-3 border-b border-emerald-200 pb-2 flex-wrap gap-2">
+                <h3 class="text-sm font-bold text-emerald-900 flex items-center gap-2">
+                    <i class="fa-solid fa-check-circle text-emerald-600"></i>
+                    <span>ধাপ ২: সিলেবাস পাওয়া গেছে</span>
+                </h3>
+                <span class="badge bg-emerald-200 text-emerald-900">
+                    <i class="fa-solid fa-clipboard-list"></i> সিলেবাস
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs mb-3">
+                <div><strong class="text-emerald-800">জামাত:</strong> <span class="font-arabic">${syllabus.className}</span></div>
+                <div><strong class="text-emerald-800">বিভাগ:</strong> ${deptName}</div>
+                <div><strong class="text-emerald-800">পর্ব:</strong> ${termName}</div>
+                <div><strong class="text-emerald-800">শাখা:</strong> ${syllabus.section === 'নাই' ? 'নাই' : syllabus.section}</div>
+                <div class="md:col-span-2"><strong class="text-emerald-800">কিতাব:</strong> <span class="font-arabic">${syllabus.bookName}</span></div>
+                <div><strong class="text-emerald-800">প্রকাশনী:</strong> <span class="font-arabic">${syllabus.publisher || '-'}</span></div>
+                <div><strong class="text-emerald-800">শিক্ষক:</strong> ${syllabus.teacherName} <small class="text-slate-500">(${teacherMeta.post || '-'})</small></div>
+            </div>
+            
+            <!-- সিলেবাস সংখ্যা সারসংক্ষেপ -->
+            <div class="grid grid-cols-3 gap-2 text-xs bg-white rounded-lg border border-emerald-200 p-2 mb-3">
+                <div class="text-center"><strong class="block text-emerald-800">মোট কিতাব পৃষ্ঠা</strong> <span class="text-lg font-bold">${syllabus.totalBookPages || '-'}</span></div>
+                <div class="text-center"><strong class="block text-emerald-800">পর্বের মোট নিসাব</strong> <span class="text-lg font-bold">${syllabus.termNisabPages || '-'}</span></div>
+                <div class="text-center"><strong class="block text-emerald-800">দশক সংখ্যা</strong> <span class="text-lg font-bold">${(syllabus.decadesData || []).length}</span></div>
+            </div>
+            
+            ${syllabus.termSyllabus && syllabus.termSyllabus.startPage > 0 ? `
+            <div class="text-xs bg-white rounded-lg border border-emerald-200 p-2 mb-3">
+                <strong class="text-emerald-800">${termName} সিলেবাস:</strong>
+                <span class="font-arabic">${syllabus.termSyllabus.startCh || '-'} (পৃ. ${syllabus.termSyllabus.startPage}) → ${syllabus.termSyllabus.endCh || '-'} (পৃ. ${syllabus.termSyllabus.endPage})</span>
+            </div>
+            ` : ''}
+            
+            <div class="text-[11px] text-emerald-800 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-down"></i>
+                <span>নিচে দশকভিত্তিক পাঠ্য এন্ট্রি করুন</span>
+            </div>
+        </div>
+    `;
+    previewEl.classList.remove('hidden');
+    
+    // ★ দশক input section দেখাও ও populate করো
+    document.getElementById('reading-input-section').classList.remove('hidden');
+    const termLabel = document.getElementById('reading-term-label');
+    if (termLabel) termLabel.textContent = termName + ' এর সাময়িক ভিত্তিক পাঠ্য এন্ট্রি';
+    
+    renderReadingDecadesInputs(syllabus);
+}
+
+function renderReadingDecadesInputs(syllabus) {
+    const container = document.getElementById('reading-decades-inputs');
+    if (!container) return;
+    
+    const decadesData = syllabus.decadesData || [];
+    
+    if (decadesData.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">সিলেবাসে কোনো দশক নেই</p>';
+        return;
+    }
+    
+    // ★ পুরনো reading data থাকলে সেটা load করো
+    const existingReading = records.find(r => 
+        r.type === 'reading' &&
+        r.dept === syllabus.dept &&
+        r.term === syllabus.term &&
+        r.className === syllabus.className &&
+        r.bookName === syllabus.bookName &&
+        r.teacherName === syllabus.teacherName
+    );
+    const existingReadingsByDecade = {};
+    if (existingReading && existingReading.decadesReadings) {
+        existingReading.decadesReadings.forEach(d => {
+            existingReadingsByDecade[d.decade] = d;
+        });
+    }
+    
+    container.innerHTML = '';
+    
+    decadesData.forEach((dec, idx) => {
+        const prev = existingReadingsByDecade[dec.decade] || {};
+        const row = document.createElement('div');
+        row.className = 'rounded-lg p-3 border';
+        row.style.background = '#fef3c7';
+        row.style.borderColor = '#fcd34d';
+        row.innerHTML = `
+            <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <div class="text-xs font-bold text-amber-900 bg-amber-200 rounded px-3 py-1">
+                    ${dec.decade}
+                </div>
+                <div class="text-[10px] text-amber-800">
+                    <strong>সিলেবাস:</strong>
+                    <span class="font-arabic">${dec.startCh || '-'}</span>
+                    <span>পৃ. ${dec.start} - ${dec.end}</span>
+                    <span class="font-arabic">(${dec.endCh || '-'})</span>
+                    | <strong>নিসাব:</strong> ${dec.nisab || 0} পৃষ্ঠা
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">পঠিত শুরুর অধ্যায়</label>
+                    <input type="text" data-dec="${dec.decade}" data-field="startCh" value="${prev.startCh || ''}" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic reading-decade-field" dir="rtl">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা</label>
+                    <input type="number" data-dec="${dec.decade}" data-field="start" value="${prev.start || ''}" min="1" placeholder="১" class="w-full rounded border-slate-300 border p-1.5 text-xs reading-decade-field">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">পঠিত শেষ অধ্যায়</label>
+                    <input type="text" data-dec="${dec.decade}" data-field="endCh" value="${prev.endCh || ''}" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic reading-decade-field" dir="rtl">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা</label>
+                    <input type="number" data-dec="${dec.decade}" data-field="end" value="${prev.end || ''}" min="1" placeholder="১০" class="w-full rounded border-slate-300 border p-1.5 text-xs reading-decade-field">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">মোট পঠিত</label>
+                    <div class="text-xs font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-2 py-1.5 text-center" data-reading-total="${dec.decade}">০</div>
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+    
+    // ★ input change listeners
+    container.querySelectorAll('.reading-decade-field').forEach(inp => {
+        inp.addEventListener('input', () => {
+            recalcReadingDecadeTotals();
+            autoFillTermFromDecades();
+        });
+    });
+    
+    // পুরনো term-level data load
+    if (existingReading && existingReading.termReading) {
+        document.getElementById('reading-term-start-ch').value = existingReading.termReading.startCh || '';
+        document.getElementById('reading-term-start-pg').value = existingReading.termReading.start || '';
+        document.getElementById('reading-term-end-ch').value = existingReading.termReading.endCh || '';
+        document.getElementById('reading-term-end-pg').value = existingReading.termReading.end || '';
+    }
+    
+    recalcReadingDecadeTotals();
+    recalcTermTotal();
+}
+
+function recalcReadingDecadeTotals() {
+    document.querySelectorAll('.reading-decade-field').forEach(inp => {
+        const dec = inp.dataset.dec;
+        const start = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="start"]`)?.value) || 0;
+        const end = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="end"]`)?.value) || 0;
+        const totalEl = document.querySelector(`[data-reading-total="${dec}"]`);
+        if (totalEl) {
+            if (start > 0 && end >= start) {
+                totalEl.textContent = (end - start + 1);
+            } else if (end > 0 && end < start) {
+                totalEl.textContent = 'ভুল!';
+                totalEl.style.color = '#dc2626';
+            } else {
+                totalEl.textContent = '০';
+                totalEl.style.color = '';
+            }
+        }
+    });
+}
+
+function autoFillTermFromDecades() {
+    // ★ ১ম দশকের startCh/start + শেষ দশকের endCh/end → term fields
+    const allDecRows = document.querySelectorAll('#reading-decades-inputs > div');
+    if (allDecRows.length === 0) return;
+    
+    const firstRow = allDecRows[0];
+    const lastRow = allDecRows[allDecRows.length - 1];
+    
+    const firstStartCh = firstRow.querySelector('input[data-field="startCh"]')?.value || '';
+    const firstStartPg = firstRow.querySelector('input[data-field="start"]')?.value || '';
+    const lastEndCh = lastRow.querySelector('input[data-field="endCh"]')?.value || '';
+    const lastEndPg = lastRow.querySelector('input[data-field="end"]')?.value || '';
+    
+    // শুধু তখনই auto-fill করব যখন term fields ফাঁকা
+    const termStartCh = document.getElementById('reading-term-start-ch');
+    const termStartPg = document.getElementById('reading-term-start-pg');
+    const termEndCh = document.getElementById('reading-term-end-ch');
+    const termEndPg = document.getElementById('reading-term-end-pg');
+    
+    if (termStartCh && !termStartCh.dataset.manual) {
+        termStartCh.value = firstStartCh;
+        termStartCh.readOnly = true;
+        termStartCh.classList.add('bg-slate-50');
+    }
+    if (termStartPg && !termStartPg.dataset.manual) {
+        termStartPg.value = firstStartPg;
+        termStartPg.readOnly = true;
+        termStartPg.classList.add('bg-slate-50');
+    }
+    if (termEndCh && !termEndCh.dataset.manual) {
+        termEndCh.value = lastEndCh;
+        termEndCh.readOnly = true;
+        termEndCh.classList.add('bg-slate-50');
+    }
+    if (termEndPg && !termEndPg.dataset.manual) {
+        termEndPg.value = lastEndPg;
+        termEndPg.readOnly = true;
+        termEndPg.classList.add('bg-slate-50');
+    }
+    
+    recalcTermTotal();
+}
+
+function recalcTermTotal() {
+    const start = parseInt(document.getElementById('reading-term-start-pg')?.value) || 0;
+    const end = parseInt(document.getElementById('reading-term-end-pg')?.value) || 0;
+    const totalEl = document.getElementById('reading-term-total');
+    if (totalEl) {
+        if (start > 0 && end >= start) {
+            totalEl.textContent = (end - start + 1);
+        } else {
+            totalEl.textContent = '০';
+        }
+    }
+}
+
+// ═══════════════════ Reading সেভ করা ═══════════════════
+window.submitReading = async function() {
+    if (!_readingSelectedSyllabus) {
+        showToast('⚠️ আগে সিলেবাস সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const syll = _readingSelectedSyllabus;
+    
+    // ★ দশকভিত্তিক reading collect করি
+    const decadesReadings = [];
+    let hasAnyDecadeData = false;
+    let validationError = null;
+    
+    const decadeRows = document.querySelectorAll('#reading-decades-inputs > div');
+    decadeRows.forEach((row, idx) => {
+        const decName = row.querySelector('input[data-field="start"]')?.dataset.dec;
+        const startCh = row.querySelector('input[data-field="startCh"]')?.value || '';
+        const startPg = parseInt(row.querySelector('input[data-field="start"]')?.value) || 0;
+        const endCh = row.querySelector('input[data-field="endCh"]')?.value || '';
+        const endPg = parseInt(row.querySelector('input[data-field="end"]')?.value) || 0;
+        
+        // কোন ডাটা থাকলে validate
+        const hasData = startCh || startPg || endCh || endPg;
+        if (hasData) {
+            hasAnyDecadeData = true;
+            if (startPg <= 0) { validationError = `${decName}: পঠিত শুরুর পৃষ্ঠা দিন`; return; }
+            if (endPg <= 0) { validationError = `${decName}: পঠিত শেষ পৃষ্ঠা দিন`; return; }
+            if (endPg < startPg) { validationError = `${decName}: শেষ পৃষ্ঠা শুরুর চেয়ে ছোট`; return; }
+            
+            // সিলেবাসের সাথে মেলানো
+            const syllDec = (syll.decadesData || []).find(d => d.decade === decName);
+            const nisab = syllDec?.nisab || 0;
+            const total = endPg - startPg + 1;
+            const diff = total - nisab;
+            
+            decadesReadings.push({
+                decade: decName,
+                startCh, start: startPg,
+                endCh, end: endPg,
+                total,
+                nisab,
+                diff
+            });
+        }
+    });
+    
+    if (validationError) { showToast('⚠️ ' + validationError, 'error'); return; }
+    
+    // ★ সাময়িক reading
+    const termStartCh = document.getElementById('reading-term-start-ch')?.value || '';
+    const termStartPg = parseInt(document.getElementById('reading-term-start-pg')?.value) || 0;
+    const termEndCh = document.getElementById('reading-term-end-ch')?.value || '';
+    const termEndPg = parseInt(document.getElementById('reading-term-end-pg')?.value) || 0;
+    
+    const hasTermData = termStartCh || termStartPg || termEndCh || termEndPg;
+    
+    if (!hasAnyDecadeData && !hasTermData) {
+        showToast('⚠️ কমপক্ষে দশক বা সাময়িকের একটি ঘর পূরণ করুন', 'warn');
+        return;
+    }
+    
+    // Validation for term data
+    if (hasTermData) {
+        if (termStartPg <= 0) { showToast('⚠️ সাময়িক: পঠিত শুরুর পৃষ্ঠা দিন', 'warn'); return; }
+        if (termEndPg <= 0) { showToast('⚠️ সাময়িক: পঠিত শেষ পৃষ্ঠা দিন', 'warn'); return; }
+        if (termEndPg < termStartPg) { showToast('⚠️ সাময়িক: শেষ পৃষ্ঠা শুরুর চেয়ে ছোট', 'warn'); return; }
+    }
+    
+    const termTotal = (termStartPg > 0 && termEndPg >= termStartPg) 
+        ? (termEndPg - termStartPg + 1) 
+        : 0;
+    const termNisab = syll.termNisabPages || 0;
+    const termDiff = termTotal - termNisab;
+    
+    // ★ পুরনো reading খুঁজে বের করি
+    const existingIdx = records.findIndex(r => 
+        r.type === 'reading' &&
+        r.dept === syll.dept &&
+        r.term === syll.term &&
+        r.className === syll.className &&
+        r.bookName === syll.bookName &&
+        r.teacherName === syll.teacherName
+    );
+    
+    // ★ Reading record
+    const readingData = {
+        id: existingIdx >= 0 ? records[existingIdx].id : Date.now().toString(),
+        type: 'reading',
+        linkedSyllabusId: syll.id,  // ★ সিলেবাসের সাথে link
+        term: syll.term,
+        dept: syll.dept,
+        className: syll.className,
+        section: syll.section,
+        bookName: syll.bookName,
+        publisher: syll.publisher,
+        teacherName: syll.teacherName,
+        totalBookPages: syll.totalBookPages,
+        termNisabPages: syll.termNisabPages,
+        termSyllabus: syll.termSyllabus || {},
+        decadesData: syll.decadesData || [],  // সিলেবাসের তথ্য রাখি তুলনার জন্য
+        // ★ Actual reading
+        decadesReadings: decadesReadings,
+        termReading: {
+            startCh: termStartCh,
+            start: termStartPg,
+            endCh: termEndCh,
+            end: termEndPg,
+            total: termTotal,
+            nisab: termNisab,
+            diff: termDiff
+        },
+        totalReadPages: decadesReadings.reduce((a, c) => a + c.total, 0),
+        createdAt: existingIdx >= 0 ? records[existingIdx].createdAt : new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: existingIdx >= 0 ? records[existingIdx].createdBy : (currentUser?.uid || 'unknown'),
+        createdByEmail: currentUser?.email || 'unknown'
+    };
+    
+    if (existingIdx >= 0) {
+        records[existingIdx] = readingData;
+    } else {
+        records.push(readingData);
+    }
+    
+    // Firestore-এ সেভ
+    const ok = await saveRecordToFirestore(readingData);
+    if (ok) {
+        saveRecordsToStorage();
+        showToast('✅ পাঠ্য পরিমাণ সংরক্ষিত হয়েছে', 'success');
+        renderSavedDataTable();
+    }
+};
+
+window.resetReadingForm = function() {
+    // সব dropdown reset
+    document.getElementById('reading-dept').value = '';
+    document.getElementById('reading-term').innerHTML = '<option value="">-- পর্ব --</option>';
+    document.getElementById('reading-class').innerHTML = '<option value="">-- জামাত --</option>';
+    document.getElementById('reading-book').innerHTML = '<option value="">-- কিতাব --</option>';
+    document.getElementById('reading-teacher').innerHTML = '<option value="">-- শিক্ষক --</option>';
+    
+    // Sections hide
+    hideReadingSections();
+    
+    // Term fields reset
+    ['reading-term-start-ch','reading-term-start-pg','reading-term-end-ch','reading-term-end-pg'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = '';
+            el.readOnly = false;
+            el.classList.remove('bg-slate-50');
+            delete el.dataset.manual;
+        }
+    });
+    
+    document.getElementById('reading-term-total').textContent = '০';
+    _readingSelectedSyllabus = null;
+};
+
+// ★ পুরনো reading auto-load করার জন্য helper
+window.loadExistingReading = function(syllabus) {
+    // এই helper প্রয়োজন হলে call করা যাবে ভবিষ্যতে
+    const existing = records.find(r => 
+        r.type === 'reading' &&
+        r.dept === syllabus.dept &&
+        r.term === syllabus.term &&
+        r.className === syllabus.className &&
+        r.bookName === syllabus.bookName &&
+        r.teacherName === syllabus.teacherName
+    );
+    return existing || null;
+};
+
+// term field-এ manual input হলে auto-fill বন্ধ হবে
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('reading-term-field')) {
+        e.target.dataset.manual = 'true';
+        e.target.readOnly = false;
+        e.target.classList.remove('bg-slate-50');
+        recalcTermTotal();
+    }
+});
 
 // ═══════════════════ TAB SWITCH ═══════════════════
 function switchTab(tabId) {
@@ -1731,6 +2662,25 @@ function onTermChange() {
     document.getElementById('per-decade-inputs').innerHTML = '<p class="text-xs text-slate-500 italic text-center py-4">উপরে দশক নির্বাচন করুন — এখানে প্রতিটি দশকের ইনপুট ফিল্ড আসবে</p>';
     document.getElementById('decade-summary').textContent = 'মোট: ০ পৃষ্ঠা';
 
+    // ★ সাময়িক সেকশন show/hide
+    const termSection = document.getElementById('term-syllabus-section');
+    const termLabel = document.getElementById('term-syllabus-label');
+    if (termSection && termLabel) {
+        if (term && TERM_CONFIG[dept] && TERM_CONFIG[dept].terms[term]) {
+            const termName = TERM_CONFIG[dept].terms[term].name;
+            termLabel.textContent = termName + ' এর সিলেবাস (সাময়িক ভিত্তিক)';
+            termSection.classList.remove('hidden');
+            
+            // পুরনো ভ্যালু clear
+            ['term-start-chapter','term-start-page','term-end-chapter','term-end-page'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+        } else {
+            termSection.classList.add('hidden');
+        }
+    }
+
     if (dept && term && TERM_CONFIG[dept] && TERM_CONFIG[dept].terms[term]) {
         TERM_CONFIG[dept].terms[term].decades.forEach(dec => {
             const label = document.createElement('label');
@@ -1765,33 +2715,41 @@ function renderPerDecadeInputs() {
     }
 
     selected.forEach((dec, idx) => {
-        const prev = existingData[dec] || { start: '', end: '', startCh: '', endCh: '' };
+        const prev = existingData[dec] || { start: '', end: '', startCh: '', endCh: '', nisab: '' };
         const row = document.createElement('div');
-        row.className = 'decade-input-row rounded-lg p-3 grid grid-cols-1 md:grid-cols-6 gap-2 items-end';
+        row.className = 'decade-input-row rounded-lg p-3';
         row.innerHTML = `
-            <div class="md:col-span-1">
-                <label class="text-[10px] font-bold text-amber-900 block mb-1">দশক</label>
-                <div class="text-xs font-bold text-amber-900 bg-amber-100 rounded px-2 py-1.5">${dec}</div>
+            <div class="grid grid-cols-1 md:grid-cols-6 gap-2 items-end mb-2">
+                <div class="md:col-span-1">
+                    <label class="text-[10px] font-bold text-amber-900 block mb-1">দশক</label>
+                    <div class="text-xs font-bold text-amber-900 bg-amber-100 rounded px-2 py-1.5">${dec}</div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
+                    <input type="text" data-dec="${dec}" data-field="startCh" value="${prev.startCh || ''}" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা *</label>
+                    <input type="number" data-dec="${dec}" data-field="start" value="${prev.start || ''}" min="1" required placeholder="১" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
+                    <input type="text" data-dec="${dec}" data-field="endCh" value="${prev.endCh || ''}" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা *</label>
+                    <input type="number" data-dec="${dec}" data-field="end" value="${prev.end || ''}" min="1" required placeholder="১০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">দশকের নিসাব পৃষ্ঠা *</label>
+                    <input type="number" data-dec="${dec}" data-field="nisab" value="${prev.nisab || ''}" min="1" required placeholder="৪০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-nisab-input bg-white border-emerald-400">
+                </div>
             </div>
-            <div>
-                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
-                <input type="text" data-dec="${dec}" data-field="startCh" value="${prev.startCh || ''}" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
-            </div>
-            <div>
-                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা *</label>
-                <input type="number" data-dec="${dec}" data-field="start" value="${prev.start || ''}" min="1" required placeholder="১" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
-            </div>
-            <div>
-                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
-                <input type="text" data-dec="${dec}" data-field="endCh" value="${prev.endCh || ''}" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
-            </div>
-            <div>
-                <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা *</label>
-                <input type="number" data-dec="${dec}" data-field="end" value="${prev.end || ''}" min="1" required placeholder="১০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
-            </div>
-            <div>
-                <label class="text-[10px] font-semibold text-slate-600 block mb-1">মোট পৃষ্ঠা</label>
-                <div class="text-xs font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-2 py-1.5 text-center" data-total-for="${dec}">০</div>
+            <div class="flex justify-end">
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="text-slate-600 font-semibold">এই দশকের মোট পঠিত পৃষ্ঠা:</span>
+                    <span class="font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-3 py-1" data-total-for="${dec}">০</span>
+                </div>
             </div>
         `;
         container.appendChild(row);
@@ -1887,7 +2845,13 @@ async function handleFormSubmit(e) {
     const selectedDecades = Array.from(document.querySelectorAll('.decade-chk:checked')).map(cb => cb.value);
     if (selectedDecades.length === 0) { showToast('⚠️ কমপক্ষে একটি দশক নির্বাচন করুন', 'warn'); return; }
 
-    // Validate per-decade data
+    // ★ পর্ব-ভিত্তিক সিলেবাস ভ্যালিডেশন
+    const termStartCh = document.getElementById('term-start-chapter')?.value || '';
+    const termStartPg = parseInt(document.getElementById('term-start-page')?.value) || 0;
+    const termEndCh = document.getElementById('term-end-chapter')?.value || '';
+    const termEndPg = parseInt(document.getElementById('term-end-page')?.value) || 0;
+
+    // Validate per-decade data (সাথে nisab সহ)
     const decadesData = [];
     let validationError = null;
 
@@ -1896,17 +2860,21 @@ async function handleFormSubmit(e) {
         const end = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="end"]`)?.value) || 0;
         const startCh = document.querySelector(`input[data-dec="${dec}"][data-field="startCh"]`)?.value || '';
         const endCh = document.querySelector(`input[data-dec="${dec}"][data-field="endCh"]`)?.value || '';
+        const nisab = parseInt(document.querySelector(`input[data-dec="${dec}"][data-field="nisab"]`)?.value) || 0;
 
         if (start <= 0) { validationError = `${dec}: শুরুর পৃষ্ঠা দিন`; break; }
         if (end <= 0) { validationError = `${dec}: শেষ পৃষ্ঠা দিন`; break; }
         if (end < start) { validationError = `${dec}: শেষ পৃষ্ঠা শুরুর চেয়ে ছোট`; break; }
+        if (nisab <= 0) { validationError = `${dec}: দশকের নিসাব পৃষ্ঠা দিন`; break; }
 
-        decadesData.push({ decade: dec, start, end, startCh, endCh, total: end - start + 1 });
+        decadesData.push({ decade: dec, start, end, startCh, endCh, nisab, total: end - start + 1 });
     }
 
     if (validationError) { showToast('⚠️ ' + validationError, 'error'); return; }
 
     const totalPages = decadesData.reduce((a, c) => a + c.total, 0);
+    const totalNisabFromDecades = decadesData.reduce((a, c) => a + c.nisab, 0);
+
     // ★ Role-based: শিক্ষক শুধু নিজের assigned জামাতের ডাটা এন্ট্রি করতে পারবেন
     if (currentUserData?.role === 'teacher') {
         const myName = currentUserData.teacherName || currentUserData.name;
@@ -1919,6 +2887,7 @@ async function handleFormSubmit(e) {
             return;
         }
     }
+
     // শিক্ষকের বিভাগ ভ্যালিডেশন
     const dept = document.getElementById('dept-select').value;
     const teacherName = document.getElementById('teacher-name').value.trim();
@@ -1933,19 +2902,29 @@ async function handleFormSubmit(e) {
         return;
     }
 
-    const recordData = {
+    // ★ সিলেবাস record
+    const syllabusData = {
+        type: 'syllabus',  // ★ আলাদা মার্কার
         term: document.getElementById('term-select').value,
         dept: document.getElementById('dept-select').value,
         className: document.getElementById('class-select').value,
         section: document.getElementById('section-select').value,
         bookName: document.getElementById('book-name').value.trim(),
         publisher: document.getElementById('publisher-name').value.trim() || '---',
-        teacherName: document.getElementById('teacher-name').value.trim(),
+        teacherName: teacherName,
         totalBookPages: parseInt(document.getElementById('total-book-pages').value) || 0,
         termNisabPages: parseInt(document.getElementById('term-nisab-pages').value) || 0,
-        decadeNisabPages: parseInt(document.getElementById('decade-nisab-pages').value) || 0,
+        // ★ নতুন: term-level syllabus
+        termSyllabus: {
+            startCh: termStartCh,
+            startPage: termStartPg,
+            endCh: termEndCh,
+            endPage: termEndPg
+        },
+        // ★ decadesData এখন nisab সহ
         decadesData: decadesData,
         totalPages: totalPages,
+        totalNisabFromDecades: totalNisabFromDecades,
         createdAt: new Date().toISOString()
     };
 
@@ -1954,22 +2933,18 @@ async function handleFormSubmit(e) {
     if (editingId) {
         const idx = records.findIndex(r => r.id === editingId);
         if (idx >= 0) {
-            const updated = { ...records[idx], ...recordData, updatedAt: new Date().toISOString() };
+            const updated = { ...records[idx], ...syllabusData, updatedAt: new Date().toISOString() };
             records[idx] = updated;
-            
-            // Firestore-এ সেভ
             const ok = await saveRecordToFirestore(updated);
-            if (ok) showToast('✅ ডাটা আপডেট হয়েছে', 'success');
+            if (ok) showToast('✅ সিলেবাস আপডেট হয়েছে', 'success');
         }
     } else {
-        recordData.id = Date.now().toString();
-        recordData.createdBy = currentUser?.uid || 'unknown';
-        recordData.createdByEmail = currentUser?.email || 'unknown';
-        records.push(recordData);
-        
-        // Firestore-এ সেভ
-        const ok = await saveRecordToFirestore(recordData);
-        if (ok) showToast('✅ নতুন ডাটা সংরক্ষিত হয়েছে (Firestore-এ)', 'success');
+        syllabusData.id = Date.now().toString();
+        syllabusData.createdBy = currentUser?.uid || 'unknown';
+        syllabusData.createdByEmail = currentUser?.email || 'unknown';
+        records.push(syllabusData);
+        const ok = await saveRecordToFirestore(syllabusData);
+        if (ok) showToast('✅ নতুন সিলেবাস সংরক্ষিত হয়েছে', 'success');
     }
 
     saveRecordsToStorage();
@@ -1993,6 +2968,13 @@ function resetForm() {
     document.getElementById('book-name').innerHTML = '<option value="">-- পূর্বে জামাত নির্বাচন করুন --</option>';
     const infoEl = document.getElementById('teacher-info-display');
     if (infoEl) infoEl.innerHTML = '';
+        // ★ term syllabus ফিল্ড reset
+    ['term-start-chapter', 'term-start-page', 'term-end-chapter', 'term-end-page'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    const termSection = document.getElementById('term-syllabus-section');
+    if (termSection) termSection.classList.add('hidden');
 }
 
 // ═══════════════════ EDIT ★★★ ═══════════════════
@@ -2086,34 +3068,16 @@ function renderJamatReport() {
     const selectedClass = document.getElementById('jamat-filter-class').value;
     const selectedSection = document.getElementById('jamat-filter-section').value;
 
-    document.getElementById('rep-jamat-name').textContent = selectedClass || 'সকল জামাত';
-    document.getElementById('rep-jamat-term').textContent = selectedTerm === 'year' ? 'পুরো বছর' : getTermName(selectedTerm);
-    document.getElementById('rep-jamat-year').textContent = settings.year || '২০২৪-২০২৫';
-    document.getElementById('rep-jamat-dept').textContent = getDeptName(selectedDept);
+    const container = document.getElementById('jamat-report-pages');
+    if (!container) return;
 
-    // ★ মাদরাসা হেডার পপুলেট
-    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
-    const setSrc = (id, val) => { const el = document.getElementById(id); if (el) el.src = val || ''; };
-
-    setTxt('print-arabic-name-jamat', settings.madrasaNameAr || 'جامعة إسلامية');
-    setTxt('print-bn-name-jamat', settings.madrasaName || 'মাদরাসার নাম');
-    setTxt('print-addr-jamat', settings.address || '');
-    setTxt('print-year-jamat', settings.year || '২০২৪-২০২৫');
-    setSrc('print-logo-jamat', settings.logo || '');
-
-    const today = new Date();
-    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
-    setTxt('print-date-jamat', dateStr);
-
-    let sessionStr = '---';
-    if (selectedDept === 'shariah') sessionStr = 'শাওয়াল → শাবান';
-    else if (selectedDept === 'non_res') sessionStr = 'জানুয়ারী → জানুয়ারী';
-    else if (selectedDept === 'noorani') sessionStr = 'শাওয়াল → রমযান';
-    setTxt('print-session-jamat', sessionStr);
-    setTxt('footer-year-jamat', settings.year || '২০২৪-২০২৫');
-    setTxt('footer-date-jamat', dateStr);
-
-    let filtered = records.filter(r => r.dept === selectedDept && r.className === selectedClass);
+    // ★ শুধু সিলেবাস টাইপ রেকর্ড
+    let filtered = records.filter(r => 
+        r.dept === selectedDept && 
+        r.className === selectedClass &&
+        (r.type === 'syllabus' || !r.type)  // পুরনো ডাটা backward compat
+    );
+    
     if (selectedTerm !== 'year') filtered = filtered.filter(r => r.term === selectedTerm);
     if (selectedSection) filtered = filtered.filter(r => r.section === selectedSection);
 
@@ -2127,211 +3091,622 @@ function renderJamatReport() {
         });
     }
 
-    const thead = document.getElementById('jamat-report-thead');
-    const tbody = document.getElementById('jamat-report-table-body');
-    thead.innerHTML = ''; tbody.innerHTML = '';
-
-    if (selectedTerm === 'year') {
-        // ★ পুরো বছর ভিউ: বিভাগের সব পর্ব একসাথে
-        const deptTerms = TERM_CONFIG[selectedDept]?.terms || {};
-        const termKeys = Object.keys(deptTerms);
-        const termNames = termKeys.map(k => deptTerms[k].name);
-
-        let h = `<th class="border border-black p-1">رقم</th><th class="border border-black p-1">اسم الكتاب</th><th class="border border-black p-1">المكتبة</th><th class="border border-black p-1">الأستاذ</th>`;
-        let sh = `<th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th>`;
-        termKeys.forEach(k => {
-            h += `<th class="border border-black p-1" colspan="3">${deptTerms[k].name}</th>`;
-            sh += `<th class="border border-black p-1">من</th><th class="border border-black p-1">إلى</th><th class="border border-black p-1 bg-amber-50">م</th>`;
-        });
-        h += `<th class="border border-black p-1">المجموع</th>`;
-        sh += `<th class="border border-black"></th>`;
-        thead.innerHTML = `<tr class="bg-slate-100 font-bold">${h}</tr><tr class="bg-slate-50 text-[10px] font-semibold">${sh}</tr>`;
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="${termKeys.length * 3 + 5}" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
-            return;
-        }
-
-        const grouped = groupByBook(filtered);
-        let i = 1;
-        Object.values(grouped).forEach(b => {
-            let html = `<td class="border border-black p-1">${i++}</td><td class="border border-black p-1 font-bold">${b.bookName}</td><td class="border border-black p-1">${b.publisher}</td><td class="border border-black p-1">${b.teacher}<br><span class="text-[9px] font-sans text-slate-600">${getTeacherMeta(b.teacher).post}</span></td>`;
-            let grand = 0;
-            termKeys.forEach(tk => {
-                const s = termSummary(b.records, tk);
-                html += `<td class="border border-black p-1">${s.start || '-'}</td><td class="border border-black p-1">${s.end || '-'}</td><td class="border border-black p-1 font-bold bg-amber-50">${s.total || '-'}</td>`;
-                grand += s.total || 0;
-            });
-            html += `<td class="border border-black p-1 font-bold text-emerald-800">${grand}</td>`;
-            const tr = document.createElement('tr');
-            tr.innerHTML = html;
-            tbody.appendChild(tr);
-        });
-    } else {
-        const decadesList = getTermDecades(selectedTerm);
-        let h = `<th class="border border-black p-1">رقم</th><th class="border border-black p-1">اسم الكتاب</th><th class="border border-black p-1">المكتبة</th><th class="border border-black p-1">الأستاذ</th>`;
-        let sh = `<th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th><th class="border border-black"></th>`;
-        decadesList.forEach(d => { h += `<th class="border border-black p-1" colspan="3">${d}</th>`; sh += `<th class="border border-black p-1">من</th><th class="border border-black p-1">إلى</th><th class="border border-black p-1 bg-amber-50">م</th>`; });
-        h += `<th class="border border-black p-1">المجموع</th>`; sh += `<th class="border border-black"></th>`;
-        thead.innerHTML = `<tr class="bg-slate-100 font-bold">${h}</tr><tr class="bg-slate-50 text-[10px] font-semibold">${sh}</tr>`;
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="${decadesList.length * 3 + 5}" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
-            return;
-        }
-
-        const grouped = groupByBook(filtered);
-        let i = 1;
-        Object.values(grouped).forEach(b => {
-            let html = `<td class="border border-black p-1">${i++}</td><td class="border border-black p-1 font-bold">${b.bookName}</td><td class="border border-black p-1">${b.publisher}</td><td class="border border-black p-1">${b.teacher}<br><span class="text-[9px] font-sans text-slate-600">${getTeacherMeta(b.teacher).post}</span></td>`;
-            let sum = 0;
-            decadesList.forEach(dec => {
-                let found = null;
-                b.records.forEach(r => { const d = (r.decadesData || []).find(x => x.decade === dec); if (d) found = d; });
-                if (found) {
-                    html += `<td class="border border-black p-1">${found.start}</td><td class="border border-black p-1">${found.end}</td><td class="border border-black p-1 font-bold bg-amber-50">${found.total}</td>`;
-                    sum += found.total;
-                } else {
-                    html += `<td class="border border-black p-1">-</td><td class="border border-black p-1">-</td><td class="border border-black p-1 bg-amber-50">-</td>`;
-                }
-            });
-            html += `<td class="border border-black p-1 font-bold text-emerald-800">${sum}</td>`;
-            const tr = document.createElement('tr');
-            tr.innerHTML = html;
-            tbody.appendChild(tr);
-        });
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                <p class="font-bold text-slate-600">কোন সিলেবাস ডাটা পাওয়া যায়নি</p>
+                <p class="text-xs mt-2">ডাটা এন্ট্রি → সিলেবাস নির্ধারণে গিয়ে আগে সিলেবাস যোগ করুন।</p>
+            </div>
+        `;
+        return;
     }
+
+    // ★ book অনুযায়ী group
+    const grouped = {};
+    filtered.forEach(r => {
+        const key = r.bookName + '::' + r.teacherName;
+        if (!grouped[key]) {
+            grouped[key] = {
+                bookName: r.bookName,
+                publisher: r.publisher,
+                teacher: r.teacherName,
+                className: r.className,
+                section: r.section,
+                dept: r.dept,
+                totalBookPages: r.totalBookPages,
+                termNisabPages: r.termNisabPages,
+                records: []
+            };
+        }
+        grouped[key].records.push(r);
+    });
+
+    // ★ প্রতিটি group-এ corresponding reading ডাটা attach করি
+    Object.values(grouped).forEach(g => {
+        const readingKey = g.bookName + '::' + g.teacher;
+        const readingRec = records.find(r =>
+            r.type === 'reading' &&
+            r.dept === g.dept &&
+            r.className === g.className &&
+            r.bookName === g.bookName &&
+            r.teacherName === g.teacher
+        );
+        g.readingRecord = readingRec || null;
+    });
+
+    // ★ প্রতিটি book/teacher এর জন্য পেজ তৈরি
+    let allPagesHTML = '';
+    let pageCounter = 0;
+
+    Object.values(grouped).forEach((bookGroup) => {
+        // ★ প্রতিটি term আলাদা section
+        const termsToRender = selectedTerm === 'year'
+            ? [...new Set(bookGroup.records.map(r => r.term))]
+            : [selectedTerm];
+
+        termsToRender.forEach(termKey => {
+            const termRecords = bookGroup.records.filter(r => r.term === termKey);
+            if (termRecords.length === 0) return;
+
+            // ★ প্রতি দশকে আলাদা পেজ
+            // সব দশক বের করি
+            const allDecades = new Map();
+            termRecords.forEach(r => {
+                (r.decadesData || []).forEach(d => {
+                    if (!allDecades.has(d.decade)) allDecades.set(d.decade, d);
+                });
+            });
+
+            const termSyllabus = termRecords[0].termSyllabus || {};
+            
+            // ★ এই term এর corresponding reading
+            let termReading = null;
+            if (bookGroup.readingRecord && bookGroup.readingRecord.term === termKey) {
+                termReading = bookGroup.readingRecord;
+            }
+
+            // ★ প্রতি দশকের পেজ
+            Array.from(allDecades.entries()).forEach(([decName, decData], idx) => {
+                pageCounter++;
+                allPagesHTML += buildJamatReportPage({
+                    dept: bookGroup.dept,
+                    className: bookGroup.className,
+                    section: bookGroup.section,
+                    bookName: bookGroup.bookName,
+                    publisher: bookGroup.publisher,
+                    teacher: bookGroup.teacher,
+                    termKey: termKey,
+                    termSyllabus: termSyllabus,
+                    decadeName: decName,
+                    decadeData: decData,
+                    totalBookPages: bookGroup.totalBookPages,
+                    termNisabPages: bookGroup.termNisabPages,
+                    pageNum: pageCounter,
+                    decadeIndex: idx + 1,
+                    totalDecades: allDecades.size,
+                    totalDecades: allDecades.size,
+                    readingRecord: termReading
+                });
+            });
+        });
+    });
+
+    if (!allPagesHTML) {
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                <p>কোন দশক ডাটা পাওয়া যায়নি</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = allPagesHTML;
+}
+
+// ═══════════════════ Jamat Report Page Builder ═══════════════════
+function buildJamatReportPage(data) {
+    const {
+        dept, className, section, bookName, publisher, teacher,
+        termKey, termSyllabus, decadeName, decadeData,
+        totalBookPages, termNisabPages, pageNum,
+        decadeIndex, totalDecades, readingRecord
+    } = data;
+    
+    // ★ decade-level reading
+    let decReading = null;
+    if (readingRecord && readingRecord.decadesReadings) {
+        decReading = readingRecord.decadesReadings.find(d => d.decade === decadeName);
+    }
+
+    // হেডার তথ্য
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া দারুল উলূম';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || 'গ্রাম, উপজেলা, জেলা';
+    const logo = settings.logo || '';
+    const year = settings.year || '২০২৪-২০২৫';
+
+    // আজকের তারিখ
+    const today = new Date();
+    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
+
+    // সেশন
+    let sessionStr = '---';
+    if (dept === 'shariah') sessionStr = 'শাওয়াল → শাবান';
+    else if (dept === 'non_res') sessionStr = 'জানুয়ারী → জানুয়ারী';
+    else if (dept === 'noorani') sessionStr = 'শাওয়াল → রমযান';
+
+    // শিক্ষকের পদবী
+    const teacherMeta = getTeacherMeta(teacher);
+    const teacherPost = teacherMeta.post || '-';
+
+    // Term name
+    const termName = getTermName(termKey);
+
+    // Dep name
+    const deptName = getDeptName(dept);
+
+    // Term syllabus display
+    const termSyllabusStr = (termSyllabus && termSyllabus.startPage > 0)
+        ? `${termSyllabus.startCh || '-'} (পৃ. ${termSyllabus.startPage}) → ${termSyllabus.endCh || '-'} (পৃ. ${termSyllabus.endPage})`
+        : '---';
+
+    // দশক তথ্য
+    const decStart = decadeData.start || 0;
+    const decEnd = decadeData.end || 0;
+    const decTotal = decadeData.total || (decEnd - decStart + 1) || 0;
+    const decNisab = decadeData.nisab || 0;
+    const diff = decTotal - decNisab;
+    const diffSign = diff >= 0 ? '+' : '';
+    const diffColor = diff >= 0 ? '#065f46' : '#dc2626';
+    const diffLabel = diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ';
+    const pct = decNisab > 0 ? Math.round((decTotal / decNisab) * 100) : 0;
+
+    return `
+        <div class="report-page" dir="rtl">
+            <!-- ★ মাদরাসা হেডার -->
+            <div class="report-page-header">
+                <div class="header-top">
+                    ${logo ? `<img src="${logo}" alt="logo">` : '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                    <div class="header-info">
+                        <h2>${madrasaAr}</h2>
+                        <h3>${madrasaBn}</h3>
+                        <p>${addr}</p>
+                    </div>
+                    ${logo ? `<div style="width:55px;height:55px;flex-shrink:0;"></div>` : '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                </div>
+                <div class="header-bar">
+                    <div><strong>তারিখ:</strong> ${dateStr}</div>
+                    <div><strong>শিক্ষাবর্ষ:</strong> ${year}</div>
+                    <div><strong>সেশন:</strong> ${sessionStr}</div>
+                </div>
+            </div>
+
+            <!-- ★ রিপোর্ট টাইটেল -->
+            <div class="report-page-title">
+                <h4>تقرير المبلغ المقروء (مقادير الأسباق)</h4>
+                <p>জামাত ভিত্তিক পাঠ পরিমাণ রিপোর্ট</p>
+            </div>
+
+            <!-- ★ জামাত + কিতাব + শিক্ষক তথ্য -->
+            <div class="report-page-meta">
+                <div class="meta-item"><strong>জামাত:</strong> <span class="font-arabic">${className}</span></div>
+                <div class="meta-item"><strong>বিভাগ:</strong> <span>${deptName}</span></div>
+                <div class="meta-item"><strong>পর্ব:</strong> <span>${termName}</span></div>
+                <div class="meta-item"><strong>শাখা:</strong> <span>${section !== 'নাই' ? section : 'নাই'}</span></div>
+                <div class="meta-item"><strong>কিতাব:</strong> <span class="font-arabic">${bookName}</span></div>
+                <div class="meta-item"><strong>প্রকাশনী:</strong> <span class="font-arabic">${publisher || '-'}</span></div>
+                <div class="meta-item"><strong>শিক্ষক:</strong> <span>${teacher} <small style="color:#64748b;">(${teacherPost})</small></span></div>
+                <div class="meta-item"><strong>মোট কিতাব পৃষ্ঠা:</strong> <span>${totalBookPages || '-'}</span></div>
+                <div class="meta-item" style="grid-column: 1 / -1;">
+                    <strong>${termName} সিলেবাস:</strong> <span style="font-family:'Amiri',serif;">${termSyllabusStr}</span>
+                </div>
+                <div class="meta-item" style="grid-column: 1 / -1;">
+                    <strong>পর্বের মোট নিসাব:</strong> <span>${termNisabPages || '-'} পৃষ্ঠা</span>
+                </div>
+            </div>
+
+            <!-- ★ দশকের তথ্য ছক -->
+            <div class="report-page-title" style="background:#065f46;font-size:12px;padding:4px;">
+                দশক ${decadeIndex} / ${totalDecades} — ${decadeName}
+            </div>
+
+            <table class="report-page-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:36px;">ক্রম</th>
+                        <th colspan="4" style="background:#dbeafe;">📖 সিলেবাস (কী পড়ানোর কথা)</th>
+                        <th colspan="4" style="background:#fef3c7;">✏️ যাচাই (কী পড়ানো হয়েছে)</th>
+                        <th rowspan="2" style="width:60px;">সম্পন্ন</th>
+                    </tr>
+                    <tr>
+                        <th style="background:#dbeafe;">শুরু অধ্যায়</th>
+                        <th style="background:#dbeafe;">শুরু পৃষ্ঠা</th>
+                        <th style="background:#dbeafe;">শেষ অধ্যায়</th>
+                        <th style="background:#dbeafe;">শেষ পৃষ্ঠা</th>
+                        <th style="background:#fef3c7;">শুরু অধ্যায়</th>
+                        <th style="background:#fef3c7;">শুরু পৃষ্ঠা</th>
+                        <th style="background:#fef3c7;">শেষ অধ্যায়</th>
+                        <th style="background:#fef3c7;">শেষ পৃষ্ঠা</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>১</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decadeData.startCh || '-'}</td>
+                        <td>${decStart}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decadeData.endCh || '-'}</td>
+                        <td>${decEnd}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decReading?.startCh || '-'}</td>
+                        <td>${decReading?.start || '-'}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decReading?.endCh || '-'}</td>
+                        <td>${decReading?.end || '-'}</td>
+                        <td style="font-weight:bold;background:${decReading ? (decReading.total >= decNisab ? '#d1fae5' : '#fee2e2') : '#f1f5f9'};color:${decReading ? (decReading.total >= decNisab ? '#065f46' : '#dc2626') : '#64748b'};">
+                            ${decReading ? Math.round((decReading.total / decNisab) * 100) + '%' : '-'}
+                        </td>
+                    </tr>
+                    <tr style="background:#f8fafc;">
+                        <td></td>
+                        <td colspan="4" style="text-align:right;font-weight:bold;font-size:10px;">পঠিত মোট: <span style="color:#065f46;">${decTotal}</span></td>
+                        <td colspan="4" style="text-align:right;font-weight:bold;font-size:10px;">যাচাই মোট: <span style="color:${decReading && decReading.total >= decNisab ? '#065f46' : '#dc2626'};">${decReading ? decReading.total : 0}</span></td>
+                        <td style="font-weight:bold;background:#fffbeb;">নিসাব: ${decNisab}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ★ সারসংক্ষেপ -->
+            <div class="report-page-summary">
+                <div><strong>দশকের পঠিত:</strong> ${decTotal} পৃষ্ঠা</div>
+                <div><strong>দশকের নিসাব:</strong> ${decNisab} পৃষ্ঠা</div>
+                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${pct}%</span></div>
+                <div><strong>অবস্থা:</strong> <span style="color:${diffColor};font-weight:bold;">${diffLabel}</span></div>
+            </div>
+
+            <!-- ★ স্বাক্ষর -->
+            <div class="report-page-signatures">
+                <div>توقيع أمين التعليم</div>
+                <div>توقيع الرئيس</div>
+            </div>
+
+            <!-- ★ ফুটার -->
+            <div style="margin-top:20px;padding-top:6px;border-top:1px solid #065f46;text-align:center;font-size:9px;color:#065f46;">
+                মাকাদীরে আসবাক (مقادير الأسباق) | শিক্ষাবর্ষ: ${year} | পৃষ্ঠা: ${pageNum}
+            </div>
+        </div>
+    `;
+}
+
+// ═══════════════════ Teacher Report Page Builder ═══════════════════
+function buildTeacherReportPage(data) {
+    const {
+        dept, className, section, bookName, publisher, teacher, teacherMeta,
+        termKey, termSyllabus, decadeName, decadeData,
+        totalBookPages, termNisabPages, pageNum,
+        decadeIndex, totalDecades, readingRecord
+    } = data;
+    
+    // ★ decade-level reading
+    let decReading = null;
+    if (readingRecord && readingRecord.decadesReadings) {
+        decReading = readingRecord.decadesReadings.find(d => d.decade === decadeName);
+    }
+
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া দারুল উলূম';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || 'গ্রাম, উপজেলা, জেলা';
+    const logo = settings.logo || '';
+    const year = settings.year || '২০২৪-২০২৫';
+
+    const today = new Date();
+    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
+
+    let sessionStr = '---';
+    if (dept === 'shariah') sessionStr = 'শাওয়াল → শাবান';
+    else if (dept === 'non_res') sessionStr = 'জানুয়ারী → জানুয়ারী';
+    else if (dept === 'noorani') sessionStr = 'শাওয়াল → রমযান';
+
+    const teacherPost = teacherMeta.post || '-';
+    const teacherCard = teacherMeta.card || '-';
+    const teacherMobile = teacherMeta.mobile || '-';
+
+    const termName = getTermName(termKey);
+    const deptName = getDeptName(dept);
+
+    const termSyllabusStr = (termSyllabus && termSyllabus.startPage > 0)
+        ? `${termSyllabus.startCh || '-'} (পৃ. ${termSyllabus.startPage}) → ${termSyllabus.endCh || '-'} (পৃ. ${termSyllabus.endPage})`
+        : '---';
+
+    const decStart = decadeData.start || 0;
+    const decEnd = decadeData.end || 0;
+    const decTotal = decadeData.total || (decEnd - decStart + 1) || 0;
+    const decNisab = decadeData.nisab || 0;
+    const diff = decTotal - decNisab;
+    const diffSign = diff >= 0 ? '+' : '';
+    const diffColor = diff >= 0 ? '#065f46' : '#dc2626';
+    const diffLabel = diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ';
+    const pct = decNisab > 0 ? Math.round((decTotal / decNisab) * 100) : 0;
+
+    return `
+        <div class="report-page" dir="rtl">
+            <!-- ★ মাদরাসা হেডার -->
+            <div class="report-page-header">
+                <div class="header-top">
+                    ${logo ? `<img src="${logo}" alt="logo">` : '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                    <div class="header-info">
+                        <h2>${madrasaAr}</h2>
+                        <h3>${madrasaBn}</h3>
+                        <p>${addr}</p>
+                    </div>
+                    ${logo ? `<div style="width:55px;height:55px;flex-shrink:0;"></div>` : '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                </div>
+                <div class="header-bar">
+                    <div><strong>তারিখ:</strong> ${dateStr}</div>
+                    <div><strong>শিক্ষাবর্ষ:</strong> ${year}</div>
+                    <div><strong>সেশন:</strong> ${sessionStr}</div>
+                </div>
+            </div>
+
+            <!-- ★ রিপোর্ট টাইটেল -->
+            <div class="report-page-title">
+                <h4>تقرير المبلغ المقروء (خاص بالأستاذ)</h4>
+                <p>শিক্ষকভিত্তিক পাঠ বিবরণী রিপোর্ট</p>
+            </div>
+
+            <!-- ★ শিক্ষক তথ্য ছক -->
+            <table class="report-page-table" style="margin-bottom:10px;">
+                <tbody>
+                    <tr>
+                        <td style="background:#ecfdf5;font-weight:bold;width:100px;text-align:right;">শিক্ষক:</td>
+                        <td style="font-weight:bold;text-align:right;">${teacher}</td>
+                        <td style="background:#ecfdf5;font-weight:bold;width:80px;text-align:right;">পদবী:</td>
+                        <td style="text-align:right;">${teacherPost}</td>
+                    </tr>
+                    <tr>
+                        <td style="background:#ecfdf5;font-weight:bold;text-align:right;">কার্ড নং:</td>
+                        <td style="font-family:monospace;text-align:right;">${teacherCard}</td>
+                        <td style="background:#ecfdf5;font-weight:bold;text-align:right;">বিভাগ:</td>
+                        <td style="text-align:right;">${deptName}</td>
+                    </tr>
+                    <tr>
+                        <td style="background:#ecfdf5;font-weight:bold;text-align:right;">মোবাইল:</td>
+                        <td style="font-family:monospace;text-align:right;">${teacherMobile}</td>
+                        <td style="background:#ecfdf5;font-weight:bold;text-align:right;">শিক্ষাবর্ষ:</td>
+                        <td style="text-align:right;">${year}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ★ জামাত + কিতাব তথ্য -->
+            <div class="report-page-meta">
+                <div class="meta-item"><strong>জামাত:</strong> <span class="font-arabic">${className}</span></div>
+                <div class="meta-item"><strong>শাখা:</strong> <span>${section !== 'নাই' ? section : 'নাই'}</span></div>
+                <div class="meta-item"><strong>কিতাব:</strong> <span class="font-arabic">${bookName}</span></div>
+                <div class="meta-item"><strong>প্রকাশনী:</strong> <span class="font-arabic">${publisher || '-'}</span></div>
+                <div class="meta-item"><strong>পর্ব:</strong> <span>${termName}</span></div>
+                <div class="meta-item"><strong>মোট কিতাব পৃষ্ঠা:</strong> <span>${totalBookPages || '-'}</span></div>
+                <div class="meta-item" style="grid-column: 1 / -1;">
+                    <strong>${termName} সিলেবাস:</strong> <span style="font-family:'Amiri',serif;">${termSyllabusStr}</span>
+                </div>
+                <div class="meta-item" style="grid-column: 1 / -1;">
+                    <strong>পর্বের মোট নিসাব:</strong> <span>${termNisabPages || '-'} পৃষ্ঠা</span>
+                </div>
+            </div>
+
+            <!-- ★ দশকের তথ্য ছক -->
+            <div class="report-page-title" style="background:#065f46;font-size:12px;padding:4px;">
+                দশক ${decadeIndex} / ${totalDecades} — ${decadeName}
+            </div>
+
+            <table class="report-page-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:36px;">ক্রম</th>
+                        <th colspan="4" style="background:#dbeafe;">📖 সিলেবাস (কী পড়ানোর কথা)</th>
+                        <th colspan="4" style="background:#fef3c7;">✏️ যাচাই (কী পড়ানো হয়েছে)</th>
+                        <th rowspan="2" style="width:60px;">সম্পন্ন</th>
+                    </tr>
+                    <tr>
+                        <th style="background:#dbeafe;">শুরু অধ্যায়</th>
+                        <th style="background:#dbeafe;">শুরু পৃষ্ঠা</th>
+                        <th style="background:#dbeafe;">শেষ অধ্যায়</th>
+                        <th style="background:#dbeafe;">শেষ পৃষ্ঠা</th>
+                        <th style="background:#fef3c7;">শুরু অধ্যায়</th>
+                        <th style="background:#fef3c7;">শুরু পৃষ্ঠা</th>
+                        <th style="background:#fef3c7;">শেষ অধ্যায়</th>
+                        <th style="background:#fef3c7;">শেষ পৃষ্ঠা</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>১</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decadeData.startCh || '-'}</td>
+                        <td>${decStart}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decadeData.endCh || '-'}</td>
+                        <td>${decEnd}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decReading?.startCh || '-'}</td>
+                        <td>${decReading?.start || '-'}</td>
+                        <td class="font-arabic" style="text-align:right;padding:4px 6px;font-size:10px;">${decReading?.endCh || '-'}</td>
+                        <td>${decReading?.end || '-'}</td>
+                        <td style="font-weight:bold;background:${decReading ? (decReading.total >= decNisab ? '#d1fae5' : '#fee2e2') : '#f1f5f9'};color:${decReading ? (decReading.total >= decNisab ? '#065f46' : '#dc2626') : '#64748b'};">
+                            ${decReading ? Math.round((decReading.total / decNisab) * 100) + '%' : '-'}
+                        </td>
+                    </tr>
+                    <tr style="background:#f8fafc;">
+                        <td></td>
+                        <td colspan="4" style="text-align:right;font-weight:bold;font-size:10px;">পঠিত মোট: <span style="color:#065f46;">${decTotal}</span></td>
+                        <td colspan="4" style="text-align:right;font-weight:bold;font-size:10px;">যাচাই মোট: <span style="color:${decReading && decReading.total >= decNisab ? '#065f46' : '#dc2626'};">${decReading ? decReading.total : 0}</span></td>
+                        <td style="font-weight:bold;background:#fffbeb;">নিসাব: ${decNisab}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ★ সারসংক্ষেপ -->
+            <div class="report-page-summary">
+                <div><strong>দশকের পঠিত:</strong> ${decTotal} পৃষ্ঠা</div>
+                <div><strong>দশকের নিসাব:</strong> ${decNisab} পৃষ্ঠা</div>
+                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${pct}%</span></div>
+                <div><strong>অবস্থা:</strong> <span style="color:${diffColor};font-weight:bold;">${diffLabel}</span></div>
+            </div>
+
+            <!-- ★ পরিদর্শকের মন্তব্য -->
+            <div style="margin-top:12px;border:1px solid #000;padding:8px;border-radius:4px;font-size:10px;">
+                <p style="font-weight:bold;margin-bottom:6px;">পরিদর্শকের মন্তব্য:</p>
+                <div style="height:20px;border-bottom:1px dashed #94a3b8;"></div>
+                <div style="margin-top:12px;text-align:left;font-weight:bold;">
+                    <span>স্বাক্ষর: .......................................</span>
+                </div>
+            </div>
+
+            <!-- ★ স্বাক্ষর -->
+            <div class="report-page-signatures">
+                <div>توقيع أمين التعليم</div>
+                <div>توقيع الرئيس</div>
+            </div>
+
+            <!-- ★ ফুটার -->
+            <div style="margin-top:20px;padding-top:6px;border-top:1px solid #065f46;text-align:center;font-size:9px;color:#065f46;">
+                মাকাদীরে আসবাক (مقادير الأسباق) | শিক্ষাবর্ষ: ${year} | পৃষ্ঠা: ${pageNum}
+            </div>
+        </div>
+    `;
 }
 
 function renderTeacherReport() {
     const teacher = document.getElementById('teacher-filter-name').value;
     const term = document.getElementById('teacher-filter-term').value;
 
-    const meta = getTeacherMeta(teacher);
+    const container = document.getElementById('teacher-report-pages');
+    if (!container) return;
 
-    // ★ মাদরাসা হেডার পপুলেট
-    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val || ''; };
-    const setSrc = (id, val) => { const el = document.getElementById(id); if (el) el.src = val || ''; };
+    if (!teacher) {
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-user-tie text-4xl mb-3"></i>
+                <p>শিক্ষক নির্বাচন করুন</p>
+            </div>
+        `;
+        return;
+    }
 
-    setTxt('print-arabic-name-teacher', settings.madrasaNameAr || 'جامعة إسلامية');
-    setTxt('print-bn-name-teacher', settings.madrasaName || 'মাদরাসার নাম');
-    setTxt('print-addr-teacher', settings.address || '');
-    setTxt('print-year-teacher', settings.year || '২০২৪-২০২৫');
-    setSrc('print-logo-teacher', settings.logo || '');
-
-    // আজকের তারিখ
-    const today = new Date();
-    const dateStr = `${today.getDate().toString().padStart(2,'0')}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getFullYear()}`;
-    setTxt('print-date-teacher', dateStr);
-
-    // সেশন (বিভাগ অনুযায়ী)
-    const teacherDept = meta.dept || '';
-    let sessionStr = '---';
-    if (teacherDept === 'শরীয়াহ') sessionStr = 'শাওয়াল → শাবান';
-    else if (teacherDept === 'অনাবাসিক') sessionStr = 'জানুয়ারী → জানুয়ারী';
-    else if (teacherDept === 'নূরানী-নাযেরা') sessionStr = 'শাওয়াল → রমযান';
-    setTxt('print-session-teacher', sessionStr);
-    setTxt('footer-year-teacher', settings.year || '২০২৪-২০২৫');
-    setTxt('footer-date-teacher', dateStr);
-
-    document.getElementById('rep-teacher-name').textContent = teacher || '---';
-    document.getElementById('rep-teacher-year').textContent = settings.year || '২০২৪-২০২৫';
-    setTxt('rep-teacher-post', meta.post || '---');
-    setTxt('rep-teacher-card', meta.card || '---');
-    setTxt('rep-teacher-dept', meta.dept || '---');
-    setTxt('rep-teacher-mobile', meta.mobile || '---');
-
-    let filtered = records.filter(r => r.teacherName === teacher);
+    // ★ শুধু সিলেবাস টাইপ রেকর্ড
+    let filtered = records.filter(r => 
+        r.teacherName === teacher && 
+        (r.type === 'syllabus' || !r.type)
+    );
+    
     if (term !== 'year') filtered = filtered.filter(r => r.term === term);
 
-    // ★ শিক্ষক হলে: শুধু নিজের নামের রিপোর্ট
     if (currentUserData?.role === 'teacher') {
         const myName = currentUserData.teacherName || currentUserData.name;
         filtered = filtered.filter(r => r.teacherName === myName);
     }
 
-    const thead = document.getElementById('teacher-report-thead');
-    const tbody = document.getElementById('teacher-report-table-body');
-    thead.innerHTML = ''; tbody.innerHTML = '';
-
-    thead.innerHTML = `
-        <tr class="bg-slate-100 font-bold">
-            <th class="border border-black p-1">رقم</th>
-            <th class="border border-black p-1">الكتاب</th>
-            <th class="border border-black p-1">الصف</th>
-            <th class="border border-black p-1">الفترة</th>
-            <th class="border border-black p-1">الدشك</th>
-            <th class="border border-black p-1">الأبواب</th>
-            <th class="border border-black p-1">الصفحات</th>
-            <th class="border border-black p-1">المقروء</th>
-            <th class="border border-black p-1">النصاب</th>
-            <th class="border border-black p-1">الفرق</th>
-        </tr>`;
-
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-slate-500">কোন ডাটা পাওয়া যায়নি</td></tr>`;
-        document.getElementById('teacher-nisab-summary').innerHTML = '';
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                <p class="font-bold text-slate-600">এই শিক্ষকের কোন সিলেবাস ডাটা পাওয়া যায়নি</p>
+            </div>
+        `;
         return;
     }
 
-    let i = 1, totalRead = 0, totalNisab = 0;
-        filtered.forEach(rec => {
-    const decadesList = rec.decadesData || [];
-    if (decadesList.length === 0) {
-        // পুরনো ডাটা হলে একটাই সারি দেখাই
-        const nisab = rec.decadeNisabPages || 0;
-        const total = rec.totalPages || rec.decadeTotalPages || 0;
-        const diff = total - nisab;
-        const diffClass = diff >= 0 ? 'text-emerald-700' : 'text-red-600';
-        totalRead += total;
-        totalNisab += nisab;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="border border-black p-1">${i++}</td>
-            <td class="border border-black p-1 font-bold">${rec.bookName || '-'}</td>
-            <td class="border border-black p-1">${rec.className || '-'}</td>
-            <td class="border border-black p-1">${getTermName(rec.term) || '-'}</td>
-            <td class="border border-black p-1">⚠️ পুরনো ডাটা</td>
-            <td class="border border-black p-1">${rec.startChapter || '-'} → ${rec.endChapter || '-'}</td>
-            <td class="border border-black p-1">${rec.startPage || '-'} - ${rec.endPage || '-'}</td>
-            <td class="border border-black p-1 font-bold bg-amber-50">${total}</td>
-            <td class="border border-black p-1">${nisab || '-'}</td>
-            <td class="border border-black p-1 font-bold ${diffClass}">${nisab ? (diff >= 0 ? '+' : '') + diff : '-'}</td>`;
-        tbody.appendChild(tr);
-        return;
-    }
+    const meta = getTeacherMeta(teacher);
+
+    // ★ book + জামাত অনুযায়ী group
+    const grouped = {};
+    filtered.forEach(r => {
+        const key = r.bookName + '::' + r.className;
+        if (!grouped[key]) {
+            grouped[key] = {
+                bookName: r.bookName,
+                publisher: r.publisher,
+                className: r.className,
+                section: r.section,
+                dept: r.dept,
+                totalBookPages: r.totalBookPages,
+                termNisabPages: r.termNisabPages,
+                records: []
+            };
+        }
+        grouped[key].records.push(r);
+    });
     
-    decadesList.forEach(d => {
-            const nisab = rec.decadeNisabPages || 0;
-            const diff = d.total - nisab;
-            const diffClass = diff >= 0 ? 'text-emerald-700' : 'text-red-600';
-            const diffSign = diff >= 0 ? '+' : '';
-            totalRead += d.total;
-            totalNisab += nisab;
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td class="border border-black p-1">${i++}</td>
-                <td class="border border-black p-1 font-bold">${rec.bookName}</td>
-                <td class="border border-black p-1">${rec.className}</td>
-                <td class="border border-black p-1">${getTermName(rec.term)}</td>
-                <td class="border border-black p-1">${d.decade}</td>
-                <td class="border border-black p-1">${d.startCh || '-'} → ${d.endCh || '-'}</td>
-                <td class="border border-black p-1">${d.start} - ${d.end}</td>
-                <td class="border border-black p-1 font-bold bg-amber-50">${d.total}</td>
-                <td class="border border-black p-1">${nisab || '-'}</td>
-                <td class="border border-black p-1 font-bold ${diffClass}">${nisab ? diffSign + diff : '-'}</td>`;
-            tbody.appendChild(tr);
+    // ★ প্রতিটি group-এ corresponding reading attach করি
+    Object.values(grouped).forEach(g => {
+        const readingRec = records.find(r =>
+            r.type === 'reading' &&
+            r.dept === g.dept &&
+            r.className === g.className &&
+            r.bookName === g.bookName &&
+            r.teacherName === teacher
+        );
+        g.readingRecord = readingRec || null;
+    });
+    let allPagesHTML = '';
+    let pageCounter = 0;
+
+    Object.values(grouped).forEach((bookGroup) => {
+        const termsToRender = term === 'year'
+            ? [...new Set(bookGroup.records.map(r => r.term))]
+            : [term];
+
+        termsToRender.forEach(termKey => {
+            const termRecords = bookGroup.records.filter(r => r.term === termKey);
+            if (termRecords.length === 0) return;
+
+            const allDecades = new Map();
+            termRecords.forEach(r => {
+                (r.decadesData || []).forEach(d => {
+                    if (!allDecades.has(d.decade)) allDecades.set(d.decade, d);
+                });
+            });
+
+            const termSyllabus = termRecords[0].termSyllabus || {};
+            
+            // ★ এই term এর corresponding reading
+            let termReading = null;
+            if (bookGroup.readingRecord && bookGroup.readingRecord.term === termKey) {
+                termReading = bookGroup.readingRecord;
+            }
+
+            Array.from(allDecades.entries()).forEach(([decName, decData], idx) => {
+                pageCounter++;
+                allPagesHTML += buildTeacherReportPage({
+                    dept: bookGroup.dept,
+                    className: bookGroup.className,
+                    section: bookGroup.section,
+                    bookName: bookGroup.bookName,
+                    publisher: bookGroup.publisher,
+                    teacher: teacher,
+                    teacherMeta: meta,
+                    termKey: termKey,
+                    termSyllabus: termSyllabus,
+                    decadeName: decName,
+                    decadeData: decData,
+                    totalBookPages: bookGroup.totalBookPages,
+                    termNisabPages: bookGroup.termNisabPages,
+                    pageNum: pageCounter,
+                    decadeIndex: idx + 1,
+                    totalDecades: allDecades.size,
+                    totalDecades: allDecades.size,
+                    readingRecord: termReading
+                });
+            });
         });
     });
 
-    const pct = totalNisab ? Math.round((totalRead / totalNisab) * 100) : 0;
-    document.getElementById('teacher-nisab-summary').innerHTML = `
-        <div class="grid grid-cols-4 gap-2 text-center">
-            <div><strong>মোট পঠিত:</strong> ${totalRead}</div>
-            <div><strong>মোট নিসাব:</strong> ${totalNisab}</div>
-            <div><strong>সম্পন্ন:</strong> <span class="${pct >= 100 ? 'text-emerald-700' : 'text-red-600'} font-bold">${pct}%</span></div>
-            <div><strong>অবস্থা:</strong> ${pct >= 100 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ'}</div>
-        </div>`;
+    if (!allPagesHTML) {
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-10 text-center text-slate-400">
+                <p>কোন দশক ডাটা পাওয়া যায়নি</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = allPagesHTML;
 }
 
 // ═══════════════════ DATA LIST ═══════════════════
@@ -2352,17 +3727,24 @@ function renderSavedDataTable() {
 
     tbody.innerHTML = '';
     if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">কোন তথ্য পাওয়া যায়নি</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">কোন তথ্য পাওয়া যায়নি</td></tr>`;
         return;
     }
 
     list.forEach(rec => {
         const decStr = (rec.decadesData || []).map(d => 
-            `${d.decade}: ${d.start}-${d.end}`
+            `${d.decade}: ${d.start}-${d.end}${d.nisab ? ` (নিসাব: ${d.nisab})` : ''}`
         ).join('<br>') || '<span class="text-red-500 text-xs">⚠️ পুরনো ডাটা — Edit করে সেভ করুন</span>';
+        
+        // ★ টাইপ ব্যাজ
+        const typeBadge = rec.type === 'reading'
+            ? '<span class="badge bg-amber-100 text-amber-800"><i class="fa-solid fa-book-reader"></i> পাঠ্য</span>'
+            : '<span class="badge bg-emerald-100 text-emerald-800"><i class="fa-solid fa-clipboard-list"></i> সিলেবাস</span>';
+        
         const tr = document.createElement('tr');
         tr.className = 'border-b hover:bg-slate-50';
         tr.innerHTML = `
+            <td class="p-3">${typeBadge}</td>
             <td class="p-3 text-xs font-semibold text-emerald-800">${getTermName(rec.term)}</td>
             <td class="p-3 text-sm font-bold font-arabic">${rec.className}${rec.section !== 'নাই' ? ' - ' + rec.section : ''}</td>
             <td class="p-3 text-sm font-arabic font-semibold">${rec.bookName}<br><span class="text-xs text-slate-500">${rec.publisher}</span></td>
@@ -3133,30 +4515,25 @@ function sharePDF(elementId, fileName) {
     const el = document.getElementById(elementId);
     if (!el) { showToast('❌ এলিমেন্ট পাওয়া যায়নি', 'error'); return; }
 
-    // প্রিন্ট ফুটার সাময়িকভাবে দেখান
-    const footer = el.querySelector('.print-footer');
-    if (footer) footer.classList.remove('hidden');
-
     showToast('📄 PDF তৈরি হচ্ছে...', 'info');
 
     const opt = {
-        margin: [5, 5, 12, 5],
+        margin: [8, 6, 10, 6],
         filename: fileName + '_' + new Date().toISOString().split('T')[0] + '.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
     };
 
     html2pdf().set(opt).from(el).save().then(() => {
-        if (footer) footer.classList.add('hidden');
         showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
     }).catch(err => {
-        if (footer) footer.classList.add('hidden');
         showToast('❌ PDF তৈরিতে সমস্যা', 'error');
         console.error(err);
     });
 }
+
 // ═══════════════════ ADMIN PANEL ═══════════════════
 window.switchAdminSub = function(sub) {
     document.querySelectorAll('.adm-sub-btn').forEach(b => {
