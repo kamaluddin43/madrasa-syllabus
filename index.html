@@ -3257,11 +3257,16 @@ function buildJamatReportPage(data) {
     const decEnd = decadeData.end || 0;
     const decTotal = decadeData.total || (decEnd - decStart + 1) || 0;
     const decNisab = decadeData.nisab || 0;
-    const diff = decTotal - decNisab;
+    
+    // ★ reading থেকে actual পঠিত পৃষ্ঠা
+    const actualRead = decReading ? decReading.total : 0;
+    const hasReading = !!decReading;
+    
+    const diff = actualRead - decNisab;
     const diffSign = diff >= 0 ? '+' : '';
-    const diffColor = diff >= 0 ? '#065f46' : '#dc2626';
-    const diffLabel = diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ';
-    const pct = decNisab > 0 ? Math.round((decTotal / decNisab) * 100) : 0;
+    const diffColor = !hasReading ? '#64748b' : (diff >= 0 ? '#065f46' : '#dc2626');
+    const diffLabel = !hasReading ? '— যাচাই হয়নি' : (diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ');
+    const pct = (hasReading && decNisab > 0) ? Math.round((actualRead / decNisab) * 100) : 0;
 
     return `
         <div class="report-page" dir="rtl">
@@ -3357,9 +3362,9 @@ function buildJamatReportPage(data) {
 
             <!-- ★ সারসংক্ষেপ -->
             <div class="report-page-summary">
-                <div><strong>দশকের পঠিত:</strong> ${decTotal} পৃষ্ঠা</div>
                 <div><strong>দশকের নিসাব:</strong> ${decNisab} পৃষ্ঠা</div>
-                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${pct}%</span></div>
+                <div><strong>যাচাইকৃত পঠিত:</strong> ${hasReading ? actualRead + ' পৃষ্ঠা' : '— যাচাই হয়নি'}</div>
+                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${hasReading ? pct + '%' : '—'}</span></div>
                 <div><strong>অবস্থা:</strong> <span style="color:${diffColor};font-weight:bold;">${diffLabel}</span></div>
             </div>
 
@@ -3421,11 +3426,16 @@ function buildTeacherReportPage(data) {
     const decEnd = decadeData.end || 0;
     const decTotal = decadeData.total || (decEnd - decStart + 1) || 0;
     const decNisab = decadeData.nisab || 0;
-    const diff = decTotal - decNisab;
+    
+    // ★ reading থেকে actual পঠিত পৃষ্ঠা
+    const actualRead = decReading ? decReading.total : 0;
+    const hasReading = !!decReading;
+    
+    const diff = actualRead - decNisab;
     const diffSign = diff >= 0 ? '+' : '';
-    const diffColor = diff >= 0 ? '#065f46' : '#dc2626';
-    const diffLabel = diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ';
-    const pct = decNisab > 0 ? Math.round((decTotal / decNisab) * 100) : 0;
+    const diffColor = !hasReading ? '#64748b' : (diff >= 0 ? '#065f46' : '#dc2626');
+    const diffLabel = !hasReading ? '— যাচাই হয়নি' : (diff >= 0 ? '✅ সম্পন্ন' : '⚠️ অসম্পূর্ণ');
+    const pct = (hasReading && decNisab > 0) ? Math.round((actualRead / decNisab) * 100) : 0;
 
     return `
         <div class="report-page" dir="rtl">
@@ -3543,9 +3553,9 @@ function buildTeacherReportPage(data) {
 
             <!-- ★ সারসংক্ষেপ -->
             <div class="report-page-summary">
-                <div><strong>দশকের পঠিত:</strong> ${decTotal} পৃষ্ঠা</div>
                 <div><strong>দশকের নিসাব:</strong> ${decNisab} পৃষ্ঠা</div>
-                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${pct}%</span></div>
+                <div><strong>যাচাইকৃত পঠিত:</strong> ${hasReading ? actualRead + ' পৃষ্ঠা' : '— যাচাই হয়নি'}</div>
+                <div><strong>সম্পন্ন:</strong> <span style="color:${diffColor};font-weight:bold;">${hasReading ? pct + '%' : '—'}</span></div>
                 <div><strong>অবস্থা:</strong> <span style="color:${diffColor};font-weight:bold;">${diffLabel}</span></div>
             </div>
 
