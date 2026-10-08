@@ -2726,10 +2726,47 @@ window.doGoogleLogin = async function() {
 window.doLogout = async function() {
     if (!confirm('লগআউট করতে চান?')) return;
     try {
-        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
-        await signOut(window.fbAuth);
+        await window.fbAuth.signOut();
+        console.log('✅ Logged out');
+        
+        // UI reset
+        currentUser = null;
+        currentUserData = null;
+        
+        // সব স্ক্রিন hide করে login দেখাও
+        ['login-screen', 'card-verify-modal', 'pending-screen', 'denied-screen', 'loading-screen'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+        });
+        
+        const ls = document.getElementById('login-screen');
+        ls.classList.remove('hidden');
+        ls.classList.add('flex');
+        
+        // Login form reset
+        const gBtn = document.getElementById('google-login-btn');
+        if (gBtn) {
+            gBtn.disabled = false;
+            gBtn.innerHTML = '<span>Google দিয়ে সাইন-ইন করুন</span>';
+        }
+        const eBtn = document.getElementById('login-btn');
+        if (eBtn) {
+            eBtn.disabled = false;
+            eBtn.innerHTML = '<i class="fa-solid fa-sign-in-alt"></i> <span>Email/Password দিয়ে লগইন</span>';
+        }
+        const emlEl = document.getElementById('login-email');
+        const pwdEl = document.getElementById('login-password');
+        if (emlEl) emlEl.value = '';
+        if (pwdEl) pwdEl.value = '';
+        const errEl = document.getElementById('login-error');
+        if (errEl) errEl.classList.add('hidden');
+        
+        // Optional: পেজ reload (সব state fresh করার জন্য)
+        setTimeout(() => location.reload(), 300);
+        
     } catch (err) {
-        console.error('Logout error:', err);
+        console.error('❌ Logout error:', err);
+        alert('লগআউট করতে সমস্যা: ' + err.message);
     }
 };
 
