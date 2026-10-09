@@ -650,13 +650,13 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </button>
         </nav>
 
-        <div class="flex items-center gap-2">
-            <div class="text-right hidden sm:block">
-                <p id="header-user-name" class="text-xs font-bold text-white">---</p>
-                <p id="header-user-role" class="text-[10px] text-amber-400">---</p>
+        <div class="flex items-center gap-3">
+            <div class="text-right">
+                <p id="header-user-name" class="text-xs font-bold text-white leading-tight">---</p>
+                <p id="header-user-role" class="text-[10px] text-amber-400 leading-tight">---</p>
             </div>
-            <button onclick="doLogout()" class="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow" title="Logout">
-                <i class="fa-solid fa-sign-out-alt"></i><span class="hidden sm:inline">লগআউট</span>
+            <button onclick="doLogout()" class="w-9 h-9 bg-red-600/80 hover:bg-red-700 text-white rounded-full flex items-center justify-center transition shadow-md hover:shadow-lg" title="লগআউট">
+                <i class="fa-solid fa-right-from-bracket text-sm"></i>
             </button>
         </div>
     </div>
@@ -700,7 +700,16 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 
             <!-- Step 1: Term & Dept -->
             <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-check text-emerald-700"></i>
+                            <span>শিক্ষাবর্ষ <span class="text-red-500">*</span></span>
+                        </label>
+                        <select id="syllabus-academic-year" required class="w-full rounded-lg border-slate-300 border p-2.5 bg-white focus:ring-2 focus:ring-emerald-500 text-sm font-medium">
+                            <option value="">-- শিক্ষাবর্ষ --</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5 flex items-center gap-2">
                             <i class="fa-solid fa-layer-group text-emerald-700"></i>
@@ -737,36 +746,6 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                     </div>
                     <div id="decades-checkbox-container" class="flex flex-wrap gap-2 pt-1">
                         <span class="text-xs text-slate-400 italic">পূর্বে পর্ব নির্বাচন করুন</span>
-                    </div>
-                </div>
-            </div>
-
-                        <!-- ★ সাময়িক/পর্ব-ভিত্তিক সিলেবাস সেকশন -->
-            <div id="term-syllabus-section" class="bg-amber-50/60 p-3.5 rounded-lg border border-amber-200 hidden">
-                <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
-                    <label class="block text-sm font-semibold text-amber-900 flex items-center gap-2">
-                        <i class="fa-solid fa-scroll text-amber-600"></i>
-                        <span id="term-syllabus-label">পর্বের সিলেবাস (সাময়িক ভিত্তিক)</span>
-                        <span class="text-red-500">*</span>
-                    </label>
-                    <span class="text-[10px] text-amber-700 italic">এই পর্বে মোট কত পৃষ্ঠা পড়ানো হবে</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div>
-                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
-                        <input type="text" id="term-start-chapter" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic" dir="rtl">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা</label>
-                        <input type="number" id="term-start-page" min="1" placeholder="১" class="w-full rounded border-slate-300 border p-2 text-xs">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
-                        <input type="text" id="term-end-chapter" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic" dir="rtl">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা</label>
-                        <input type="number" id="term-end-page" min="1" placeholder="১০" class="w-full rounded border-slate-300 border p-2 text-xs">
                     </div>
                 </div>
             </div>
@@ -823,6 +802,40 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 </div>
             </div>
 
+            <!-- ★ সাময়িক/পর্ব-ভিত্তিক সিলেবাস সেকশন -->
+            <div id="term-syllabus-section" class="bg-amber-50/60 p-3.5 rounded-lg border border-amber-200 hidden">
+                <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
+                    <label class="block text-sm font-semibold text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-scroll text-amber-600"></i>
+                        <span id="term-syllabus-label">পর্বের সিলেবাস (সাময়িক ভিত্তিক)</span>
+                        <span class="text-red-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-amber-700 italic">এই পর্বে মোট কত পৃষ্ঠা পড়ানো হবে</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরুর অধ্যায়</label>
+                        <input type="text" id="term-start-chapter" placeholder="كتاب الإيمان" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic term-syllabus-field" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শুরু পৃষ্ঠা</label>
+                        <input type="number" id="term-start-page" min="1" placeholder="১" class="w-full rounded border-slate-300 border p-2 text-xs term-syllabus-field">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ অধ্যায়</label>
+                        <input type="text" id="term-end-chapter" placeholder="باب الكبائر" class="w-full rounded border-slate-300 border p-2 text-xs font-arabic term-syllabus-field" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">শেষ পৃষ্ঠা</label>
+                        <input type="number" id="term-end-page" min="1" placeholder="১০" class="w-full rounded border-slate-300 border p-2 text-xs term-syllabus-field">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 block mb-1">মোট পৃষ্ঠা</label>
+                        <div id="term-total-pages" class="text-xs font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-2 py-2 text-center">০</div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Step 4: Per-Decade Syllabus (নতুন নাম) -->
             <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200">
                 <div class="flex items-center justify-between mb-3 border-b border-amber-200 pb-2 flex-wrap gap-2">
@@ -873,6 +886,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 <i class="fa-solid fa-info-circle mt-0.5"></i>
                 <span>নিচের ৫টি dropdown দিয়ে সিলেবাস খুঁজুন। সব সিলেক্ট করলে সংশ্লিষ্ট সিলেবাস অটো লোড হবে।</span>
             </p>
+            <div class="mb-3">
+                <label class="block text-[10px] font-semibold text-slate-700 mb-1">শিক্ষাবর্ষ *</label>
+                <select id="reading-academic-year" onchange="onReadingYearChange()" class="w-full max-w-xs rounded-lg border-slate-300 border p-2 bg-white text-xs font-medium">
+                    <option value="">-- শিক্ষাবর্ষ --</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="block text-[10px] font-semibold text-slate-700 mb-1">শিক্ষাবর্ষ *</label>
+                <select id="reading-academic-year" onchange="onReadingYearChange()" class="w-full max-w-xs rounded-lg border-slate-300 border p-2 bg-white text-xs font-medium">
+                    <option value="">-- শিক্ষাবর্ষ --</option>
+                </select>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
                 <div>
                     <label class="block text-[10px] font-semibold text-slate-700 mb-1">বিভাগ *</label>
@@ -1015,6 +1041,12 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
         <div class="flex flex-wrap gap-3 items-center">
             <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">শিক্ষাবর্ষ:</label>
+                <select id="jamat-filter-year" onchange="renderJamatReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                    <option value="">সব বছর</option>
+                </select>
+            </div>
+            <div>
                 <label class="text-xs font-semibold text-slate-600 block mb-1">বিভাগ:</label>
                 <select id="jamat-filter-dept" onchange="onJamatDeptChange()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
                     <option value="shariah">শরীয়াহ</option>
@@ -1085,6 +1117,12 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
         <div class="flex flex-wrap gap-3 items-center">
             <div>
+                <label class="text-xs font-semibold text-slate-600 block mb-1">শিক্ষাবর্ষ:</label>
+                <select id="teacher-filter-year" onchange="renderTeacherReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium">
+                    <option value="">সব বছর</option>
+                </select>
+            </div>
+            <div>
                 <label class="text-xs font-semibold text-slate-600 block mb-1">শিক্ষক:</label>
                 <select id="teacher-filter-name" onchange="renderTeacherReport()" class="rounded-lg border-slate-300 border p-2 text-sm font-medium"></select>
                 <p id="teacher-restriction-note" class="text-[10px] text-amber-700 mt-1 hidden"><i class="fa-solid fa-lock"></i> আপনি শুধু নিজের রিপোর্ট দেখতে পারবেন</p>
@@ -1145,6 +1183,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                     <i class="fa-solid fa-trash-can"></i> সব মুছুন
                 </button>
             </div>
+        </div>
 
         <!-- Filters -->
         <div class="bg-slate-50 p-3 rounded-lg mb-4 grid grid-cols-2 md:grid-cols-5 gap-2">
@@ -1228,6 +1267,29 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 </button>
             </div>
         </form>
+                <!-- ═══════════════════ শিক্ষাবর্ষ মাস্টার লিস্ট ═══════════════════ -->
+        <div class="mt-8 pt-6 border-t border-slate-200">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <h3 class="text-sm font-bold text-slate-700">
+                    <i class="fa-solid fa-calendar-check text-emerald-600"></i> শিক্ষাবর্ষ তালিকা
+                    <span id="year-master-count" class="badge bg-emerald-100 text-emerald-800 ml-2">০ টি</span>
+                </h3>
+                <button type="button" onclick="addAcademicYear()" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> নতুন শিক্ষাবর্ষ যোগ
+                </button>
+            </div>
+            
+            <p class="text-[11px] text-slate-500 mb-3">
+                <i class="fa-solid fa-info-circle"></i>
+                শিক্ষাবর্ষ যোগ করুন। "বর্তমান" হিসেবে একটি বছর থাকবে — যা ডাটা এন্ট্রিতে ডিফল্ট হিসেবে দেখাবে।
+            </p>
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                <div id="year-master-list" class="space-y-2">
+                    <p class="text-xs text-slate-400 italic text-center py-3">কোন শিক্ষাবর্ষ নেই</p>
+                </div>
+            </div>
+        </div>
         <div class="mt-8 pt-6 border-t border-slate-200">
             <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <h3 class="text-sm font-bold text-slate-700">
@@ -1338,6 +1400,10 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <button onclick="switchAdminSub('approvals')" id="adm-sub-approvals" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 relative">
                 <i class="fa-solid fa-user-clock"></i> অনুমোদন
                 <span id="approval-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] hidden">0</span>
+            </button>
+            <button onclick="switchAdminSub('edit-requests')" id="adm-sub-edit-requests" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 relative">
+                <i class="fa-solid fa-pen-to-square"></i> এডিট অনুরোধ
+                <span id="edit-request-badge" class="absolute -top-1 -right-1 bg-amber-600 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] hidden">0</span>
             </button>
             <button onclick="switchAdminSub('users')" id="adm-sub-users" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-user-gear"></i> ইউজার অ্যাকাউন্ট
@@ -1618,7 +1684,8 @@ let settings = { madrasaName: '', madrasaNameAr: '', address: '', year: '২০�
 // ═══════════════════ INIT ═══════════════════
 window.onload = function() {
     loadSettings();
-    loadTeachers();       // ★ নতুন
+    loadAcademicYears();   // ★ নতুন
+    loadTeachers();
     loadRecords();
     populateClassFilters();
     updateStats();
@@ -1692,6 +1759,250 @@ function saveSettings(e) {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
     applySettingsToUI();
     showToast('✅ সেটিংস সফলভাবে সংরক্ষিত হয়েছে', 'success');
+}
+
+// ═══════════════════ শিক্ষাবর্ষ ম্যানেজমেন্ট ═══════════════════
+let academicYears = [];  // [{ id, name, isCurrent }]
+
+function loadAcademicYears() {
+    // ★ প্রথমে localStorage থেকে load করি (দ্রুত)
+    const saved = localStorage.getItem('madrasa_academic_years');
+    if (saved) {
+        try { academicYears = JSON.parse(saved); } catch(e) { academicYears = []; }
+    }
+    
+    // ★ যদি কোনো বছর না থাকে — default "২০২৬-২০২৭" তৈরি করি
+    if (academicYears.length === 0) {
+        academicYears = [
+            { id: 'year_' + Date.now(), name: '২০২৬-২০২৭', isCurrent: true }
+        ];
+        saveAcademicYearsToStorage();
+    }
+    
+    renderYearMasterList();
+    populateYearDropdowns();
+    
+    // ★ Firestore থেকেও sync করি (background)
+    syncYearsFromFirestore();
+}
+
+// ★ Firestore থেকে years load
+async function syncYearsFromFirestore() {
+    if (!currentUser) return;
+    try {
+        const { doc, getDoc } = window.fbFuncs;
+        const ref = doc(window.fbDB, 'config', 'academicYears');
+        const snap = await getDoc(ref);
+        
+        if (snap.exists()) {
+            const data = snap.data();
+            if (data.years && Array.isArray(data.years) && data.years.length > 0) {
+                academicYears = data.years;
+                localStorage.setItem('madrasa_academic_years', JSON.stringify(academicYears));
+                renderYearMasterList();
+                populateYearDropdowns();
+                console.log('☁️ Academic years synced from Firestore:', academicYears.length);
+            }
+        }
+    } catch (err) {
+        console.error('❌ syncYearsFromFirestore error:', err);
+    }
+}
+
+function saveAcademicYearsToStorage() {
+    localStorage.setItem('madrasa_academic_years', JSON.stringify(academicYears));
+    // ★ Firestore-এও সেভ (background)
+    saveAcademicYearsToFirestore();
+}
+
+// ★ Firestore-এ years সেভ
+async function saveAcademicYearsToFirestore() {
+    if (!currentUser) return;
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        const ref = doc(window.fbDB, 'config', 'academicYears');
+        await setDoc(ref, {
+            years: academicYears,
+            updatedAt: serverTimestamp(),
+            updatedBy: currentUser.uid
+        });
+        console.log('☁️ Academic years saved to Firestore');
+    } catch (err) {
+        console.error('❌ saveAcademicYearsToFirestore error:', err);
+    }
+}
+
+function getCurrentYear() {
+    const cur = academicYears.find(y => y.isCurrent);
+    return cur ? cur.name : (academicYears[0]?.name || '২০২৬-২০২৭');
+}
+
+function renderYearMasterList() {
+    const container = document.getElementById('year-master-list');
+    const countEl = document.getElementById('year-master-count');
+    if (!container) return;
+    
+    if (countEl) countEl.textContent = academicYears.length + ' টি';
+    
+    if (academicYears.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-3">কোন শিক্ষাবর্ষ নেই</p>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    academicYears.forEach((y, idx) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg hover:border-emerald-300 transition';
+        div.innerHTML = `
+            <div class="flex items-center gap-2 flex-1">
+                <span class="font-bold text-sm">${y.name}</span>
+                ${y.isCurrent 
+                    ? '<span class="badge bg-emerald-600 text-white text-[10px]"><i class="fa-solid fa-star"></i> বর্তমান</span>' 
+                    : '<span class="badge bg-slate-200 text-slate-600 text-[10px]">আর্কাইভ</span>'}
+            </div>
+            <div class="flex gap-1">
+                ${!y.isCurrent ? `
+                    <button onclick="setCurrentYear(${idx})" class="px-2 py-1 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-[10px] font-bold rounded transition" title="বর্তমান হিসেবে মার্ক করুন">
+                        <i class="fa-solid fa-check"></i> বর্তমান
+                    </button>
+                ` : ''}
+                <button onclick="editAcademicYear(${idx})" class="text-blue-500 hover:text-blue-700 p-1 text-xs" title="সম্পাদনা">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="deleteAcademicYear(${idx})" class="text-red-500 hover:text-red-700 p-1 text-xs" title="মুছুন">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+window.addAcademicYear = function() {
+    const name = prompt('শিক্ষাবর্ষের নাম দিন:\nযেমন: ২০২৭-২০২৮');
+    if (!name || !name.trim()) return;
+    
+    const cleanName = name.trim();
+    if (academicYears.some(y => y.name === cleanName)) {
+        showToast('⚠️ এই শিক্ষাবর্ষ ইতিমধ্যে আছে', 'warn');
+        return;
+    }
+    
+    academicYears.push({
+        id: 'year_' + Date.now(),
+        name: cleanName,
+        isCurrent: false
+    });
+    
+    saveAcademicYearsToStorage();
+    renderYearMasterList();
+    populateYearDropdowns();
+    showToast('✅ শিক্ষাবর্ষ যোগ হয়েছে', 'success');
+};
+
+window.editAcademicYear = function(idx) {
+    const y = academicYears[idx];
+    if (!y) return;
+    
+    const newName = prompt('নতুন নাম:', y.name);
+    if (newName === null || !newName.trim()) return;
+    const cleanName = newName.trim();
+    if (cleanName === y.name) return;
+    
+    if (academicYears.some((yr, i) => i !== idx && yr.name === cleanName)) {
+        showToast('⚠️ এই নামে আরেকটা শিক্ষাবর্ষ আছে', 'warn');
+        return;
+    }
+    
+    const oldName = y.name;
+    academicYears[idx].name = cleanName;
+    saveAcademicYearsToStorage();
+    
+    // ★ পুরনো records-এ year field আপডেট করি
+    let updatedCount = 0;
+    records.forEach(r => {
+        if (r.academicYear === oldName) {
+            r.academicYear = cleanName;
+            updatedCount++;
+        }
+    });
+    if (updatedCount > 0) {
+        saveRecordsToStorage();
+        console.log(`✅ ${updatedCount}টি record-এর year আপডেট হয়েছে`);
+    }
+    
+    renderYearMasterList();
+    populateYearDropdowns();
+    showToast('✅ শিক্ষাবর্ষ আপডেট হয়েছে', 'success');
+};
+
+window.deleteAcademicYear = function(idx) {
+    const y = academicYears[idx];
+    if (!y) return;
+    
+    if (academicYears.length === 1) {
+        showToast('⚠️ কমপক্ষে একটি শিক্ষাবর্ষ থাকতে হবে', 'warn');
+        return;
+    }
+    
+    // ★ চেক করুন — এই বছরের কোনো record আছে কি?
+    const yearRecords = records.filter(r => r.academicYear === y.name);
+    let msg = `"${y.name}" মুছে ফেলবেন?`;
+    if (yearRecords.length > 0) {
+        msg = `⚠️ "${y.name}"-এর ${yearRecords.length}টি রেকর্ড আছে। ডিলিট করলে সেগুলো "শিক্ষাবর্ষ নেই" অবস্থায় থাকবে। আপনি কি নিশ্চিত?`;
+    }
+    if (!confirm(msg)) return;
+    
+    const wasCurrent = y.isCurrent;
+    academicYears.splice(idx, 1);
+    
+    // ★ যদি বর্তমান বছর ডিলিট হয় → প্রথমটাকে বর্তমান করি
+    if (wasCurrent && academicYears.length > 0) {
+        academicYears[0].isCurrent = true;
+    }
+    
+    saveAcademicYearsToStorage();
+    renderYearMasterList();
+    populateYearDropdowns();
+    showToast('🗑️ শিক্ষাবর্ষ মুছে ফেলা হয়েছে', 'info');
+};
+
+window.setCurrentYear = function(idx) {
+    academicYears.forEach((y, i) => {
+        y.isCurrent = (i === idx);
+    });
+    saveAcademicYearsToStorage();
+    renderYearMasterList();
+    populateYearDropdowns();
+    showToast(`✅ "${academicYears[idx].name}" এখন বর্তমান শিক্ষাবর্ষ`, 'success');
+};
+
+// ★ সব year dropdown populate করি
+function populateYearDropdowns() {
+    const dropdowns = ['syllabus-academic-year', 'reading-academic-year', 'jamat-filter-year', 'teacher-filter-year'];
+    
+    dropdowns.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        
+        const currentVal = sel.value;
+        sel.innerHTML = '';
+        
+        // ★ সব years
+        academicYears.forEach(y => {
+            const opt = document.createElement('option');
+            opt.value = y.name;
+            opt.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
+            sel.appendChild(opt);
+        });
+        
+        // ★ পুরনো ভ্যালু থাকলে সেটাই রাখি, নাহলে current
+        if (currentVal && academicYears.some(y => y.name === currentVal)) {
+            sel.value = currentVal;
+        } else {
+            sel.value = getCurrentYear();
+        }
+    });
 }
 
 function onTeacherNameInput() {
@@ -1862,8 +2173,10 @@ window.loadRecordsFromFirestore = async function() {
             return tb - ta;
         });
         
-        records = fbRecords;
+        // ★ প্রতিটি record-এ migration প্রয়োগ (academicYear যোগ)
+        records = fbRecords.map(r => migrateRecord(r));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+        console.log(`✅ ${records.length}টি record migrate করা হয়েছে`);
         renderSavedDataTable();
         updateStats();
         console.log('☁️ Records loaded from Firestore:', records.length);
@@ -1875,9 +2188,14 @@ window.loadRecordsFromFirestore = async function() {
 
 // ★★★ নতুন মাইগ্রেশন ফাংশন ★★★
 function migrateRecord(r) {
+    // ★ academicYear না থাকলে বর্তমান বছর যোগ করি
+    if (!r.academicYear) {
+        r.academicYear = getCurrentYear();
+    }
+    
     // যদি ইতিমধ্যেই v3 ফরম্যাটে থাকে
     if (r.decadesData && Array.isArray(r.decadesData)) {
-        // ★ type ফিল্ড না থাকলে syllabus ধরে নাও (পুরনো সব ডাটা সিলেবাস ছিল)
+        // ★ type ফিল্ড না থাকলে syllabus ধরে নাও
         if (!r.type) r.type = 'syllabus';
         // ★ প্রতিটি decade-এ nisab ফিল্ড না থাকলে 0 বসাও
         r.decadesData = r.decadesData.map(d => ({
@@ -1909,7 +2227,8 @@ function migrateRecord(r) {
     
     return {
         id: r.id || Date.now().toString() + Math.random(),
-        type: 'syllabus',  // ★ পুরনো সব ডাটা syllabus
+        type: 'syllabus',
+        academicYear: r.academicYear || getCurrentYear(),
         term: r.term || '',
         dept: r.dept || '',
         className: r.className || '',
@@ -1963,6 +2282,94 @@ window.saveRecordToFirestore = async function(record) {
     } catch (err) {
         console.error('❌ saveRecordToFirestore error:', err);
         showToast('❌ Firestore সেভ ব্যর্থ: ' + err.message, 'error');
+        return false;
+    }
+};
+
+// ═══════════════════ Edit Request System ═══════════════════
+
+// ★ একটা নির্দিষ্ট দশক আগে সেভ হয়েছে কি না চেক
+function checkDecadeExists(dept, term, className, bookName, teacherName, decadeName) {
+    return records.find(r =>
+        (r.type === 'syllabus' || !r.type) &&
+        r.dept === dept &&
+        r.term === term &&
+        r.className === className &&
+        r.bookName === bookName &&
+        r.teacherName === teacherName &&
+        (r.decadesData || []).some(d => d.decade === decadeName)
+    );
+}
+
+// ★ এডিট অনুরোধ Firestore-এ সেভ
+window.submitEditRequest = async function(requestData) {
+    if (!currentUser) { showToast('❌ লগইন করুন', 'error'); return false; }
+    try {
+        const { doc, setDoc, collection, serverTimestamp } = window.fbFuncs;
+        const reqId = 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        const ref = doc(window.fbDB, 'editRequests', reqId);
+        
+        await setDoc(ref, {
+            ...requestData,
+            id: reqId,
+            requestedBy: currentUser.uid,
+            requestedByEmail: currentUser.email,
+            requestedAt: serverTimestamp(),
+            status: 'pending'
+        });
+        
+        console.log('✅ Edit request saved:', reqId);
+        return true;
+    } catch (err) {
+        console.error('❌ submitEditRequest error:', err);
+        showToast('❌ অনুরোধ সেভ ব্যর্থ: ' + err.message, 'error');
+        return false;
+    }
+};
+
+// ★ এডিট অনুরোধ approve করলে পুরনো record-এর দশক replace
+window.applyEditRequest = async function(requestData) {
+    try {
+        // ★ পুরনো record খুঁজি
+        const oldRecord = records.find(r => r.id === requestData.originalRecordId);
+        if (!oldRecord) {
+            showToast('⚠️ পুরনো সিলেবাস পাওয়া যায়নি — এডিট বাতিল', 'warn');
+            return false;
+        }
+        
+        // ★ decadesData আপডেট — যেই দশকটার জন্য অনুরোধ, শুধু সেটা replace
+        const newDecadesData = (oldRecord.decadesData || []).map(d => {
+            if (d.decade === requestData.decadeName) {
+                return requestData.newDecadeData;
+            }
+            return d;
+        });
+        
+        const updatedRecord = {
+            ...oldRecord,
+            decadesData: newDecadesData,
+            totalPages: newDecadesData.reduce((a, c) => a + (c.total || 0), 0),
+            totalNisabFromDecades: newDecadesData.reduce((a, c) => a + (c.nisab || 0), 0),
+            updatedAt: new Date().toISOString(),
+            lastEditedBy: requestData.requestedBy,
+            lastEditedByName: requestData.requestedByName,
+            lastEditedAt: requestData.requestedAt || new Date().toISOString()
+        };
+        
+        // ★ Local records আপডেট
+        const idx = records.findIndex(r => r.id === oldRecord.id);
+        if (idx >= 0) records[idx] = updatedRecord;
+        
+        // ★ Firestore-এ সেভ
+        const ok = await saveRecordToFirestore(updatedRecord);
+        if (ok) {
+            saveRecordsToStorage();
+            console.log('✅ Edit request applied');
+            return true;
+        }
+        return false;
+    } catch (err) {
+        console.error('❌ applyEditRequest error:', err);
         return false;
     }
 };
@@ -2023,6 +2430,16 @@ window.switchEntrySub = function(sub) {
 // ═══════════════════ পাঠ্য পরিমাণ যাচাই — Dropdown Chain ═══════════════════
 let _readingSelectedSyllabus = null;
 
+window.onReadingYearChange = function() {
+    // ★ শিক্ষাবর্ষ পরিবর্তন হলে সব dropdown রিসেট করি
+    document.getElementById('reading-dept').value = '';
+    document.getElementById('reading-term').innerHTML = '<option value="">-- পর্ব --</option>';
+    document.getElementById('reading-class').innerHTML = '<option value="">-- জামাত --</option>';
+    document.getElementById('reading-book').innerHTML = '<option value="">-- কিতাব --</option>';
+    document.getElementById('reading-teacher').innerHTML = '<option value="">-- শিক্ষক --</option>';
+    hideReadingSections();
+};
+
 window.onReadingDeptChange = function() {
     const dept = document.getElementById('reading-dept').value;
     const termSel = document.getElementById('reading-term');
@@ -2058,6 +2475,7 @@ window.onReadingTermChange = function() {
     const syllabusRecords = records.filter(r => 
         r.dept === dept && 
         r.term === term && 
+        (!academicYear || r.academicYear === academicYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -2099,10 +2517,13 @@ window.onReadingClassChange = function() {
     
     if (!dept || !term || !className) return;
     
+    const academicYear = document.getElementById('reading-academic-year').value;
+    
     let syllabusRecords = records.filter(r => 
         r.dept === dept && 
         r.term === term && 
         r.className === className &&
+        (!academicYear || r.academicYear === academicYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -2141,11 +2562,14 @@ window.onReadingBookChange = function() {
     
     if (!dept || !term || !className || !bookName) return;
     
+    const academicYear = document.getElementById('reading-academic-year').value;
+    
     let syllabusRecords = records.filter(r => 
         r.dept === dept && 
         r.term === term && 
         r.className === className &&
         r.bookName === bookName &&
+        (!academicYear || r.academicYear === academicYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -2185,12 +2609,15 @@ window.onReadingTeacherChange = function() {
     if (!dept || !term || !className || !bookName || !teacherName) return;
     
     // ★ সংশ্লিষ্ট সিলেবাস খুঁজি
+    const academicYear = document.getElementById('reading-academic-year').value;
+    
     const syllabus = records.find(r => 
         r.dept === dept && 
         r.term === term && 
         r.className === className &&
         r.bookName === bookName &&
         r.teacherName === teacherName &&
+        (!academicYear || r.academicYear === academicYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -2533,6 +2960,7 @@ window.submitReading = async function() {
     const readingData = {
         id: existingIdx >= 0 ? records[existingIdx].id : Date.now().toString(),
         type: 'reading',
+        academicYear: document.getElementById('reading-academic-year').value || syll.academicYear || getCurrentYear(),
         linkedSyllabusId: syll.id,  // ★ সিলেবাসের সাথে link
         term: syll.term,
         dept: syll.dept,
@@ -2769,6 +3197,27 @@ function onTermChange() {
     }
 }
 
+// ★ সাময়িক সিলেবাস মোট পৃষ্ঠা auto-calc
+document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('term-syllabus-field')) {
+        const start = parseInt(document.getElementById('term-start-page')?.value) || 0;
+        const end = parseInt(document.getElementById('term-end-page')?.value) || 0;
+        const totalEl = document.getElementById('term-total-pages');
+        if (totalEl) {
+            if (start > 0 && end >= start) {
+                totalEl.textContent = (end - start + 1);
+                totalEl.style.color = '#065f46';
+            } else if (end > 0 && end < start) {
+                totalEl.textContent = 'ভুল!';
+                totalEl.style.color = '#dc2626';
+            } else {
+                totalEl.textContent = '০';
+                totalEl.style.color = '#065f46';
+            }
+        }
+    }
+});
+
 function toggleSelectAllDecades() {
     const chks = document.querySelectorAll('.decade-chk');
     const allChecked = Array.from(chks).every(c => c.checked);
@@ -2817,14 +3266,8 @@ function renderPerDecadeInputs() {
                     <input type="number" data-dec="${dec}" data-field="end" value="${prev.end || ''}" min="1" required placeholder="১০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-page-input">
                 </div>
                 <div>
-                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">দশকের নিসাব পৃষ্ঠা *</label>
-                    <input type="number" data-dec="${dec}" data-field="nisab" value="${prev.nisab || ''}" min="1" required placeholder="৪০" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-nisab-input bg-white border-emerald-400">
-                </div>
-            </div>
-            <div class="flex justify-end">
-                <div class="flex items-center gap-2 text-xs">
-                    <span class="text-slate-600 font-semibold">এই দশকের মোট পঠিত পৃষ্ঠা:</span>
-                    <span class="font-bold text-emerald-800 bg-white border border-emerald-300 rounded px-3 py-1" data-total-for="${dec}">০</span>
+                    <label class="text-[10px] font-semibold text-slate-600 block mb-1">দশকের মোট পৃষ্ঠা</label>
+                    <input type="number" data-dec="${dec}" data-field="nisab" value="${prev.nisab || ''}" readonly placeholder="—" class="w-full rounded border-slate-300 border p-1.5 text-xs decade-nisab-input bg-emerald-50 border-emerald-400 font-bold text-emerald-800">
                 </div>
             </div>
         `;
@@ -2832,11 +3275,40 @@ function renderPerDecadeInputs() {
     });
 
     container.querySelectorAll('.decade-page-input').forEach(inp => {
-        inp.addEventListener('input', () => { recalcDecadeTotals(); updateDecadeSummary(); });
+        inp.addEventListener('input', () => { 
+            recalcDecadeTotals(); 
+            updateDecadeSummary(); 
+            autoCalcDecadeNisab(); 
+        });
     });
 
     recalcDecadeTotals();
     updateDecadeSummary();
+    autoCalcDecadeNisab();
+}
+
+// ★ দশকের মোট পৃষ্ঠা auto-calc (শেষ − শুরু + ১)
+function autoCalcDecadeNisab() {
+    document.querySelectorAll('#per-decade-inputs input[data-field="start"]').forEach(startInput => {
+        const dec = startInput.dataset.dec;
+        const start = parseInt(startInput.value) || 0;
+        const end = parseInt(document.querySelector(`#per-decade-inputs input[data-dec="${dec}"][data-field="end"]`)?.value) || 0;
+        const nisabInput = document.querySelector(`#per-decade-inputs input[data-dec="${dec}"][data-field="nisab"]`);
+        
+        if (nisabInput) {
+            if (start > 0 && end >= start) {
+                nisabInput.value = end - start + 1;
+                nisabInput.classList.remove('border-red-400');
+                nisabInput.classList.add('border-emerald-400');
+            } else if (end > 0 && end < start) {
+                nisabInput.value = 'ভুল!';
+                nisabInput.classList.remove('border-emerald-400');
+                nisabInput.classList.add('border-red-400');
+            } else {
+                nisabInput.value = '';
+            }
+        }
+    });
 }
 
 function collectPerDecadeData() {
@@ -2980,7 +3452,8 @@ async function handleFormSubmit(e) {
 
     // ★ সিলেবাস record
     const syllabusData = {
-        type: 'syllabus',  // ★ আলাদা মার্কার
+        type: 'syllabus',
+        academicYear: document.getElementById('syllabus-academic-year')?.value || getCurrentYear(),
         term: document.getElementById('term-select').value,
         dept: document.getElementById('dept-select').value,
         className: document.getElementById('class-select').value,
@@ -3005,7 +3478,91 @@ async function handleFormSubmit(e) {
     };
 
     const editingId = document.getElementById('editing-id').value;
+    const isTeacher = currentUserData?.role === 'teacher';
 
+    // ★★★ শিক্ষক হলে detection logic
+    if (isTeacher) {
+        // প্রতিটি দশক আলাদা check করি
+        const newDecades = [];      // যেগুলো আগে নেই — সরাসরি সেভ হবে
+        const editRequests = [];    // যেগুলো আগে আছে — edit request হবে
+        
+        for (const dec of decadesData) {
+            const existing = checkDecadeExists(
+                syllabusData.dept,
+                syllabusData.term,
+                syllabusData.className,
+                syllabusData.bookName,
+                syllabusData.teacherName,
+                dec.decade
+            );
+            
+            if (existing) {
+                editRequests.push({
+                    existingRecord: existing,
+                    decadeData: dec
+                });
+            } else {
+                newDecades.push(dec);
+            }
+        }
+        
+        // ★ নতুন দশক থাকলে → সরাসরি সেভ
+        if (newDecades.length > 0) {
+            const newSyllabusData = {
+                ...syllabusData,
+                decadesData: newDecades,
+                totalPages: newDecades.reduce((a, c) => a + c.total, 0),
+                totalNisabFromDecades: newDecades.reduce((a, c) => a + c.nisab, 0),
+                id: Date.now().toString(),
+                createdBy: currentUser?.uid || 'unknown',
+                createdByEmail: currentUser?.email || 'unknown'
+            };
+            records.push(newSyllabusData);
+            const ok = await saveRecordToFirestore(newSyllabusData);
+            if (ok) showToast(`✅ ${newDecades.length}টি নতুন দশক সেভ হয়েছে`, 'success');
+        }
+        
+        // ★ পুরনো দশক থাকলে → edit request জমা
+        if (editRequests.length > 0) {
+            let successCount = 0;
+            for (const req of editRequests) {
+                const requestPayload = {
+                    type: 'syllabus-edit',
+                    originalRecordId: req.existingRecord.id,
+                    decadeName: req.decadeData.decade,
+                    // ★ নতুন দশকের ডাটা
+                    newDecadeData: req.decadeData,
+                    // ★ পুরনো ডাটা (তুলনার জন্য)
+                    oldDecadeData: (req.existingRecord.decadesData || []).find(d => d.decade === req.decadeData.decade),
+                    // ★ প্রেক্ষাপট
+                    dept: syllabusData.dept,
+                    term: syllabusData.term,
+                    className: syllabusData.className,
+                    section: syllabusData.section,
+                    bookName: syllabusData.bookName,
+                    publisher: syllabusData.publisher,
+                    teacherName: syllabusData.teacherName,
+                    requestedByName: currentUserData?.name || currentUser?.email || '---'
+                };
+                
+                const ok = await submitEditRequest(requestPayload);
+                if (ok) successCount++;
+            }
+            
+            if (successCount > 0) {
+                showToast(`📝 ${successCount}টি দশকের এডিট অনুরোধ এডমিনের কাছে পাঠানো হয়েছে`, 'info');
+            }
+        }
+        
+        saveRecordsToStorage();
+        resetForm();
+        populateTeacherFilters();
+        populateTeacherFilterDropdown();
+        renderSavedDataTable();
+        return;
+    }
+
+    // ★★★ এডমিন হলে — সরাসরি সেভ (আগের মতোই)
     if (editingId) {
         const idx = records.findIndex(r => r.id === editingId);
         if (idx >= 0) {
@@ -3051,6 +3608,9 @@ function resetForm() {
     });
     const termSection = document.getElementById('term-syllabus-section');
     if (termSection) termSection.classList.add('hidden');
+    // ★ academic year reset (বর্তমান বছরে ফিরে যাবে)
+    const yearSel = document.getElementById('syllabus-academic-year');
+    if (yearSel) yearSel.value = getCurrentYear();
 }
 
 // ═══════════════════ EDIT ★★★ ═══════════════════
@@ -3143,6 +3703,7 @@ function renderJamatReport() {
     const selectedTerm = document.getElementById('jamat-filter-term').value;
     const selectedClass = document.getElementById('jamat-filter-class').value;
     const selectedSection = document.getElementById('jamat-filter-section').value;
+    const selectedYear = document.getElementById('jamat-filter-year')?.value || '';
 
     const container = document.getElementById('jamat-report-pages');
     if (!container) return;
@@ -3163,7 +3724,8 @@ function renderJamatReport() {
     let filtered = records.filter(r => 
         r.dept === selectedDept && 
         r.className === selectedClass &&
-        (r.type === 'syllabus' || !r.type)  // পুরনো ডাটা backward compat
+        (!selectedYear || r.academicYear === selectedYear) &&
+        (r.type === 'syllabus' || !r.type)
     );
     
     if (selectedTerm !== 'year') filtered = filtered.filter(r => r.term === selectedTerm);
@@ -3308,10 +3870,13 @@ function renderJamatTermSummary(dept, term, className, section) {
         return;
     }
     
+    const selectedYear = document.getElementById('jamat-filter-year')?.value || '';
+    
     // ★ সিলেবাস রেকর্ড
     let syllabusRecords = records.filter(r => 
         r.dept === dept && 
         r.className === className &&
+        (!selectedYear || r.academicYear === selectedYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -3361,15 +3926,14 @@ function renderJamatTermSummary(dept, term, className, section) {
     });
     
     // ★ প্রতিটি group-এ reading attach
-    Object.values(grouped).forEach(g => {
         g.readingRecord = records.find(r =>
             r.type === 'reading' &&
             r.dept === g.dept &&
             r.className === g.className &&
             r.bookName === g.bookName &&
-            r.teacherName === g.teacher
+            r.teacherName === teacher &&
+            (!selectedYear || r.academicYear === selectedYear)
         ) || null;
-    });
     
     let allPagesHTML = '';
     let pageCounter = 0;
@@ -3648,10 +4212,13 @@ function renderJamatSessionSummary(dept, className, section) {
         return;
     }
     
+    const selectedYear = document.getElementById('jamat-filter-year')?.value || '';
+    
     // ★ সব সিলেবাস রেকর্ড (সব term)
     let syllabusRecords = records.filter(r => 
         r.dept === dept && 
         r.className === className &&
+        (!selectedYear || r.academicYear === selectedYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -4158,9 +4725,12 @@ function renderTeacherTermSummary(teacher, term) {
         return;
     }
     
+    const selectedYear = document.getElementById('teacher-filter-year')?.value || '';
+    
     // ★ এই শিক্ষকের সব সিলেবাস
     let syllabusRecords = records.filter(r => 
         r.teacherName === teacher &&
+        (!selectedYear || r.academicYear === selectedYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -4202,7 +4772,8 @@ function renderTeacherTermSummary(teacher, term) {
             r.dept === g.dept &&
             r.className === g.className &&
             r.bookName === g.bookName &&
-            r.teacherName === teacher
+            r.teacherName === teacher &&
+            (!selectedYear || r.academicYear === selectedYear)
         ) || null;
     });
     
@@ -4503,9 +5074,12 @@ function renderTeacherSessionSummary(teacher) {
         return;
     }
     
+    const selectedYear = document.getElementById('teacher-filter-year')?.value || '';
+    
     // ★ এই শিক্ষকের সব সিলেবাস (সব term)
     let syllabusRecords = records.filter(r => 
         r.teacherName === teacher &&
+        (!selectedYear || r.academicYear === selectedYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -4543,7 +5117,8 @@ function renderTeacherSessionSummary(teacher) {
             r.dept === g.dept &&
             r.className === g.className &&
             r.bookName === g.bookName &&
-            r.teacherName === teacher
+            r.teacherName === teacher &&
+            (!selectedYear || r.academicYear === selectedYear)
         );
     });
     
@@ -5029,6 +5604,7 @@ function buildTeacherReportPage(data) {
 function renderTeacherReport() {
     const teacher = document.getElementById('teacher-filter-name').value;
     const term = document.getElementById('teacher-filter-term').value;
+    const selectedYear = document.getElementById('teacher-filter-year')?.value || '';
 
     const container = document.getElementById('teacher-report-pages');
     if (!container) return;
@@ -5057,6 +5633,7 @@ function renderTeacherReport() {
     // ★ শুধু সিলেবাস টাইপ রেকর্ড
     let filtered = records.filter(r => 
         r.teacherName === teacher && 
+        (!selectedYear || r.academicYear === selectedYear) &&
         (r.type === 'syllabus' || !r.type)
     );
     
@@ -5098,14 +5675,15 @@ function renderTeacherReport() {
         grouped[key].records.push(r);
     });
     
-    // ★ প্রতিটি group-এ corresponding reading attach করি
+    // ★ প্রতিটি group-এ corresponding reading ডাটা attach করি
     Object.values(grouped).forEach(g => {
         const readingRec = records.find(r =>
             r.type === 'reading' &&
             r.dept === g.dept &&
             r.className === g.className &&
             r.bookName === g.bookName &&
-            r.teacherName === teacher
+            r.teacherName === g.teacher &&
+            (!selectedYear || r.academicYear === selectedYear)
         );
         g.readingRecord = readingRec || null;
     });
@@ -5703,6 +6281,10 @@ async function handleUserLogin(user) {
             console.log('📦 Records load...');
             await loadRecordsFromFirestore();
             console.log('✅ Records loaded');
+            
+            console.log('📦 Academic years sync...');
+            await syncYearsFromFirestore();
+            console.log('✅ Academic years synced');
         } catch (err) {
             console.error('❌ Load error (এটাই silent fail ছিল):', err);
         }
@@ -6018,6 +6600,8 @@ window.switchAdminSub = function(sub) {
     else if (sub === 'assign') renderAdminAssign();
     else if (sub === 'users') renderAdminUsers();
     else if (sub === 'approvals') renderAdminApprovals();
+    else if (sub === 'approvals') renderAdminApprovals();
+    else if (sub === 'edit-requests') renderAdminEditRequests();
     else {
         const content = document.getElementById('adm-content');
         content.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-screwdriver-wrench text-4xl mb-3"></i><p class="text-sm">"${sub}" সেকশন পরের ধাপে যোগ হবে</p></div>`;
@@ -7990,6 +8574,253 @@ window.renderAdminApprovals = async function() {
         </div>
     `;
 };
+
+// ═══════════════════ ADMIN: এডিট অনুরোধ ═══════════════════
+let adminEditRequests = [];
+
+window.renderAdminEditRequests = async function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+    
+    content.innerHTML = `<div class="text-center py-12 text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i><p>এডিট অনুরোধ লোড হচ্ছে...</p></div>`;
+    
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        const q = query(collection(window.fbDB, 'editRequests'), where('status', '==', 'pending'));
+        const snap = await getDocs(q);
+        
+        adminEditRequests = [];
+        snap.forEach(d => adminEditRequests.push({ id: d.id, ...d.data() }));
+        
+        // Sort by requestedAt desc
+        adminEditRequests.sort((a, b) => {
+            const ta = a.requestedAt?.seconds || 0;
+            const tb = b.requestedAt?.seconds || 0;
+            return tb - ta;
+        });
+    } catch (err) {
+        console.error('❌ renderAdminEditRequests error:', err);
+        content.innerHTML = `<div class="text-center py-12 text-red-500"><i class="fa-solid fa-exclamation-triangle text-3xl mb-3"></i><p>লোড ব্যর্থ: ${err.message}</p></div>`;
+        return;
+    }
+    
+    // ★ ব্যাজ আপডেট
+    const badge = document.getElementById('edit-request-badge');
+    if (badge) {
+        if (adminEditRequests.length > 0) {
+            badge.textContent = adminEditRequests.length;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+    
+    // ★ অনুরোধ কার্ড
+    let cardsHTML = '';
+    if (adminEditRequests.length === 0) {
+        cardsHTML = `
+            <div class="text-center py-16 text-slate-400">
+                <i class="fa-solid fa-check-circle text-5xl mb-3 text-emerald-500"></i>
+                <p class="font-bold text-slate-600">কোন এডিট অনুরোধ নেই</p>
+                <p class="text-xs mt-2">শিক্ষকরা যখন পুরনো দশকে পরিবর্তন চাইবেন, তখন এখানে দেখাবে।</p>
+            </div>
+        `;
+    } else {
+        adminEditRequests.forEach((req, idx) => {
+            const requestedDate = req.requestedAt?.seconds 
+                ? new Date(req.requestedAt.seconds * 1000).toLocaleString('bn-BD')
+                : '---';
+            
+            const oldDec = req.oldDecadeData || {};
+            const newDec = req.newDecadeData || {};
+            const termName = getTermName(req.term);
+            const deptName = getDeptName(req.dept);
+            
+            // ★ কোন কোন ফিল্ড পরিবর্তন হয়েছে চিহ্নিত করি
+            const changedFields = [];
+            if ((oldDec.start || 0) !== (newDec.start || 0)) changedFields.push('শুরু পৃষ্ঠা');
+            if ((oldDec.end || 0) !== (newDec.end || 0)) changedFields.push('শেষ পৃষ্ঠা');
+            if ((oldDec.nisab || 0) !== (newDec.nisab || 0)) changedFields.push('নিসাব পৃষ্ঠা');
+            if ((oldDec.startCh || '') !== (newDec.startCh || '')) changedFields.push('শুরুর অধ্যায়');
+            if ((oldDec.endCh || '') !== (newDec.endCh || '')) changedFields.push('শেষ অধ্যায়');
+            
+            cardsHTML += `
+                <div class="bg-white border-2 border-amber-300 rounded-xl overflow-hidden shadow-sm">
+                    <!-- হেডার -->
+                    <div class="bg-amber-100 px-4 py-2 flex items-center justify-between flex-wrap gap-2 border-b border-amber-200">
+                        <div class="flex items-center gap-2">
+                            <span class="badge bg-amber-600 text-white"><i class="fa-solid fa-pen-to-square"></i> এডিট অনুরোধ</span>
+                            <span class="text-xs font-bold text-amber-900">${req.decadeName || '---'}</span>
+                        </div>
+                        <span class="text-[10px] text-amber-800"><i class="fa-solid fa-clock"></i> ${requestedDate}</span>
+                    </div>
+                    
+                    <!-- কে পাঠিয়েছে -->
+                    <div class="px-4 py-2 bg-amber-50 border-b border-amber-200 text-xs">
+                        <strong class="text-amber-900">আবেদনকারী:</strong>
+                        <span class="text-slate-700">${req.requestedByName || '---'}</span>
+                        <span class="text-slate-500">(${req.requestedByEmail || '---'})</span>
+                    </div>
+                    
+                    <!-- প্রেক্ষাপট -->
+                    <div class="px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs border-b border-slate-200">
+                        <div><strong class="text-slate-600">জামাত:</strong> <span class="font-arabic">${req.className}</span></div>
+                        <div><strong class="text-slate-600">বিভাগ:</strong> ${deptName}</div>
+                        <div><strong class="text-slate-600">পর্ব:</strong> ${termName}</div>
+                        <div><strong class="text-slate-600">কিতাব:</strong> <span class="font-arabic">${req.bookName}</span></div>
+                        <div class="md:col-span-2"><strong class="text-slate-600">শিক্ষক:</strong> ${req.teacherName}</div>
+                        <div><strong class="text-slate-600">শাখা:</strong> ${req.section === 'নাই' ? 'নাই' : req.section}</div>
+                        <div><strong class="text-slate-600">প্রকাশনী:</strong> <span class="font-arabic">${req.publisher || '-'}</span></div>
+                    </div>
+                    
+                    <!-- পরিবর্তনের তুলনা -->
+                    <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
+                        <p class="text-xs font-bold text-slate-700 mb-2">
+                            <i class="fa-solid fa-arrow-right-arrow-left text-amber-600"></i>
+                            পরিবর্তনের তুলনা
+                            ${changedFields.length > 0 ? `<span class="text-[10px] ml-2 text-amber-700">(${changedFields.join(', ')} পরিবর্তন হয়েছে)</span>` : '<span class="text-[10px] ml-2 text-slate-500">(কোনো পরিবর্তন নেই)</span>'}
+                        </p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-center text-xs border-collapse border border-slate-300">
+                                <thead>
+                                    <tr class="bg-slate-100">
+                                        <th class="border border-slate-300 p-1.5 text-[10px]"></th>
+                                        <th class="border border-slate-300 p-1.5 text-[10px] bg-red-50">পুরনো</th>
+                                        <th class="border border-slate-300 p-1.5 text-[10px] bg-emerald-50">নতুন</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1.5 text-[10px] font-bold text-left">শুরুর অধ্যায়</td>
+                                        <td class="border border-slate-300 p-1.5 font-arabic ${(oldDec.startCh || '') !== (newDec.startCh || '') ? 'bg-red-50 text-red-700 font-bold' : ''}">${oldDec.startCh || '-'}</td>
+                                        <td class="border border-slate-300 p-1.5 font-arabic ${(oldDec.startCh || '') !== (newDec.startCh || '') ? 'bg-emerald-50 text-emerald-800 font-bold' : ''}">${newDec.startCh || '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1.5 text-[10px] font-bold text-left">শুরু পৃষ্ঠা</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.start || 0) !== (newDec.start || 0) ? 'bg-red-50 text-red-700 font-bold' : ''}">${oldDec.start || '-'}</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.start || 0) !== (newDec.start || 0) ? 'bg-emerald-50 text-emerald-800 font-bold' : ''}">${newDec.start || '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1.5 text-[10px] font-bold text-left">শেষ অধ্যায়</td>
+                                        <td class="border border-slate-300 p-1.5 font-arabic ${(oldDec.endCh || '') !== (newDec.endCh || '') ? 'bg-red-50 text-red-700 font-bold' : ''}">${oldDec.endCh || '-'}</td>
+                                        <td class="border border-slate-300 p-1.5 font-arabic ${(oldDec.endCh || '') !== (newDec.endCh || '') ? 'bg-emerald-50 text-emerald-800 font-bold' : ''}">${newDec.endCh || '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1.5 text-[10px] font-bold text-left">শেষ পৃষ্ঠা</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.end || 0) !== (newDec.end || 0) ? 'bg-red-50 text-red-700 font-bold' : ''}">${oldDec.end || '-'}</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.end || 0) !== (newDec.end || 0) ? 'bg-emerald-50 text-emerald-800 font-bold' : ''}">${newDec.end || '-'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1.5 text-[10px] font-bold text-left">নিসাব পৃষ্ঠা</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.nisab || 0) !== (newDec.nisab || 0) ? 'bg-red-50 text-red-700 font-bold' : ''}">${oldDec.nisab || '-'}</td>
+                                        <td class="border border-slate-300 p-1.5 ${(oldDec.nisab || 0) !== (newDec.nisab || 0) ? 'bg-emerald-50 text-emerald-800 font-bold' : ''}">${newDec.nisab || '-'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- অ্যাকশন বাটন -->
+                    <div class="px-4 py-3 flex justify-end gap-2 bg-white">
+                        <button onclick="rejectEditRequest(${idx})" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded-lg transition">
+                            <i class="fa-solid fa-xmark"></i> বাতিল
+                        </button>
+                        <button onclick="approveEditRequest(${idx})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition">
+                            <i class="fa-solid fa-check"></i> অনুমোদন দিন
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-pen-to-square text-amber-600"></i> এডিট অনুরোধ
+                    <span class="badge bg-amber-100 text-amber-800 ml-2">${adminEditRequests.length} টি</span>
+                </h3>
+                <button onclick="renderAdminEditRequests()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> রিফ্রেশ
+                </button>
+            </div>
+            
+            ${adminEditRequests.length > 0 ? `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-xs text-amber-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    শিক্ষকরা পুরনো সিলেবাসে পরিবর্তন চাইলে অনুরোধ পাঠান। <strong>অনুমোদন</strong> করলে শুধু নির্দিষ্ট দশকের ডাটা পুরনো record-এ replace হবে।
+                </p>
+            </div>` : ''}
+            
+            <div class="space-y-3">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+};
+
+// ═══════════════════ Approve Edit Request ═══════════════════
+window.approveEditRequest = async function(idx) {
+    const req = adminEditRequests[idx];
+    if (!req) return;
+    
+    if (!confirm(`এই এডিট অনুরোধ অনুমোদন করবেন?\n\nদশক: ${req.decadeName}\nশিক্ষক: ${req.teacherName}\n\nঅনুমোদন করলে পুরনো সিলেবাসে এই দশকের ডাটা replace হবে।`)) return;
+    
+    try {
+        showToast('⏳ অনুমোদন করা হচ্ছে...', 'info');
+        
+        // ★ পুরনো record-এ apply
+        const ok = await applyEditRequest(req);
+        if (!ok) {
+            showToast('❌ পুরনো রেকর্ডে apply করা যায়নি', 'error');
+            return;
+        }
+        
+        // ★ Firestore-এ request status update
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+        await updateDoc(doc(window.fbDB, 'editRequests', req.id), {
+            status: 'approved',
+            approvedAt: serverTimestamp(),
+            approvedBy: currentUser?.uid || 'admin',
+            approvedByName: currentUserData?.name || 'এডমিন'
+        });
+        
+        showToast('✅ এডিট অনুমোদিত হয়েছে', 'success');
+        renderAdminEditRequests();
+    } catch (err) {
+        console.error('❌ approveEditRequest error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ Reject Edit Request ═══════════════════
+window.rejectEditRequest = async function(idx) {
+    const req = adminEditRequests[idx];
+    if (!req) return;
+    
+    if (!confirm(`এই এডিট অনুরোধ বাতিল করবেন?\n\nদশক: ${req.decadeName}\nশিক্ষক: ${req.teacherName}\n\nবাতিল করলে পুরনো সিলেবাস অপরিবর্তিত থাকবে।`)) return;
+    
+    try {
+        showToast('⏳ বাতিল করা হচ্ছে...', 'info');
+        
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+        await updateDoc(doc(window.fbDB, 'editRequests', req.id), {
+            status: 'rejected',
+            rejectedAt: serverTimestamp(),
+            rejectedBy: currentUser?.uid || 'admin',
+            rejectedByName: currentUserData?.name || 'এডমিন'
+        });
+        
+        showToast('🗑️ এডিট অনুরোধ বাতিল হয়েছে', 'info');
+        renderAdminEditRequests();
+    } catch (err) {
+        console.error('❌ rejectEditRequest error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
 // ═══════════════════ APPROVE / REJECT ═══════════════════
 let _approveTargetUser = null;
 
