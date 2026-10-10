@@ -302,6 +302,210 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
         margin-top: 30px;
     }
 }
+/* ═══════════════ ক্লাস রুটিন স্টাইল ═══════════════ */
+.routine-container { max-width: 100%; overflow-x: auto; }
+
+.routine-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+}
+.routine-table th,
+.routine-table td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+.routine-table th {
+    background: #065f46;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+}
+.routine-table th.subhead {
+    background: #ecfdf5;
+    color: #064e3b;
+    font-size: 10px;
+}
+.routine-table td.period-cell {
+    background: #f1f5f9;
+    font-weight: bold;
+    font-size: 11px;
+    color: #065f46;
+    white-space: nowrap;
+}
+.routine-table td.time-cell {
+    background: #f8fafc;
+    font-size: 10.5px;
+    white-space: nowrap;
+    color: #475569;
+}
+.routine-table td.book-cell {
+    font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #1e293b;
+    background: #fffbeb;
+}
+/* ★ ফুল-পেইজ টেবিল — প্রতিটি সারি সমান উচ্চতা */
+.routine-fulltable {
+    table-layout: fixed;
+}
+.routine-fulltable td {
+    padding: 10px 8px !important;
+    font-size: 13px;
+    vertical-align: middle;
+}
+.routine-fulltable td.book-cell {
+    font-family: 'Amiri', 'Noto Naskh Arabic', 'Hind Siliguri', serif;
+    font-size: 14px !important;
+    word-break: break-word;
+    line-height: 1.5;
+}
+.routine-fulltable td.period-cell {
+    font-size: 13px !important;
+    padding: 10px 6px !important;
+}
+.routine-fulltable td.time-cell {
+    font-size: 12px !important;
+    padding: 10px 6px !important;
+}
+.routine-fulltable td.teacher-cell {
+    font-size: 12px !important;
+    line-height: 1.4;
+}
+.routine-fulltable td.empty-cell {
+    font-size: 12px !important;
+}
+
+/* ★ প্রিন্ট: ফুল-পেইজ */
+@media print {
+    .routine-fullpage {
+        min-height: 275mm !important;
+        padding: 0 !important;
+        border: none !important;
+        page-break-after: always;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .routine-fullpage:last-child { page-break-after: auto; }
+    .routine-fulltable {
+        font-size: 11pt !important;
+    }
+    .routine-fulltable td { padding: 8px 6px !important; }
+    @page { size: A4 portrait; margin: 8mm 6mm; }
+}
+.routine-table td.teacher-cell {
+    font-size: 11px;
+    color: #1e293b;
+}
+.routine-table td.empty-cell {
+    background: #f8fafc;
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 10px;
+}
+.routine-table tr.break-row td {
+    background: #fef3c7 !important;
+    font-weight: bold;
+    color: #92400e;
+    font-size: 11px;
+}
+.routine-table tr:hover:not(.break-row) td { background: #f0fdf4; }
+.routine-table[dir="rtl"] { direction: rtl; }
+.routine-table[dir="rtl"] td.book-cell { text-align: right; }
+
+.routine-entry-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    transition: all .2s;
+}
+.routine-entry-card:hover {
+    border-color: #10b981;
+    box-shadow: 0 2px 6px rgba(16,185,129,0.1);
+}
+.routine-entry-card.conflict {
+    border-color: #f59e0b;
+    background: #fffbeb;
+}
+.routine-entry-card.saved {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+.conflict-warning {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 10.5px;
+    color: #92400e;
+    margin-top: 4px;
+}
+.conflict-warning i { color: #d97706; }
+
+.teacher-progress-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.teacher-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    transition: width .4s;
+}
+
+.routine-teacher-overview { font-size: 11px; }
+.routine-teacher-overview th {
+    background: #065f46;
+    color: white;
+    font-size: 10.5px;
+    padding: 6px 4px;
+}
+.routine-teacher-overview td {
+    padding: 5px 4px;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+}
+.routine-teacher-overview td.teacher-name-cell {
+    background: #ecfdf5;
+    font-weight: bold;
+    color: #065f46;
+    text-align: right;
+    white-space: nowrap;
+    font-size: 11px;
+}
+.routine-teacher-overview td.has-class {
+    background: #fffbeb;
+    color: #1e293b;
+    font-family: 'Amiri', serif;
+    font-size: 11px;
+}
+.routine-teacher-overview td.no-class { background: #f8fafc; color: #cbd5e1; }
+
+.routine-teacher-page {
+    page-break-after: always;
+    background: white;
+    padding: 12mm 10mm;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.routine-teacher-page:last-child { page-break-after: auto; }
+
+@media print {
+    .routine-table { font-size: 10pt !important; }
+    .routine-table th,
+    .routine-table td { padding: 3px 5px !important; border: 1px solid #000 !important; }
+    .routine-teacher-page { page-break-after: always; padding: 0; border: none; margin: 0; }
+    .routine-teacher-overview { font-size: 9pt !important; }
+}
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
 ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
@@ -638,6 +842,9 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </button>
             <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2 hidden">
                 <i class="fa-solid fa-chart-line"></i><span class="hidden sm:inline">ড্যাশবোর্ড</span>
+            </button>
+            <button onclick="switchTab('routine')" id="tab-btn-routine" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-week"></i><span class="hidden sm:inline">ক্লাস রুটিন</span>
             </button>
             <button onclick="switchTab('data-list')" id="tab-btn-data-list" class="tab-btn px-3 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all text-emerald-100 hover:bg-emerald-700 flex items-center gap-2">
                 <i class="fa-solid fa-database"></i><span class="hidden sm:inline">ডাটা তালিকা</span>
@@ -1420,6 +1627,100 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     </div>
 </section>
 
+<!-- ═══════════════════ TAB: CLASS ROUTINE ═══════════════════ -->
+<section id="tab-routine" class="tab-content hidden space-y-4">
+
+    <!-- ★ টপ: শিক্ষাবর্ষ + বিভাগ + ভাষা -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 no-print">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    <i class="fa-solid fa-calendar-check text-emerald-600"></i> শিক্ষাবর্ষ
+                </label>
+                <select id="routine-academic-year" onchange="onRoutineYearChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-medium">
+                    <option value="">-- শিক্ষাবর্ষ --</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    <i class="fa-solid fa-layer-group text-emerald-600"></i> বিভাগ
+                </label>
+                <select id="routine-dept" onchange="onRoutineDeptChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-medium">
+                    <option value="">-- বিভাগ --</option>
+                    <option value="shariah">শরীয়াহ (আরবি রুটিন)</option>
+                    <option value="noorani">নূরানী ও নাযেরা (বাংলা)</option>
+                    <option value="non_res">অনাবাসিক (বাংলা)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                    <i class="fa-solid fa-language text-emerald-600"></i> ভাষা ও সেশন
+                </label>
+                <div id="routine-lang-display" class="text-xs text-slate-500 p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                    বিভাগ নির্বাচন করুন
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ★ মৌসুম ট্যাব -->
+    <div id="routine-season-wrapper" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print hidden">
+        <div class="flex flex-wrap gap-2">
+            <button onclick="switchRoutineSeason('winter')" id="routine-season-winter" class="routine-season-btn flex-1 md:flex-none px-5 py-3 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 bg-emerald-700 text-white shadow-md">
+                <i class="fa-solid fa-snowflake"></i>
+                <span>🌸 শীতকালীন রুটিন</span>
+            </button>
+            <button onclick="switchRoutineSeason('summer')" id="routine-season-summer" class="routine-season-btn flex-1 md:flex-none px-5 py-3 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100 border border-slate-200">
+                <i class="fa-solid fa-sun"></i>
+                <span>☀️ গ্রীষ্মকালীন রুটিন</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ★ সাব-বাটন -->
+    <div id="routine-subnav-wrapper" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print hidden">
+        <div class="flex flex-wrap gap-2">
+            <button onclick="switchRoutineSub('entry')" id="routine-sub-entry" class="routine-sub-btn flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 bg-amber-600 text-white shadow-md">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>📝 ডাটা এন্ট্রি</span>
+            </button>
+            <button onclick="switchRoutineSub('teacher')" id="routine-sub-teacher" class="routine-sub-btn flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100 border border-slate-200">
+                <i class="fa-solid fa-user-tie"></i>
+                <span>👨‍🏫 শিক্ষক ভিত্তিক</span>
+            </button>
+            <button onclick="switchRoutineSub('jamat')" id="routine-sub-jamat" class="routine-sub-btn flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100 border border-slate-200">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>🏫 জামাত ভিত্তিক</span>
+            </button>
+            <button onclick="switchRoutineSub('matrix')" id="routine-sub-matrix" class="routine-sub-btn flex-1 md:flex-none px-5 py-2.5 rounded-lg text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100 border border-slate-200">
+                <i class="fa-solid fa-table-cells-large"></i>
+                <span>📊 ম্যাট্রিক্স ভিউ</span>
+            </button>
+        </div>
+        <p id="routine-sub-hint" class="text-[11px] text-slate-500 mt-2 flex items-center gap-2">
+            <i class="fa-solid fa-info-circle text-emerald-600"></i>
+            <span id="routine-sub-hint-text">শিক্ষাবর্ষ ও বিভাগ নির্বাচন করুন।</span>
+        </p>
+    </div>
+
+    <!-- ★ প্লেসহোল্ডার -->
+    <div id="routine-placeholder" class="bg-white rounded-xl shadow-md border border-slate-200 p-12 text-center">
+        <i class="fa-solid fa-calendar-week text-emerald-300 text-5xl mb-4"></i>
+        <h3 class="text-lg font-bold text-slate-700 mb-2">ক্লাস রুটিন</h3>
+        <p class="text-sm text-slate-500">শুরু করতে উপরে <strong>শিক্ষাবর্ষ</strong> ও <strong>বিভাগ</strong> নির্বাচন করুন।</p>
+        <p class="text-xs text-slate-400 mt-3">শরীয়াহ → আরবি রুটিন | নূরানী-নাযেরা ও অনাবাসিক → বাংলা রুটিন</p>
+    </div>
+
+    <!-- ★ সাব-ভিউ এলাকা -->
+    <div id="routine-content" class="hidden">
+        <div id="routine-view-entry" class="routine-view hidden"></div>
+        <div id="routine-view-teacher" class="routine-view hidden"></div>
+        <div id="routine-view-jamat" class="routine-view hidden"></div>
+        <div id="routine-view-matrix" class="routine-view hidden"></div>
+    </div>
+
+</section>
+
 <!-- ═══════════════════ TAB 7: DASHBOARD ═══════════════════ -->
 <section id="tab-dashboard" class="tab-content hidden space-y-6">
     <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6">
@@ -1444,6 +1745,131 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 </footer>
 
 <script>
+// ═══════════════════ ডিফল্ট ক্লাস রুটিন পিরিয়ড কনফিগ ═══════════════════
+const DEFAULT_ROUTINE_PERIODS = {
+    // ── শরীয়াহ বিভাগ (আরবি রুটিন) ──
+    shariah: {
+        summer: {
+            label: 'শরীয়াহ — গ্রীষ্মকালীন',
+            lang: 'ar',
+            session: 'শাওয়াল → শাবান',
+            rows: [
+                { key: 's1', label: 'الحصة الأولى', time: '٧:٣٠–٨:١٥', duration: 45 },
+                { key: 's2', label: 'الحصة الثانية', time: '٨:١٥–٩:٠٠', duration: 45 },
+                { key: 's3', label: 'الحصة الثالثة', time: '٩:٠٠–٩:٤٥', duration: 45 },
+                { key: 's4', label: 'الحصة الرابعة', time: '٩:٤٥–١٠:٣٠', duration: 45 },
+                { key: 's5', label: 'الحصة الخامسة', time: '١٠:٣٠–١١:١٥', duration: 45 },
+                { key: 's6', label: 'الحصة السادسة', time: '١١:١٥–١٢:٠٠', duration: 45 },
+                { key: 's7', label: 'الحصة السابعة', time: '١٢:٠٠–١٢:٤٥', duration: 45 },
+                { key: 'b1', label: 'استراحة', time: '١٢:٤٥–٢:٠٠', duration: 75, isBreak: true },
+                { key: 's8', label: 'الحصة الثامنة', time: '٢:٠٠–٢:٤٠', duration: 40 },
+                { key: 's9', label: 'الحصة التاسعة', time: '٢:٤٠–٣:٢٠', duration: 40 }
+            ]
+        },
+        winter: {
+            label: 'শরীয়াহ — শীতকালীন',
+            lang: 'ar',
+            session: 'শাওয়াল → শাবান',
+            rows: [
+                { key: 's1', label: 'الحصة الأولى', time: '٨:٠٠–٨:٤٥', duration: 45 },
+                { key: 's2', label: 'الحصة الثانية', time: '٨:٤٥–٩:٣٠', duration: 45 },
+                { key: 's3', label: 'الحصة الثالثة', time: '٩:٣٠–١٠:١٥', duration: 45 },
+                { key: 's4', label: 'الحصة الرابعة', time: '١٠:١٥–١١:٠٠', duration: 45 },
+                { key: 's5', label: 'الحصة الخامسة', time: '١١:٠٠–١١:٤٥', duration: 45 },
+                { key: 's6', label: 'الحصة السادسة', time: '١١:٤٥–١٢:٣٠', duration: 45 },
+                { key: 's7', label: 'الحصة السابعة', time: '١٢:٣٠–١:١٥', duration: 45 },
+                { key: 'b1', label: 'استراحة', time: '١:١٥–٢:٣٠', duration: 75, isBreak: true },
+                { key: 's8', label: 'الحصة الثامنة', time: '٢:٣٠–٣:١٠', duration: 40 },
+                { key: 's9', label: 'الحصة التاسعة', time: '٣:١٠–٣:٥٠', duration: 40 }
+            ]
+        }
+    },
+
+    // ── নূরানী ও নাযেরা (বাংলা রুটিন) ──
+    noorani: {
+        summer: {
+            label: 'নূরানী ও নাযেরা — গ্রীষ্মকালীন',
+            lang: 'bn',
+            session: 'শাওয়াল → শাবান',
+            rows: [
+                { key: 's1', label: '১ম ঘণ্টা', time: '৭:৪৫–৮:৩০', duration: 45 },
+                { key: 's2', label: '২য় ঘণ্টা', time: '৮:৩০–৯:১০', duration: 40 },
+                { key: 's3', label: '৩য় ঘণ্টা', time: '৯:১০–৯:৫০', duration: 40 },
+                { key: 's4', label: '৪র্থ ঘণ্টা', time: '৯:৫০–১০:৩০', duration: 40 },
+                { key: 's5', label: '৫ম+৬ষ্ঠ ঘণ্টা', time: '১০:৩০–১২:৪৫', duration: 135 },
+                { key: 'b1', label: 'বিরতি', time: '১২:৪৫–২:০০', duration: 75, isBreak: true },
+                { key: 's7', label: '৭ম ঘণ্টা', time: '২:০০–২:৪৫', duration: 45 },
+                { key: 's8', label: '৮ম ঘণ্টা', time: '২:৪৫–৩:৩০', duration: 45 },
+                { key: 's9', label: '৯ম ঘণ্টা', time: '৩:৩০–৪:১০', duration: 40 }
+            ]
+        },
+        winter: {
+            label: 'নূরানী ও নাযেরা — শীতকালীন',
+            lang: 'bn',
+            session: 'শাওয়াল → শাবান',
+            rows: [
+                { key: 's1', label: '১ম ঘণ্টা', time: '৮:১৫–৯:০০', duration: 45 },
+                { key: 's2', label: '২য় ঘণ্টা', time: '৯:০০–৯:৪০', duration: 40 },
+                { key: 's3', label: '৩য় ঘণ্টা', time: '৯:৪০–১০:২০', duration: 40 },
+                { key: 's4', label: '৪র্থ ঘণ্টা', time: '১০:২০–১১:০০', duration: 40 },
+                { key: 's5', label: '৫ম+৬ষ্ঠ ঘণ্টা', time: '১১:০০–১:১৫', duration: 135 },
+                { key: 'b1', label: 'বিরতি', time: '১:১৫–২:৩০', duration: 75, isBreak: true },
+                { key: 's7', label: '৭ম ঘণ্টা', time: '২:৩০–৩:১৫', duration: 45 },
+                { key: 's8', label: '৮ম ঘণ্টা', time: '৩:১৫–৪:০০', duration: 45 },
+                { key: 's9', label: '৯ম ঘণ্টা', time: '৪:০০–৪:৪০', duration: 40 }
+            ]
+        }
+    },
+
+    // ── অনাবাসিক (বাংলা রুটিন, ইংরেজি সেশন) ──
+    non_res: {
+        summer: {
+            label: 'অনাবাসিক — গ্রীষ্মকালীন',
+            lang: 'bn',
+            session: 'জানুয়ারী → ডিসেম্বর',
+            rows: [
+                { key: 's1', label: '১ম ঘণ্টা', time: '৭:৪৫–৮:৩০', duration: 45 },
+                { key: 's2', label: '২য় ঘণ্টা', time: '৮:৩০–৯:১৫', duration: 45 },
+                { key: 's3', label: '৩য় ঘণ্টা', time: '৯:১৫–১০:০০', duration: 45 },
+                { key: 's4', label: '৪র্থ ঘণ্টা', time: '১০:০০–১০:৪৫', duration: 45 },
+                { key: 'b1', label: 'বিরতি', time: '১০:৪৫–১১:১৫', duration: 30, isBreak: true },
+                { key: 's5', label: '৫ম ঘণ্টা', time: '১১:১৫–১২:০০', duration: 45 },
+                { key: 's6', label: '৬ষ্ঠ ঘণ্টা', time: '১২:০০–১২:৪৫', duration: 45 },
+                { key: 's7', label: '৭ম ঘণ্টা', time: '২:০০–২:৪৫', duration: 45 },
+                { key: 's8', label: '৮ম ঘণ্টা', time: '২:৪৫–৩:৩০', duration: 45 }
+            ]
+        },
+        winter: {
+            label: 'অনাবাসিক — শীতকালীন',
+            lang: 'bn',
+            session: 'জানুয়ারী → ডিসেম্বর',
+            rows: [
+                { key: 's1', label: '১ম ঘণ্টা', time: '৮:১৫–৯:০০', duration: 45 },
+                { key: 's2', label: '২য় ঘণ্টা', time: '৯:০০–৯:৪৫', duration: 45 },
+                { key: 's3', label: '৩য় ঘণ্টা', time: '৯:৪৫–১০:৩০', duration: 45 },
+                { key: 's4', label: '৪র্থ ঘণ্টা', time: '১০:৩০–১১:১৫', duration: 45 },
+                { key: 'b1', label: 'বিরতি', time: '১১:১৫–১১:৪৫', duration: 30, isBreak: true },
+                { key: 's5', label: '৫ম ঘণ্টা', time: '১১:৪৫–১২:৩০', duration: 45 },
+                { key: 's6', label: '৬ষ্ঠ ঘণ্টা', time: '১২:৩০–১:১৫', duration: 45 },
+                { key: 's7', label: '৭ম ঘণ্টা', time: '২:৩০–৩:১৫', duration: 45 },
+                { key: 's8', label: '৮ম ঘণ্টা', time: '৩:১৫–৪:০০', duration: 45 }
+            ]
+        }
+    }
+};
+
+// ═══════════════════ ক্লাস রুটিন স্টেট ═══════════════════
+let routineState = {
+    academicYear: '',
+    dept: '',
+    season: 'winter',    // 'winter' | 'summer'
+    subView: 'entry',    // 'entry' | 'teacher' | 'jamat'
+    deptInfo: null
+};
+
+let routinesCache = [];  // বর্তমান শিক্ষাবর্ষের সব রুটিন স্লট
+// ★ Multi-class save-এর জন্য pending এন্ট্রি (সেভ না হওয়া পর্যন্ত memory-তে থাকবে)
+let pendingRoutineEntries = {};  // আর ব্যবহার হচ্ছে না — এন্ট্রি এখন সরাসরি সেভ হয়
 // ═══════════════════ শিক্ষক মাস্টার ডাটাবেস ═══════════════════
 const SEED_TEACHERS = [
     // ═══ শরীয়াহ বিভাগ (২৩ জন) ═══
@@ -3098,6 +3524,2058 @@ window.switchTeacherView = function(view) {
     renderTeacherReport();
 };
 
+// ═══════════════════ ক্লাস রুটিন — কন্ট্রোলার ═══════════════════
+window.onRoutineYearChange = function() {
+    routineState.academicYear = document.getElementById('routine-academic-year').value;
+    checkRoutineReadiness();
+};
+
+window.onRoutineDeptChange = function() {
+    routineState.dept = document.getElementById('routine-dept').value;
+    const displayEl = document.getElementById('routine-lang-display');
+    
+    if (!routineState.dept) {
+        displayEl.innerHTML = 'বিভাগ নির্বাচন করুন';
+        checkRoutineReadiness();
+        return;
+    }
+    
+    const info = getRoutineDeptInfo(routineState.dept, routineState.season);
+    const langText = info.lang === 'ar' ? '🇸🇦 আরবি রুটিন' : '🇧🇩 বাংলা রুটিন';
+    displayEl.innerHTML = `<strong class="text-emerald-700">${langText}</strong> <span class="text-slate-400 mx-1">|</span> <span>সেশন: ${info.session}</span>`;
+    
+    checkRoutineReadiness();
+};
+
+function getRoutineDeptInfo(dept, season) {
+    const fromConfig = configData?.routinePeriods?.[dept]?.[season];
+    const defaults = DEFAULT_ROUTINE_PERIODS[dept]?.[season];
+    const data = fromConfig || defaults || { rows: [], lang: 'bn', session: '' };
+    return data;
+}
+
+function checkRoutineReadiness() {
+    const ready = routineState.academicYear && routineState.dept;
+    const placeholder = document.getElementById('routine-placeholder');
+    const content = document.getElementById('routine-content');
+    const seasonWrap = document.getElementById('routine-season-wrapper');
+    const subWrap = document.getElementById('routine-subnav-wrapper');
+    
+    if (ready) {
+        placeholder.classList.add('hidden');
+        content.classList.remove('hidden');
+        seasonWrap.classList.remove('hidden');
+        subWrap.classList.remove('hidden');
+        renderRoutineSub();
+    } else {
+        placeholder.classList.remove('hidden');
+        content.classList.add('hidden');
+        seasonWrap.classList.add('hidden');
+        subWrap.classList.add('hidden');
+    }
+}
+
+window.switchRoutineSeason = function(season) {
+    routineState.season = season;
+    
+    document.querySelectorAll('.routine-season-btn').forEach(b => {
+        b.classList.remove('bg-emerald-700', 'text-white', 'shadow-md');
+        b.classList.add('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    });
+    const btn = document.getElementById('routine-season-' + season);
+    if (btn) {
+        btn.classList.add('bg-emerald-700', 'text-white', 'shadow-md');
+        btn.classList.remove('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    }
+    
+    onRoutineDeptChange();
+};
+
+window.switchRoutineSub = function(sub) {
+    // entry শুধু এডমিন
+    if (sub === 'entry' && currentUserData?.role !== 'admin') {
+        showToast('⚠️ ডাটা এন্ট্রি শুধু এডমিন করতে পারবেন', 'warn');
+        sub = 'teacher';
+    }
+    
+    routineState.subView = sub;
+    
+    document.querySelectorAll('.routine-sub-btn').forEach(b => {
+        b.classList.remove('bg-amber-600', 'text-white', 'shadow-md');
+        b.classList.add('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    });
+    const btn = document.getElementById('routine-sub-' + sub);
+    if (btn) {
+        btn.classList.add('bg-amber-600', 'text-white', 'shadow-md');
+        btn.classList.remove('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    }
+    
+    const hintEl = document.getElementById('routine-sub-hint-text');
+    const hints = {
+        entry:   'প্রতিটি শিক্ষকের জন্য আলাদাভাবে ঘণ্টা-ভিত্তিক কিতাব বন্টন করুন। কনফ্লিক্ট থাকলে সতর্কতা দেখানো হবে।',
+        teacher: 'শিক্ষকভিত্তিক রুটিন — সব শিক্ষক এক পেইজে বা আলাদা আলাদা পেইজে।',
+        jamat:   'জামাতভিত্তিক রুটিন — প্রতি জামাতের জন্য ঘণ্টা, কিতাব ও শিক্ষক একসাথে।',
+        matrix:  'ম্যাট্রিক্স ভিউ — সারিতে জামাত, কলামে ঘণ্টা, সেলে কিতাব। এক নজরে পুরো সপ্তাহ।'
+    };
+    if (hintEl) hintEl.textContent = hints[sub] || '';
+    
+    document.querySelectorAll('.routine-view').forEach(v => v.classList.add('hidden'));
+    const view = document.getElementById('routine-view-' + sub);
+    if (view) view.classList.remove('hidden');
+    
+    renderRoutineSub();
+};
+
+function renderRoutineSub() {
+    const sub = routineState.subView;
+    const view = document.getElementById('routine-view-' + sub);
+    if (!view) return;
+    
+    if (sub === 'entry') {
+        renderRoutineEntryView(view);
+    } else if (sub === 'teacher') {
+        renderRoutineTeacherView(view);
+    } else if (sub === 'jamat') {
+        renderRoutineJamatView(view);
+    } else if (sub === 'matrix') {
+        renderRoutineMatrixView(view);
+    }
+}
+
+// ═══════════════════ ডাটা এন্ট্রি ভিউ (এডমিন) ═══════════════════
+// ═══════════════════ ডাটা এন্ট্রি ভিউ — জামাত পাল্টালেও এন্ট্রি হারাবে না ═══════════════════
+function renderRoutineEntryView(view) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const seasonName = season === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    const otherSeason = season === 'winter' ? 'summer' : 'winter';
+    const otherSeasonName = otherSeason === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    
+    const deptMap = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const deptTeachers = (configData?.teachers || []).filter(t => t.dept === deptMap[dept]);
+    
+    const teacherOptions = deptTeachers.map(t => 
+        `<option value="${t.name}">${t.name} (${t.post})</option>`
+    ).join('');
+    
+    const classes = (configData?.classes || {})[dept] || [];
+    const classOptions = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    
+    const dir = info.lang === 'ar' ? 'rtl' : 'ltr';
+    const fontClass = info.lang === 'ar' ? 'font-arabic' : '';
+    
+    view.innerHTML = `
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 md:p-6">
+            <!-- হেডার -->
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
+                <h2 class="text-base font-bold text-emerald-900 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                    <span>${deptNames[dept]} — ${seasonName} রুটিন এন্ট্রি</span>
+                </h2>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="badge bg-emerald-100 text-emerald-800">${year}</span>
+                    <button onclick="copySeasonRoutine('${otherSeason}')" class="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-semibold rounded-lg transition">
+                        <i class="fa-solid fa-clone"></i> ${otherSeasonName} থেকে কপি
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="mb-4 bg-emerald-50 rounded-lg p-3 border border-emerald-200">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-xs font-bold text-emerald-900">
+                        <i class="fa-solid fa-chart-line"></i> এন্ট্রি অগ্রগতি
+                    </span>
+                    <span id="routine-entry-progress-text" class="text-xs font-bold text-emerald-800">০ / ${deptTeachers.length}</span>
+                </div>
+                <div class="teacher-progress-bar">
+                    <div id="routine-entry-progress-fill" class="teacher-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- শিক্ষক + জামাত + শাখা সিলেকশন -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4 bg-slate-50 rounded-lg p-3 border border-slate-200">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        <i class="fa-solid fa-user-tie text-emerald-700"></i> শিক্ষক *
+                    </label>
+                    <select id="rentry-teacher" onchange="onRoutineEntryTeacherChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                        <option value="">-- শিক্ষক --</option>
+                        ${teacherOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        <i class="fa-solid fa-graduation-cap text-emerald-700"></i> জামাত *
+                    </label>
+                    <select id="rentry-class" onchange="onRoutineEntryClassChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm ${fontClass}">
+                        <option value="">-- জামাত --</option>
+                        ${classOptions}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        <i class="fa-solid fa-users-viewfinder text-emerald-700"></i> শাখা
+                    </label>
+                    <select id="rentry-section" onchange="onRoutineEntrySectionChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm">
+                        <option value="নাই">সব শাখা একসাথে</option>
+                        <option value="ক (أ)">ক (أ)</option>
+                        <option value="খ (ب)">খ (ب)</option>
+                        <option value="গ (ج)">গ (ج)</option>
+                        <option value="ঘ (د)">ঘ (د)</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="resetRoutineEntryForm()" class="w-full py-2.5 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg transition">
+                        <i class="fa-solid fa-rotate-left"></i> রিসেট
+                    </button>
+                </div>
+            </div>
+
+            <!-- ★ Pending এন্ট্রির স্ট্যাটাস ব্যানার -->
+            <div id="routine-pending-banner" class="hidden bg-blue-50 border-2 border-blue-300 rounded-lg p-3 mb-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-blue-600 text-lg"></i>
+                        <div>
+                            <p class="text-xs font-bold text-blue-900">
+                                <span id="routine-pending-count">০</span>টি এন্ট্রি সেভের অপেক্ষায়
+                            </p>
+                            <p class="text-[10px] text-blue-700">
+                                <i class="fa-solid fa-info-circle"></i>
+                                জামাত পাল্টালেও এন্ট্রি হারাবে না — সব শেষে একবার "সব জমা দিন"
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="clearPendingEntries()" class="px-3 py-1.5 bg-white hover:bg-red-50 border border-red-300 text-red-700 text-xs font-semibold rounded-lg transition">
+                            <i class="fa-solid fa-trash"></i> সব মুছুন
+                        </button>
+                    </div>
+                </div>
+                <!-- pending list preview -->
+                <div id="routine-pending-list" class="mt-2 text-[10px] text-blue-800 space-y-0.5"></div>
+            </div>
+                        <!-- ★ স্লট তালিকা + সেভ -->
+            <div id="routine-slots-summary" class="hidden mb-4">
+                <div class="border-2 border-emerald-300 rounded-xl overflow-hidden">
+                    <div class="bg-emerald-700 text-white px-4 py-2.5 flex items-center justify-between">
+                        <h3 class="text-sm font-bold">
+                            <i class="fa-solid fa-list-check"></i>
+                            স্লট তালিকা — <span id="routine-slots-count">০</span>টি
+                        </h3>
+                        <span class="text-[10px] opacity-90">নিচে সেভ বাটন — সব একবারে যাবে</span>
+                    </div>
+                    <div id="routine-slots-body" class="bg-white max-h-56 overflow-y-auto"></div>
+                    <div class="bg-slate-100 px-4 py-3 border-t border-slate-200 flex justify-end gap-2">
+                        <button onclick="saveAllPendingEntries()" class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm rounded-lg shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> সব সেভ করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- ঘণ্টা-ভিত্তিক বন্টন এলাকা -->
+            <div id="routine-entry-slots" class="hidden">
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-3">
+                    <p class="text-xs text-amber-900">
+                        <i class="fa-solid fa-info-circle"></i>
+                        শিক্ষক ও জামাত সিলেক্ট করার পর প্রতি ঘণ্টায় কিতাব বেছে নিন। <strong>জামাত পাল্টালেও এন্ট্রি হারাবে না</strong> — সব শেষে একবার "সব জমা দিন"।
+                    </p>
+                </div>
+                <div id="routine-entry-slots-list" class="space-y-2"></div>
+            </div>
+
+            <!-- এন্ট্রি করা শিক্ষকের তালিকা -->
+            <div class="mt-6 pt-5 border-t border-slate-200">
+                <h3 class="text-sm font-bold text-slate-700 mb-2">
+                    <i class="fa-solid fa-list-check text-emerald-600"></i> এই শিক্ষাবর্ষে এন্ট্রি করা রুটিন
+                </h3>
+                <div id="routine-entry-summary" class="text-xs text-slate-500">লোড হচ্ছে...</div>
+            </div>
+        </div>
+    `;
+    
+    updateRoutineEntryProgress();
+    refreshRoutineEntrySummary();
+}
+
+// ───────── শিক্ষক/জামাত change হ্যান্ডলার ─────────
+window.onRoutineEntryTeacherChange = function() {
+    const teacher = document.getElementById('rentry-teacher').value;
+    const classSel = document.getElementById('rentry-class');
+    
+    // শিক্ষকের জন্য auto-select শুধু প্রথমবার
+    if (teacher && !classSel.value) {
+        // কিছু করার দরকার নেই
+    }
+    
+    checkRoutineSlotsVisibility();
+};
+
+window.onRoutineEntryClassChange = function() {
+    checkRoutineSlotsVisibility();
+    // ★ জামাত পাল্টালে টেবিল আবার render — কিন্তু সেভড এন্ট্রি হারাবে না
+    if (document.getElementById('routine-entry-slots')?.classList.contains('hidden') === false) {
+        renderRoutineEntrySlots();
+    }
+};
+
+window.onRoutineEntrySectionChange = function() {
+    checkRoutineSlotsVisibility();
+    if (document.getElementById('routine-entry-slots')?.classList.contains('hidden') === false) {
+        renderRoutineEntrySlots();
+    }
+};
+
+window.onRoutineEntrySectionChange = function() {
+    checkRoutineSlotsVisibility();
+};
+
+function checkRoutineSlotsVisibility() {
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const slotsDiv = document.getElementById('routine-entry-slots');
+    
+    if (teacher && className) {
+        slotsDiv.classList.remove('hidden');
+        renderRoutineEntrySlots();
+    } else {
+        slotsDiv.classList.add('hidden');
+    }
+}
+
+// ───────── ঘণ্টা-ভিত্তিক ইনপুট রেন্ডার ─────────
+function renderRoutineEntrySlots() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const currentClass = document.getElementById('rentry-class').value;  // এখন যে জামাত dropdown-এ
+    const currentSection = document.getElementById('rentry-section').value;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    const listEl = document.getElementById('routine-entry-slots-list');
+    if (!listEl) return;
+    
+    // ★ এখন যে জামাত সিলেক্ট করা আছে — তার কিতাব তালিকা
+    const currentBooks = (configData?.books || {})[currentClass] || [];
+    
+    // ★ এই শিক্ষকের সব সেভড এন্ট্রি (সব জামাত মিলিয়ে)
+    const teacherSaved = routinesCache.filter(r => 
+        r.academicYear === year &&
+        r.season === season &&
+        r.dept === dept &&
+        r.teacherName === teacher
+    );
+    
+    const dir = info.lang === 'ar' ? 'rtl' : 'ltr';
+    const fontClass = info.lang === 'ar' ? 'font-arabic' : '';
+    
+    let html = '';
+    info.rows.forEach(p => {
+        if (p.isBreak) {
+            html += `
+                <div class="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 text-center text-xs font-bold text-amber-900">
+                    <i class="fa-solid fa-mug-hot"></i> ${p.label} — ${p.time}
+                </div>
+            `;
+            return;
+        }
+        
+        // ★ এই ঘণ্টায় এই শিক্ষকের সেভড এন্ট্রি (সব জামাত মিলিয়ে)
+        const savedInPeriod = teacherSaved.filter(r => r.periodKey === p.key);
+        
+        // ★ এই ঘণ্টায় একই (currentClass + currentSection)-এর এন্ট্রি
+        const exactMatch = savedInPeriod.find(r => 
+            r.className === currentClass && (r.section || 'নাই') === currentSection
+        );
+        
+        // ★ Dropdown-এ কোন তালিকা দেখাব:
+        //    - যদি exactMatch থাকে (এখন যে জামাত+শাখা সিলেক্ট করা, সেখানে আগের এন্ট্রি):
+        //        → সেই জামাতের কিতাব + currentBooks (merge)
+        //    - নাহলে: currentBooks (এখন যে জামাতের কিতাব)
+        let dropdownBooks = currentBooks.slice();
+        
+        // সেভড এন্ট্রি থাকলে সেই কিতাবকেও তালিকায় নিশ্চিত করি
+        savedInPeriod.forEach(r => {
+            if (!dropdownBooks.includes(r.bookName)) {
+                dropdownBooks.push(r.bookName + ' ‹' + r.className + '›');
+            }
+        });
+        
+        // ★ প্রতিটি সারির জন্য কার্যকর "কোন জামাতের" — সেভড এন্ট্রি থাকলে সেটার, নাহলে current
+        const effectiveClass = exactMatch ? exactMatch.className : currentClass;
+        
+        // ★ dropdown-এ selected value নির্ধারণ
+        const selectedBook = exactMatch ? exactMatch.bookName : '';
+        
+        const bookOptions = dropdownBooks.map(b => {
+            // "‹তাকমীল›" suffix থেকে আসল নাম বের করি
+            const realName = b.replace(/\s‹.*›$/, '');
+            const suffix = b.includes('‹') ? ' ' + b.match(/‹.*›/)[0] : '';
+            const isSelected = realName === selectedBook;
+            return `<option value="${realName}" ${isSelected ? 'selected' : ''}>${realName}${suffix}</option>`;
+        }).join('');
+        
+        // ★ এই ঘণ্টায় সেভড এন্ট্রির লেবেল (ছোট)
+        const savedLabelsHTML = savedInPeriod.map(s => `
+            <div class="text-[10px] text-slate-600 mt-1 flex items-center gap-1">
+                <i class="fa-solid fa-check-circle text-emerald-600"></i>
+                <span class="font-bold">${s.className}</span>
+                ${s.section !== 'নাই' ? `<span>(${s.section})</span>` : ''}
+                —
+                <span class="font-arabic">${s.bookName}</span>
+                <button onclick="deletePeriodEntry('${s.id}')" class="text-red-500 hover:text-red-700 ml-auto" title="ডিলিট">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `).join('');
+        
+        html += `
+            <div class="routine-entry-card" id="rcard-${p.key}" data-period="${p.key}">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
+                    <div class="md:col-span-2">
+                        <div class="text-xs font-bold text-emerald-800 ${fontClass}" dir="${dir}">${p.label}</div>
+                        <div class="text-[10px] text-slate-500">${p.time} (${p.duration} মি)</div>
+                    </div>
+                    <div class="md:col-span-7">
+                        <div class="flex gap-2 items-center">
+                            <select id="rselect-${p.key}" 
+                                    data-period="${p.key}"
+                                    class="flex-1 rounded-lg border-slate-300 border p-2 text-sm ${fontClass}"
+                                    dir="${dir}">
+                                <option value="">-- কিতাব নির্বাচন করুন --</option>
+                                ${bookOptions}
+                            </select>
+                            <button onclick="addPeriodEntry('${p.key}')" 
+                                    class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex-shrink-0 font-bold text-xs" 
+                                    title="সেভ করুন">
+                                <i class="fa-solid fa-floppy-disk"></i> সেভ
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3">
+                        ${savedLabelsHTML}
+                        ${savedInPeriod.length === 0 ? '<div class="text-[10px] text-slate-400 italic">— খালি —</div>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    listEl.innerHTML = html;
+}
+
+// ═══════════════════ এই ঘণ্টার এন্ট্রি সেভ ═══════════════════
+window.addPeriodEntry = async function(periodKey) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const section = document.getElementById('rentry-section').value;
+    const bookName = document.getElementById('rselect-' + periodKey)?.value;
+    
+    if (!teacher || !className) {
+        showToast('⚠️ শিক্ষক ও জামাত সিলেক্ট করুন', 'warn');
+        return;
+    }
+    if (!bookName) {
+        showToast('⚠️ কিতাব সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    // ★ এই (teacher + class + section + periodKey) এর আগের এন্ট্রি থাকলে — মুছি (replace হবে)
+    const oldEntry = routinesCache.find(r => 
+        r.academicYear === year &&
+        r.season === season &&
+        r.dept === dept &&
+        r.className === className &&
+        (r.section || 'নাই') === section &&
+        r.periodKey === periodKey &&
+        r.teacherName === teacher
+    );
+    
+    showToast('⏳ সেভ হচ্ছে...', 'info');
+    
+    try {
+        const { doc, setDoc, deleteDoc, serverTimestamp } = window.fbFuncs;
+        
+        // পুরনো থাকলে মুছি
+        if (oldEntry) {
+            await deleteDoc(doc(window.fbDB, 'routines', oldEntry.id));
+            routinesCache = routinesCache.filter(r => r.id !== oldEntry.id);
+        }
+        
+        // ★ নতুন এন্ট্রি
+        const safeClass = className.replace(/[^\w]/g, '_');
+        const safeTeacher = teacher.replace(/[^\w]/g, '_');
+        const safeSection = section.replace(/[^\w]/g, '_');
+        const id = `rt_${dept}_${year}_${season}_${safeClass}_${safeSection}_${safeTeacher}_${periodKey}`;
+        
+        const payload = {
+            id: id,
+            academicYear: year,
+            season: season,
+            dept: dept,
+            className: className,
+            section: section,
+            periodKey: periodKey,
+            bookName: bookName,
+            teacherName: teacher,
+            updatedAt: serverTimestamp(),
+            createdBy: currentUser?.uid || 'unknown'
+        };
+        
+        await setDoc(doc(window.fbDB, 'routines', id), payload, { merge: true });
+        routinesCache.push({ ...payload, updatedAt: null });
+        
+        showToast(`✅ ${className} — ${bookName} সেভ হয়েছে`, 'success');
+        
+        // ★ Pেইজ রিফ্রেশ — সেভড এন্ট্রি দেখা যাবে
+        renderRoutineEntrySlots();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+        
+    } catch (err) {
+        console.error('❌ addPeriodEntry error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ এই ঘণ্টার এন্ট্রি ডিলিট ═══════════════════
+window.deletePeriodEntry = async function(entryId) {
+    if (!confirm('এই এন্ট্রিটি মুছে ফেলবেন?')) return;
+    
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'routines', entryId));
+        routinesCache = routinesCache.filter(r => r.id !== entryId);
+        
+        showToast('🗑️ এন্ট্রি মুছে ফেলা হয়েছে', 'info');
+        renderRoutineEntrySlots();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+    } catch (err) {
+        console.error('❌ deletePeriodEntry error:', err);
+        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ───────── কিতাব পরিবর্তনের সময় conflict চেক ─────────
+window.onRoutineBookChange = function(periodKey) {
+    checkRoutineSlotConflict(periodKey);
+};
+
+function checkRoutineSlotConflict(periodKey) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const section = document.getElementById('rentry-section').value;
+    const bookName = document.getElementById('rselect-' + periodKey)?.value;
+    
+    const warnEl = document.getElementById('rwarn-' + periodKey);
+    const cardEl = document.getElementById('rcard-' + periodKey);
+    if (!warnEl || !cardEl) return;
+    
+    warnEl.classList.add('hidden');
+    cardEl.classList.remove('conflict');
+    
+    if (!bookName) return;
+    
+    // ★ এই একই (year + season + dept + periodKey)-এ সব এন্ট্রি
+    const sameSlot = routinesCache.filter(r => 
+        r.academicYear === year &&
+        r.season === season &&
+        r.dept === dept &&
+        r.periodKey === periodKey &&
+        // নিজের বর্তমান এন্ট্রি বাদ
+        !(r.teacherName === teacher && r.className === className && r.section === section)
+    );
+    
+    const warnings = [];
+    
+    // ★ চেক ১: একই শ্রেণিতে (same className + same section) এই ঘণ্টায় অন্য কিতাব/শিক্ষক
+    const sameClassConflicts = sameSlot.filter(r => 
+        r.className === className && 
+        (r.section || 'নাই') === section
+    );
+    sameClassConflicts.forEach(c => {
+        if (c.bookName !== bookName) {
+            warnings.push(`🚫 <strong>${className}</strong> শ্রেণিতে এই ঘণ্টায় ইতিমধ্যে <strong class="font-arabic">${c.bookName}</strong> এন্ট্রি আছে (শিক্ষক: ${c.teacherName})`);
+        }
+    });
+    
+    // ★ চেক ২: একই শিক্ষকের এই ঘণ্টায় অন্য শ্রেণিতে ক্লাস
+    const sameTeacherConflicts = sameSlot.filter(r => r.teacherName === teacher);
+    sameTeacherConflicts.forEach(c => {
+        warnings.push(`⚠️ এই ঘণ্টায় <strong>${teacher}</strong> ইতিমধ্যে <strong>${c.className}</strong>-এ <strong class="font-arabic">${c.bookName}</strong> পড়াচ্ছেন`);
+    });
+    
+    // ★ চেক ৩: একই কিতাব অন্য শিক্ষকের কাছে (একই বিভাগে, অন্য শ্রেণিতে)
+    const sameBookConflicts = sameSlot.filter(r => 
+        r.bookName === bookName && r.teacherName !== teacher
+    );
+    sameBookConflicts.forEach(c => {
+        warnings.push(`⚠️ <strong class="font-arabic">${bookName}</strong> এই ঘণ্টায় <strong>${c.teacherName}</strong> (${c.className}) এর কাছে বন্টিত`);
+    });
+    
+    // ★ চেক ৪: একই শ্রেণির অন্য শাখায় ভিন্ন কিতাব (শাখা "নাই" ছাড়া)
+    if (section !== 'নাই') {
+        const otherSectionConflicts = sameSlot.filter(r => 
+            r.className === className && 
+            r.section !== section &&
+            r.section !== 'নাই'
+        );
+        otherSectionConflicts.forEach(c => {
+            if (c.bookName !== bookName) {
+                warnings.push(`ℹ️ <strong>${className}</strong>-এর শাখা <strong>${c.section}</strong>-এ এই ঘণ্টায় <strong class="font-arabic">${c.bookName}</strong> আছে (ভিন্ন শাখা — সাধারণত সমস্যা নয়)`);
+            }
+        });
+    }
+    
+    if (warnings.length > 0) {
+        // কোন ধরণের warning — সেটা অনুযায়ী CSS class
+        const hasCritical = sameClassConflicts.some(c => c.bookName !== bookName) || sameTeacherConflicts.length > 0;
+        
+        warnEl.innerHTML = warnings.join('<br>');
+        warnEl.classList.remove('hidden');
+        cardEl.classList.add('conflict');
+        
+        // Critical হলে লাল, নাহলে অ্যাম্বার
+        if (hasCritical) {
+            cardEl.style.borderColor = '#dc2626';
+            cardEl.style.background = '#fef2f2';
+            warnEl.style.background = '#fee2e2';
+            warnEl.style.borderColor = '#fca5a5';
+            warnEl.style.color = '#991b1b';
+        } else {
+            cardEl.style.borderColor = '#f59e0b';
+            cardEl.style.background = '#fffbeb';
+            warnEl.style.background = '#fef3c7';
+            warnEl.style.borderColor = '#fcd34d';
+            warnEl.style.color = '#92400e';
+        }
+    } else {
+        // Conflict নেই — রিসেট
+        cardEl.style.borderColor = '';
+        cardEl.style.background = '';
+        warnEl.style.background = '';
+        warnEl.style.borderColor = '';
+        warnEl.style.color = '';
+    }
+}
+
+// ★ "এই জামাতের এন্ট্রি যোগ করুন" — pending memory-তে রাখে
+window.stageCurrentClassEntries = function() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const section = document.getElementById('rentry-section').value;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    if (!teacher || !className) {
+        showToast('⚠️ শিক্ষক ও জামাত সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    // ★ প্রতিটি ঘণ্টার বর্তমান মান → pending memory-তে
+    let addedCount = 0;
+    const conflicts = [];
+    
+    info.rows.forEach(p => {
+        if (p.isBreak) return;
+        const sel = document.getElementById('rselect-' + p.key);
+        if (!sel) return;
+        const bookName = sel.value;
+        const key = `${className}::${section}::${p.key}`;
+        
+        if (bookName) {
+            // কনফ্লিক্ট আছে কি?
+            const card = document.getElementById('rcard-' + p.key);
+            if (card && card.classList.contains('conflict')) {
+                conflicts.push(p.key);
+            }
+            
+            pendingRoutineEntries[key] = {
+                className,
+                section,
+                periodKey: p.key,
+                bookName,
+                teacherName: teacher,
+                academicYear: year,
+                season,
+                dept
+            };
+            addedCount++;
+        } else {
+            // bookName খালি হলে pending থেকে মুছি
+            if (pendingRoutineEntries[key]) {
+                delete pendingRoutineEntries[key];
+            }
+        }
+    });
+    
+    // ★ কনফ্লিক্ট চেক — শুধু informational, না থামিয়ে দিই
+    if (conflicts.length > 0) {
+        const proceed = confirm(
+            `⚠️ ${conflicts.length}টি ঘণ্টায় কনফ্লিক্ট আছে!\n\n` +
+            `তবুও এই জামাতের এন্ট্রি pending-এ যোগ করবেন?`
+        );
+        if (!proceed) {
+            showToast('❌ যোগ বাতিল', 'info');
+            return;
+        }
+    }
+    
+    if (addedCount === 0) {
+        showToast('⚠️ কোনো ঘণ্টায় কিতাব নির্বাচন করা হয়নি', 'warn');
+        return;
+    }
+    
+    showToast(`✅ ${className} — ${addedCount}টি এন্ট্রি pending-এ যোগ হয়েছে`, 'success');
+    
+    updatePendingBanner();
+    
+    // ★ U পরের জামাতের জন্য dropdown খালি করি কিন্তু শিক্ষক রেখে দিই
+    document.getElementById('rentry-class').value = '';
+    document.getElementById('rentry-section').value = 'নাই';
+    document.getElementById('routine-entry-slots').classList.add('hidden');
+    
+    // শিক্ষকের উপর focus
+    document.getElementById('rentry-class').focus();
+};
+
+// ★ সব pending এন্ট্রি একবারে সেভ
+window.saveAllPendingEntries = async function() {
+    const keys = Object.keys(pendingRoutineEntries);
+    if (keys.length === 0) {
+        showToast('⚠️ কোনো pending এন্ট্রি নেই', 'warn');
+        return;
+    }
+    
+    // শিক্ষক অনুযায়ী group করি
+    const byTeacher = {};
+    keys.forEach(k => {
+        const e = pendingRoutineEntries[k];
+        if (!byTeacher[e.teacherName]) byTeacher[e.teacherName] = [];
+        byTeacher[e.teacherName].push(e);
+    });
+    
+    const teacherCount = Object.keys(byTeacher).length;
+    const entryCount = keys.length;
+    
+    if (!confirm(`✅ ${entryCount}টি এন্ট্রি ${teacherCount} জন শিক্ষকের জন্য সেভ করবেন?`)) return;
+    
+    showToast('⏳ সেভ হচ্ছে...', 'info');
+    
+    try {
+        const { doc, setDoc, deleteDoc, serverTimestamp } = window.fbFuncs;
+        
+        let savedCount = 0;
+        
+        for (const tName of Object.keys(byTeacher)) {
+            const entries = byTeacher[tName];
+            
+            // ★ পুরনো এন্ট্রি (এই teacher+class+section) মুছি
+            const uniqueGroups = new Set(entries.map(e => `${e.className}::${e.section}`));
+            
+            for (const grp of uniqueGroups) {
+                const [cls, sec] = grp.split('::');
+                const dept = entries[0].dept;
+                const year = entries[0].academicYear;
+                const season = entries[0].season;
+                
+                const oldEntries = routinesCache.filter(r => 
+                    r.academicYear === year &&
+                    r.season === season &&
+                    r.dept === dept &&
+                    r.className === cls &&
+                    (r.section || 'নাই') === sec &&
+                    r.teacherName === tName
+                );
+                for (const old of oldEntries) {
+                    await deleteDoc(doc(window.fbDB, 'routines', old.id));
+                }
+            }
+            
+            // ★ নতুন লিখি
+            const newEntries = [];
+            for (const e of entries) {
+                const safeClass = e.className.replace(/[^\w]/g, '_');
+                const safeTeacher = e.teacherName.replace(/[^\w]/g, '_');
+                const safeSection = e.section.replace(/[^\w]/g, '_');
+                const id = `rt_${e.dept}_${e.academicYear}_${e.season}_${safeClass}_${safeSection}_${safeTeacher}_${e.periodKey}`;
+                
+                const payload = {
+                    id: id,
+                    academicYear: e.academicYear,
+                    season: e.season,
+                    dept: e.dept,
+                    className: e.className,
+                    section: e.section,
+                    periodKey: e.periodKey,
+                    bookName: e.bookName,
+                    teacherName: e.teacherName,
+                    updatedAt: serverTimestamp(),
+                    createdBy: currentUser?.uid || 'unknown'
+                };
+                
+                await setDoc(doc(window.fbDB, 'routines', id), payload, { merge: true });
+                newEntries.push({ ...payload, updatedAt: null });
+                savedCount++;
+            }
+            
+            // Cache update
+            routinesCache = routinesCache.filter(r => 
+                !(r.teacherName === tName && r.academicYear === entries[0].academicYear && 
+                  r.season === entries[0].season && r.dept === entries[0].dept)
+            );
+            newEntries.forEach(e => routinesCache.push(e));
+        }
+        
+        // ★ pending clear
+        pendingRoutineEntries = {};
+        updatePendingBanner();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+        
+        showToast(`✅ ${savedCount}টি এন্ট্রি সেভ হয়েছে!`, 'success');
+        
+    } catch (err) {
+        console.error('❌ saveAllPendingEntries error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ★ pending banner আপডেট
+function updatePendingBanner() {
+    const count = Object.keys(pendingRoutineEntries).length;
+    const banner = document.getElementById('routine-pending-banner');
+    const countEl = document.getElementById('routine-pending-count');
+    const listEl = document.getElementById('routine-pending-list');
+    
+    if (!banner) return;
+    
+    if (count === 0) {
+        banner.classList.add('hidden');
+        return;
+    }
+    
+    banner.classList.remove('hidden');
+    if (countEl) countEl.textContent = count;
+    
+    // ★ preview list
+    if (listEl) {
+        const byTeacher = {};
+        Object.values(pendingRoutineEntries).forEach(e => {
+            if (!byTeacher[e.teacherName]) byTeacher[e.teacherName] = [];
+            byTeacher[e.teacherName].push(e);
+        });
+        
+        let listHTML = '';
+        Object.keys(byTeacher).forEach(tName => {
+            const entries = byTeacher[tName];
+            const classSet = new Set(entries.map(e => e.className));
+            listHTML += `<div>• <strong>${tName}</strong> — ${classSet.size}টি জামাত, ${entries.length}টি ঘণ্টা</div>`;
+        });
+        listEl.innerHTML = listHTML;
+    }
+}
+
+// ★ pending clear
+window.clearPendingEntries = function() {
+    if (Object.keys(pendingRoutineEntries).length === 0) return;
+    if (!confirm('সব pending এন্ট্রি মুছে ফেলবেন?')) return;
+    pendingRoutineEntries = {};
+    updatePendingBanner();
+    showToast('🗑️ Pending এন্ট্রি মুছে ফেলা হয়েছে', 'info');
+};
+
+// ───────── Progress + Summary ─────────
+function updateRoutineEntryProgress() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const deptMap = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const deptTeachers = (configData?.teachers || []).filter(t => t.dept === deptMap[dept]);
+    
+    const enteredTeachers = new Set();
+    routinesCache.forEach(r => {
+        if (r.academicYear === year && r.season === season && r.dept === dept) {
+            enteredTeachers.add(r.teacherName);
+        }
+    });
+    
+    const total = deptTeachers.length;
+    const done = enteredTeachers.size;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    
+    const textEl = document.getElementById('routine-entry-progress-text');
+    const fillEl = document.getElementById('routine-entry-progress-fill');
+    if (textEl) textEl.textContent = `${done} / ${total}`;
+    if (fillEl) fillEl.style.width = pct + '%';
+}
+
+async function refreshRoutineEntrySummary() {
+    const el = document.getElementById('routine-entry-summary');
+    if (!el) return;
+    
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    
+    // Firestore থেকে ফ্রেশ ডাটা
+    await loadRoutinesForYear();
+    
+    const list = routinesCache.filter(r => 
+        r.academicYear === year && r.season === season && r.dept === dept
+    );
+    
+    if (list.length === 0) {
+        el.innerHTML = '<p class="text-slate-400 italic">এখনো কোনো এন্ট্রি হয়নি</p>';
+        return;
+    }
+    
+    // শিক্ষক অনুযায়ী group
+    const byTeacher = {};
+    list.forEach(r => {
+        if (!byTeacher[r.teacherName]) byTeacher[r.teacherName] = [];
+        byTeacher[r.teacherName].push(r);
+    });
+    
+    const info = getRoutineDeptInfo(dept, season);
+    const periodLabelMap = {};
+    info.rows.forEach(p => { periodLabelMap[p.key] = p.label; });
+    
+    let html = '<div class="space-y-2">';
+    Object.keys(byTeacher).sort().forEach(tName => {
+        const slots = byTeacher[tName].sort((a, b) => {
+            const ai = info.rows.findIndex(p => p.key === a.periodKey);
+            const bi = info.rows.findIndex(p => p.key === b.periodKey);
+            return ai - bi;
+        });
+        
+        const classes = [...new Set(slots.map(s => s.className))];
+        
+        html += `
+            <div class="bg-white border border-slate-200 rounded-lg p-2 flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <span class="font-bold text-xs text-emerald-800">${tName}</span>
+                    <span class="text-[10px] text-slate-500 ml-2">(${classes.length}টি জামাত, ${slots.length}টি ঘণ্টা)</span>
+                </div>
+                <button onclick="loadTeacherEntryForEdit('${tName.replace(/'/g, "\\'")}')" class="text-[10px] text-blue-600 hover:underline">
+                    <i class="fa-solid fa-pen"></i> এডিট
+                </button>
+            </div>
+        `;
+    });
+    html += '</div>';
+    el.innerHTML = html;
+}
+
+window.loadTeacherEntryForEdit = function(teacherName) {
+    const sel = document.getElementById('rentry-teacher');
+    if (sel) sel.value = teacherName;
+    
+    // এই শিক্ষকের প্রথম জামাত auto-select
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const my = routinesCache.filter(r => 
+        r.academicYear === year && r.season === season && r.dept === dept && r.teacherName === teacherName
+    );
+    if (my.length > 0) {
+        const cls = document.getElementById('rentry-class');
+        if (cls) cls.value = my[0].className;
+        const sec = document.getElementById('rentry-section');
+        if (sec) sec.value = my[0].section;
+    }
+    
+    checkRoutineSlotsVisibility();
+    window.scrollTo({ top: 200, behavior: 'smooth' });
+};
+
+// ───────── রিসেট ─────────
+window.resetRoutineEntryForm = function() {
+    const t = document.getElementById('rentry-teacher');
+    const c = document.getElementById('rentry-class');
+    const s = document.getElementById('rentry-section');
+    if (t) t.value = '';
+    if (c) c.value = '';
+    if (s) s.value = 'নাই';
+    const slots = document.getElementById('routine-entry-slots');
+    if (slots) slots.classList.add('hidden');
+    
+    // ★ pending এন্ট্রি মুছি কিনা জিজ্ঞেস
+    if (Object.keys(pendingRoutineEntries).length > 0) {
+        if (confirm(`${Object.keys(pendingRoutineEntries).length}টি pending এন্ট্রি আছে — এগুলো মুছে ফেলবেন?`)) {
+            pendingRoutineEntries = {};
+            updatePendingBanner();
+        }
+    }
+};
+
+// ═══════════════════ Firestore থেকে রুটিন লোড + Auto ক্যারি-ফরওয়ার্ড ═══════════════════
+async function loadRoutinesForYear() {
+    const year = routineState.academicYear;
+    if (!year || !currentUser) return;
+    
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        const q = query(collection(window.fbDB, 'routines'), where('academicYear', '==', year));
+        const snap = await getDocs(q);
+        routinesCache = [];
+        snap.forEach(d => routinesCache.push({ id: d.id, ...d.data() }));
+        console.log(`📚 ${routinesCache.length} টি routine লোড হয়েছে (${year})`);
+        
+        // ★ Auto ক্যারি-ফরওয়ার্ড প্রস্তাব (শুধু এডমিন, শুধু entry view-তে)
+        if (routineState.subView === 'entry' && 
+            currentUserData?.role === 'admin' && 
+            routinesCache.length === 0) {
+            await suggestCarryForward(year);
+        }
+    } catch (err) {
+        console.error('❌ loadRoutinesForYear error:', err);
+        routinesCache = [];
+    }
+}
+
+// ★ আগের বছরের রুটিন খুঁজে ক্যারি-ফরওয়ার্ডের সুপারিশ
+async function suggestCarryForward(targetYear) {
+    // এই বছর index
+    const idx = academicYears.findIndex(y => y.name === targetYear);
+    if (idx <= 0) return; // প্রথম বছর → কিছু করার নেই
+    
+    const prevYear = academicYears[idx - 1].name;
+    
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        const q = query(collection(window.fbDB, 'routines'), where('academicYear', '==', prevYear));
+        const snap = await getDocs(q);
+        
+        if (snap.empty) return; // আগের বছরও খালি
+        
+        const count = snap.size;
+        const prevData = [];
+        snap.forEach(d => prevData.push({ id: d.id, ...d.data() }));
+        
+        // কনফার্মেশন ব্যানার দেখাই (window.confirm নয় — non-blocking UI)
+        showCarryForwardBanner(targetYear, prevYear, count, prevData);
+    } catch (err) {
+        console.error('❌ suggestCarryForward error:', err);
+    }
+}
+
+function showCarryForwardBanner(targetYear, prevYear, count, prevData) {
+    const container = document.getElementById('routine-view-entry');
+    if (!container) return;
+    
+    // পুরনো ব্যানার থাকলে মুছি
+    document.getElementById('carry-forward-banner')?.remove();
+    
+    const banner = document.createElement('div');
+    banner.id = 'carry-forward-banner';
+    banner.className = 'bg-blue-50 border-2 border-blue-300 rounded-xl p-4 mb-4';
+    banner.innerHTML = `
+        <div class="flex items-start gap-3 flex-wrap">
+            <i class="fa-solid fa-circle-info text-blue-600 text-2xl"></i>
+            <div class="flex-1 min-w-[200px]">
+                <h3 class="text-sm font-bold text-blue-900 mb-1">
+                    আগের বছরের রুটিন পাওয়া গেছে
+                </h3>
+                <p class="text-xs text-blue-800 mb-2">
+                    <strong>${prevYear}</strong> শিক্ষাবর্ষে <strong>${count}</strong>টি রুটিন এন্ট্রি আছে। 
+                    <strong>${targetYear}</strong> শিক্ষাবর্ষে সেটা কপি করে শুরু করতে চান? 
+                    তারপর আপনি শুধু সংশোধন করবেন।
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="executeCarryForward('${prevYear}', '${targetYear}')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">
+                        <i class="fa-solid fa-copy"></i> হ্যাঁ, কপি করুন (${count}টি)
+                    </button>
+                    <button onclick="document.getElementById('carry-forward-banner').remove()" class="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-lg transition">
+                        না, খালি শুরু করব
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // entry view-র একেবারে উপরে insert
+    const entryHeader = container.querySelector('.bg-white');
+    if (entryHeader) {
+        entryHeader.parentNode.insertBefore(banner, entryHeader);
+    } else {
+        container.prepend(banner);
+    }
+}
+
+window.executeCarryForward = async function(prevYear, targetYear) {
+    if (!confirm(`"${prevYear}" এর সব রুটিন কি "${targetYear}"-এ কপি করবেন?\n\nকপি করার পর আপনি যেকোনো ঘণ্টা এডিট করতে পারবেন।`)) return;
+    
+    showToast('⏳ কপি হচ্ছে...', 'info');
+    
+    try {
+        const { collection, getDocs, query, where, doc, setDoc, serverTimestamp } = window.fbFuncs;
+        
+        const q = query(collection(window.fbDB, 'routines'), where('academicYear', '==', prevYear));
+        const snap = await getDocs(q);
+        
+        let copied = 0;
+        for (const d of snap.docs) {
+            const src = d.data();
+            const newId = src.id.replace(prevYear, targetYear);
+            
+            const payload = {
+                ...src,
+                id: newId,
+                academicYear: targetYear,
+                updatedAt: serverTimestamp(),
+                copiedFrom: prevYear,
+                copiedAt: serverTimestamp(),
+                createdBy: currentUser?.uid || 'unknown'
+            };
+            
+            await setDoc(doc(window.fbDB, 'routines', newId), payload);
+            copied++;
+        }
+        
+        showToast(`✅ ${copied}টি রুটিন কপি হয়েছে`, 'success');
+        
+        // Cache refresh
+        await loadRoutinesForYear();
+        
+        // ব্যানার মুছি + UI refresh
+        document.getElementById('carry-forward-banner')?.remove();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+        
+    } catch (err) {
+        console.error('❌ executeCarryForward error:', err);
+        showToast('❌ কপি ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ শীত ↔ গ্রীষ্ম কপি ═══════════════════
+window.copySeasonRoutine = async function(fromSeason) {
+    const year = routineState.academicYear;
+    const dept = routineState.dept;
+    const toSeason = routineState.season;
+    const fromName = fromSeason === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    const toName = toSeason === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    
+    // সোর্স সিজনে ডাটা আছে কি?
+    try {
+        const { collection, getDocs, query, where, doc, setDoc, serverTimestamp, deleteDoc } = window.fbFuncs;
+        
+        const q = query(
+            collection(window.fbDB, 'routines'),
+            where('academicYear', '==', year),
+            where('season', '==', fromSeason),
+            where('dept', '==', dept)
+        );
+        const snap = await getDocs(q);
+        
+        if (snap.empty) {
+            showToast(`⚠️ ${fromName} রুটিন খালি — কপি করার কিছু নেই`, 'warn');
+            return;
+        }
+        
+        if (!confirm(
+            `${fromName} রুটিন থেকে ${toName} রুটিনে ${snap.size}টি এন্ট্রি কপি করবেন?\n\n` +
+            `⚠️ ${toName} রুটিনে বর্তমান সব এন্ট্রি মুছে যাবে।`
+        )) return;
+        
+        showToast('⏳ কপি হচ্ছে...', 'info');
+        
+        // বর্তমান টার্গেট সিজনের সব মুছি
+        const targetQ = query(
+            collection(window.fbDB, 'routines'),
+            where('academicYear', '==', year),
+            where('season', '==', toSeason),
+            where('dept', '==', dept)
+        );
+        const targetSnap = await getDocs(targetQ);
+        for (const d of targetSnap.docs) {
+            await deleteDoc(doc(window.fbDB, 'routines', d.id));
+        }
+        
+        // নতুন কপি
+        let copied = 0;
+        for (const d of snap.docs) {
+            const src = d.data();
+            const newId = src.id.replace(`_${fromSeason}_`, `_${toSeason}_`);
+            
+            const payload = {
+                ...src,
+                id: newId,
+                season: toSeason,
+                updatedAt: serverTimestamp(),
+                copiedFrom: fromSeason,
+                copiedAt: serverTimestamp()
+            };
+            
+            await setDoc(doc(window.fbDB, 'routines', newId), payload);
+            copied++;
+        }
+        
+        showToast(`✅ ${copied}টি এন্ট্রি কপি হয়েছে`, 'success');
+        await loadRoutinesForYear();
+        renderRoutineSub();
+        
+    } catch (err) {
+        console.error('❌ copySeasonRoutine error:', err);
+        showToast('❌ কপি ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ শিক্ষক ভিত্তিক রুটিন ভিউ ═══════════════════
+async function renderRoutineTeacherView(view) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const seasonName = season === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    
+    await loadRoutinesForYear();
+    
+    // এই বিভাগের শিক্ষক
+    const deptMap = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const deptTeachers = (configData?.teachers || []).filter(t => t.dept === deptMap[dept]);
+    
+    if (deptTeachers.length === 0) {
+        view.innerHTML = `<div class="bg-white rounded-xl p-10 text-center text-slate-400"><i class="fa-solid fa-users-slash text-4xl mb-3"></i><p>এই বিভাগে কোনো শিক্ষক নেই</p></div>`;
+        return;
+    }
+    
+    view.innerHTML = `
+        <div class="space-y-4">
+            <!-- হেডার + ভিউ সুইচার -->
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print">
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <h2 class="text-base font-bold text-emerald-900">
+                            <i class="fa-solid fa-user-tie text-emerald-600"></i>
+                            শিক্ষক ভিত্তিক রুটিন — ${deptNames[dept]} (${seasonName})
+                        </h2>
+                        <p class="text-[11px] text-slate-500 mt-0.5">${year} | ${info.session}</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="switchTeacherRoutineMode('overview')" id="rtm-overview" class="rtm-btn px-4 py-2 rounded-lg text-xs font-bold bg-emerald-700 text-white shadow">
+                            <i class="fa-solid fa-table-cells"></i> সব শিক্ষক একসাথে
+                        </button>
+                        <button onclick="switchTeacherRoutineMode('individual')" id="rtm-individual" class="rtm-btn px-4 py-2 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100 border border-slate-200">
+                            <i class="fa-solid fa-user"></i> প্রতি শিক্ষকের আলাদা
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- প্রিন্ট/PDF বাটন -->
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-2 items-center justify-between">
+                <div class="flex flex-wrap gap-2 items-center">
+                    <label class="text-xs font-semibold text-slate-600">শিক্ষক:</label>
+                    <select id="rtm-teacher-filter" onchange="renderTeacherRoutineContent()" class="rounded-lg border-slate-300 border p-1.5 text-xs">
+                        <option value="">-- সব --</option>
+                        ${deptTeachers.map(t => `<option value="${t.name}">${t.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="printRoutineSection('routine-teacher-print')" class="px-3 py-2 bg-emerald-800 text-white rounded-lg text-xs font-semibold hover:bg-emerald-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="shareRoutinePDF('routine-teacher-print', 'teacher_routine_${dept}_${season}', routineState.teacherMode === 'individual' ? 'portrait' : 'landscape')" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- কনটেন্ট এলাকা -->
+            <div id="routine-teacher-print" class="bg-slate-100 p-3 md:p-4 rounded-xl">
+                <div id="routine-teacher-content"></div>
+            </div>
+        </div>
+    `;
+    
+    // মোড state
+    routineState.teacherMode = 'overview';
+    renderTeacherRoutineContent();
+}
+
+window.switchTeacherRoutineMode = function(mode) {
+    routineState.teacherMode = mode;
+    document.querySelectorAll('.rtm-btn').forEach(b => {
+        b.classList.remove('bg-emerald-700', 'text-white', 'shadow');
+        b.classList.add('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    });
+    const active = document.getElementById('rtm-' + mode);
+    if (active) {
+        active.classList.add('bg-emerald-700', 'text-white', 'shadow');
+        active.classList.remove('text-slate-600', 'hover:bg-slate-100', 'border', 'border-slate-200');
+    }
+    renderTeacherRoutineContent();
+};
+
+function renderTeacherRoutineContent() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    const mode = routineState.teacherMode || 'overview';
+    const filterTeacher = document.getElementById('rtm-teacher-filter')?.value || '';
+    
+    const deptMap = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    let deptTeachers = (configData?.teachers || []).filter(t => t.dept === deptMap[dept]);
+    if (filterTeacher) deptTeachers = deptTeachers.filter(t => t.name === filterTeacher);
+    
+    const container = document.getElementById('routine-teacher-content');
+    if (!container) return;
+    
+    // এই বিভাগের সব routine
+    const myRoutines = routinesCache.filter(r => 
+        r.academicYear === year && r.season === season && r.dept === dept
+    );
+    
+    if (mode === 'overview') {
+        container.innerHTML = buildTeacherOverviewHTML(deptTeachers, info, myRoutines, dept, season, year);
+    } else {
+        container.innerHTML = deptTeachers.map(t => 
+            buildTeacherIndividualHTML(t, info, myRoutines, dept, season, year)
+        ).join('');
+        // ★ individual মোডে পোর্ট্রেট PDF বাটন দেখাও
+        const pdfBtn = document.querySelector('#routine-teacher-print ~ div button, button[onclick*="shareRoutinePDF"]');
+        // পোর্ট্রেট PDF-এর জন্য আলাদা বাটন (উপরে যোগ করা আছে)
+    }
+}
+
+// ───────── শিক্ষক — সব একসাথে (Landscape) ─────────
+function buildTeacherOverviewHTML(teachers, info, routines, dept, season, year) {
+    const isArabic = info.lang === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const fontClass = isArabic ? 'font-arabic' : '';
+    
+    const headerCols = info.rows.map(p => 
+        `<th style="min-width:80px;font-size:${p.isBreak ? '9px' : '10px'};${p.isBreak ? 'background:#d97706;' : ''}">
+            <div class="${fontClass}" dir="${dir}">${p.label}</div>
+            <div style="font-weight:normal;font-size:8.5px;opacity:.85;">${p.time}</div>
+        </th>`
+    ).join('');
+    
+    let rowsHTML = '';
+    teachers.forEach(t => {
+        const cells = info.rows.map(p => {
+            if (p.isBreak) {
+                return `<td style="background:#fef3c7;font-size:9px;color:#92400e;">—</td>`;
+            }
+            const entries = routines.filter(r => r.teacherName === t.name && r.periodKey === p.key);
+            if (entries.length === 0) {
+                return `<td class="no-class">—</td>`;
+            }
+            // একাধিক এন্ট্রি থাকতে পারে (একই ঘণ্টায় একাধিক শ্রেণি)
+            const cellContent = entries.map(e => 
+                `<div style="line-height:1.2;font-size:10px;" class="${fontClass}" dir="${dir}">
+                    <strong>${e.bookName}</strong>
+                    <span style="font-size:8.5px;color:#64748b;display:block;">${e.className}${e.section !== 'নাই' ? ' · ' + e.section : ''}</span>
+                </div>`
+            ).join('<hr style="margin:2px 0;border:0;border-top:1px dashed #cbd5e1;">');
+            return `<td class="has-class">${cellContent}</td>`;
+        }).join('');
+        
+        rowsHTML += `
+            <tr>
+                <td class="teacher-name-cell ${fontClass}" dir="${dir}">${t.name}</td>
+                ${cells}
+            </tr>
+        `;
+    });
+    
+    return `
+        <div class="routine-container">
+            <div style="background:white;padding:10px;border-radius:8px;">
+                <div style="text-align:center;margin-bottom:8px;border-bottom:2px solid #065f46;padding-bottom:6px;">
+                    <h3 style="font-size:14px;font-weight:bold;color:#065f46;margin:0;" class="${fontClass}" dir="${dir}">
+                        ${settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم'}
+                    </h3>
+                    <p style="font-size:11px;color:#475569;margin:2px 0;">
+                        ${settings.madrasaName || 'জামিয়া ইসলামিয়া'} — শিক্ষকভিত্তিক ক্লাস রুটিন
+                    </p>
+                    <p style="font-size:10px;color:#64748b;margin:0;">
+                        ${info.label} | শিক্ষাবর্ষ: ${year} | সেশন: ${info.session}
+                    </p>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table class="routine-table routine-teacher-overview" dir="${dir}">
+                        <thead>
+                            <tr>
+                                <th style="min-width:120px;${isArabic ? 'text-align:right;' : ''}">${isArabic ? 'اسم الأستاذ' : 'শিক্ষকের নাম'}</th>
+                                ${headerCols}
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ───────── প্রতি শিক্ষকের আলাদা পেইজ (Portrait) ─────────
+// ───────── প্রতি শিক্ষকের আলাদা পেইজ (Portrait, ফুল-পেইজ) ─────────
+function buildTeacherIndividualHTML(teacher, info, routines, dept, season, year) {
+    const isArabic = info.lang === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const fontClass = isArabic ? 'font-arabic' : '';
+    const teacherMeta = findTeacherByName(teacher.name) || {};
+    
+    const teacherRoutines = routines.filter(r => r.teacherName === teacher.name);
+    const nonBreakPeriods = info.rows.filter(p => !p.isBreak);
+    const filledPeriods = teacherRoutines.filter(r => 
+        nonBreakPeriods.some(p => p.key === r.periodKey)
+    ).length;
+    
+    // ★ রুটিন টেবিল — ৬ কলাম: ঘণ্টা | সময় | কিতাব | জামাত+শাখা
+    let rowsHTML = '';
+    info.rows.forEach(p => {
+        if (p.isBreak) {
+            rowsHTML += `
+                <tr class="break-row">
+                    <td colspan="4" style="text-align:center;padding:6px;">
+                        <i class="fa-solid fa-mug-hot"></i> ${p.label} — ${p.time}
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        const entries = teacherRoutines.filter(r => r.periodKey === p.key);
+        if (entries.length === 0) {
+            rowsHTML += `
+                <tr>
+                    <td class="period-cell ${fontClass}" dir="${dir}">${p.label}</td>
+                    <td class="time-cell">${p.time}</td>
+                    <td class="empty-cell" colspan="2">—</td>
+                </tr>
+            `;
+        } else {
+            entries.forEach((e, i) => {
+                rowsHTML += `
+                    <tr>
+                        ${i === 0 ? `<td class="period-cell ${fontClass}" dir="${dir}" rowspan="${entries.length}">${p.label}</td>
+                                     <td class="time-cell" rowspan="${entries.length}">${p.time}</td>` : ''}
+                        <td class="book-cell" dir="${dir}" style="font-size:14px;">${e.bookName}</td>
+                        <td class="teacher-cell" style="font-size:12px;">
+                            <span class="${fontClass}" dir="${dir}">${e.className}</span>
+                            ${e.section !== 'নাই' ? `<br><span style="font-size:10px;color:#64748b;">শাখা: ${e.section}</span>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+    });
+    
+    // ★ লোগো — মাত্র একবার (বাম দিকে)
+    const logo = settings.logo 
+        ? `<img src="${settings.logo}" style="width:70px;height:70px;object-fit:contain;border:2px solid #065f46;border-radius:50%;padding:3px;background:white;flex-shrink:0;">` 
+        : `<div style="width:70px;height:70px;flex-shrink:0;"></div>`;
+    
+    return `
+        <div class="routine-teacher-page routine-fullpage" style="page-break-after:always;min-height:275mm;display:flex;flex-direction:column;padding:10mm 8mm;">
+            
+            <!-- ★ হেডার (আরবি নাম বড়) -->
+            <div style="border:2px solid #065f46;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:14px;padding:12px 16px;background:linear-gradient(to left,#ecfdf5,#fffbeb);">
+                    ${logo}
+                    <div style="flex:1;text-align:center;">
+                        <h2 class="${fontClass}" dir="rtl" style="font-size:22px;color:#064e3b;font-weight:bold;margin:0;font-family:'Amiri',serif;line-height:1.3;">
+                            ${settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم'}
+                        </h2>
+                        <h3 style="font-size:17px;color:#065f46;font-weight:bold;margin:5px 0 0;line-height:1.3;">
+                            ${settings.madrasaName || 'জামিয়া ইসলামিয়া'}
+                        </h3>
+                        <p style="font-size:12px;color:#475569;margin:4px 0 0;">${settings.address || ''}</p>
+                    </div>
+                    <div style="width:70px;height:70px;flex-shrink:0;"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#065f46;color:white;font-size:11px;text-align:center;">
+                    <div style="padding:6px;border-right:1px solid #047857;"><strong>${info.label}</strong></div>
+                    <div style="padding:6px;border-right:1px solid #047857;">শিক্ষাবর্ষ: ${year}</div>
+                    <div style="padding:6px;">সেশন: ${info.session}</div>
+                </div>
+            </div>
+
+            <!-- ★ শিক্ষক তথ্য (বড় নাম) -->
+            <div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:8px;padding:12px;margin-bottom:12px;">
+                <table style="width:100%;font-size:13px;border-collapse:collapse;">
+                    <tr>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">শিক্ষকের নাম:</strong> <span class="${fontClass}" dir="${dir}" style="font-size:15px;">${teacher.name}</span></td>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">পদবী:</strong> ${teacherMeta.post || '-'}</td>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">কার্ড:</strong> <span style="font-family:monospace;">${teacherMeta.card || '-'}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">বিভাগ:</strong> ${teacherMeta.dept || '-'}</td>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">মোবাইল:</strong> <span style="font-family:monospace;">${teacherMeta.mobile || '-'}</span></td>
+                        <td style="padding:5px 4px;"><strong style="color:#92400e;">মোট ঘণ্টা:</strong> ${filledPeriods} / ${nonBreakPeriods.length} টি</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- ★ রুটিন টেবিল (ফ্লেক্স-গ্রো — পুরো পেইজ ভরবে) -->
+            <div style="flex:1;display:flex;flex-direction:column;">
+                <table class="routine-table routine-fulltable" dir="${dir}" style="width:100%;height:100%;flex:1;">
+                    <thead>
+                        <tr>
+                            <th style="width:15%;font-size:13px;padding:8px 5px;">${isArabic ? 'الحصة' : 'ঘণ্টা'}</th>
+                            <th style="width:18%;font-size:13px;padding:8px 5px;">${isArabic ? 'الوقت' : 'সময়'}</th>
+                            <th style="font-size:13px;padding:8px 5px;">${isArabic ? 'الكتاب' : 'কিতাব'}</th>
+                            <th style="width:22%;font-size:13px;padding:8px 5px;">${isArabic ? 'الصف' : 'জামাত'}</th>
+                        </tr>
+                    </thead>
+                    <tbody style="height:100%;">${rowsHTML}</tbody>
+                </table>
+            </div>
+
+            <!-- ★ স্বাক্ষর -->
+            <div style="margin-top:20px;display:flex;justify-content:space-around;font-size:12px;font-weight:bold;">
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع المعلم' : 'শিক্ষকের স্বাক্ষর'}
+                </div>
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع أمين التعليم' : 'শিক্ষা সচিবের স্বাক্ষর'}
+                </div>
+            </div>
+
+            <!-- ★ ফুটার -->
+            <div style="margin-top:10px;text-align:center;font-size:10px;color:#065f46;border-top:1px solid #065f46;padding-top:6px;">
+                মাকাদীরে আসবাক (مقادير الأسباق) — শিক্ষাবর্ষ ${year} | সেশন: ${info.session}
+            </div>
+        </div>
+    `;
+}
+
+// ═══════════════════ জামাত ভিত্তিক রুটিন ভিউ ═══════════════════
+async function renderRoutineJamatView(view) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const seasonName = season === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    
+    await loadRoutinesForYear();
+    
+    const classes = (configData?.classes || {})[dept] || [];
+    
+    if (classes.length === 0) {
+        view.innerHTML = `<div class="bg-white rounded-xl p-10 text-center text-slate-400"><i class="fa-solid fa-school text-4xl mb-3"></i><p>এই বিভাগে কোনো জামাত নেই</p></div>`;
+        return;
+    }
+    
+    const classOptions = classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    
+    view.innerHTML = `
+        <div class="space-y-4">
+            <!-- হেডার + ফিল্টার -->
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-emerald-900">
+                        <i class="fa-solid fa-graduation-cap text-emerald-600"></i>
+                        জামাত ভিত্তিক রুটিন — ${deptNames[dept]} (${seasonName})
+                    </h2>
+                    <p class="text-[11px] text-slate-500 mt-0.5">${year} | ${info.session}</p>
+                </div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <label class="text-xs font-semibold text-slate-600">জামাত:</label>
+                    <select id="rjm-class-filter" onchange="renderJamatRoutineContent()" class="rounded-lg border-slate-300 border p-1.5 text-xs">
+                        <option value="">-- সব জামাত --</option>
+                        ${classOptions}
+                    </select>
+                    <button onclick="printRoutineSection('routine-jamat-print')" class="px-3 py-2 bg-emerald-800 text-white rounded-lg text-xs font-semibold hover:bg-emerald-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="shareRoutinePDF('routine-jamat-print', 'jamat_routine_${dept}_${season}', 'landscape')" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- কনটেন্ট -->
+            <div id="routine-jamat-print" class="bg-slate-100 p-3 md:p-4 rounded-xl">
+                <div id="routine-jamat-content"></div>
+            </div>
+        </div>
+    `;
+    
+    renderJamatRoutineContent();
+}
+
+function renderJamatRoutineContent() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    const filter = document.getElementById('rjm-class-filter')?.value || '';
+    const container = document.getElementById('routine-jamat-content');
+    if (!container) return;
+    
+    let classes = (configData?.classes || {})[dept] || [];
+    if (filter) classes = classes.filter(c => c === filter);
+    
+    const routines = routinesCache.filter(r => 
+        r.academicYear === year && r.season === season && r.dept === dept
+    );
+    
+    if (classes.length === 0) {
+        container.innerHTML = `<div class="bg-white p-8 text-center text-slate-400 rounded-lg">কোন জামাত নেই</div>`;
+        return;
+    }
+    
+    container.innerHTML = classes.map(c => buildJamatRoutineHTML(c, info, routines, dept, season, year)).join('');
+}
+
+// ═══════════════════ ম্যাট্রিক্স ভিউ — জামাত × ঘণ্টা ═══════════════════
+async function renderRoutineMatrixView(view) {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const seasonName = season === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন';
+    
+    await loadRoutinesForYear();
+    
+    const classes = (configData?.classes || {})[dept] || [];
+    
+    if (classes.length === 0) {
+        view.innerHTML = `<div class="bg-white rounded-xl p-10 text-center text-slate-400"><i class="fa-solid fa-school text-4xl mb-3"></i><p>এই বিভাগে কোনো জামাত নেই</p></div>`;
+        return;
+    }
+    
+    view.innerHTML = `
+        <div class="space-y-4">
+            <!-- হেডার + ফিল্টার -->
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print flex flex-wrap gap-3 items-center justify-between">
+                <div>
+                    <h2 class="text-base font-bold text-emerald-900">
+                        <i class="fa-solid fa-table-cells-large text-emerald-600"></i>
+                        ম্যাট্রিক্স ভিউ — ${deptNames[dept]} (${seasonName})
+                    </h2>
+                    <p class="text-[11px] text-slate-500 mt-0.5">${year} | ${info.session} | সারিতে জামাত, কলামে ঘণ্টা</p>
+                </div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <label class="text-xs font-semibold text-slate-600">জামাত:</label>
+                    <select id="rmx-class-filter" onchange="renderMatrixContent()" class="rounded-lg border-slate-300 border p-1.5 text-xs">
+                        <option value="">-- সব জামাত --</option>
+                        ${classes.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                    <button onclick="printRoutineSection('routine-matrix-print')" class="px-3 py-2 bg-emerald-800 text-white rounded-lg text-xs font-semibold hover:bg-emerald-900 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="shareRoutinePDF('routine-matrix-print', 'matrix_routine_${dept}_${season}', 'landscape')" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Matrix কনটেন্ট -->
+            <div id="routine-matrix-print" class="bg-slate-100 p-3 md:p-4 rounded-xl">
+                <div id="routine-matrix-content"></div>
+            </div>
+        </div>
+    `;
+    
+    renderMatrixContent();
+}
+
+function renderMatrixContent() {
+    const dept = routineState.dept;
+    const season = routineState.season;
+    const year = routineState.academicYear;
+    const info = getRoutineDeptInfo(dept, season);
+    const filter = document.getElementById('rmx-class-filter')?.value || '';
+    const container = document.getElementById('routine-matrix-content');
+    if (!container) return;
+    
+    let classes = (configData?.classes || {})[dept] || [];
+    if (filter) classes = classes.filter(c => c === filter);
+    
+    const routines = routinesCache.filter(r => 
+        r.academicYear === year && r.season === season && r.dept === dept
+    );
+    
+    const isArabic = info.lang === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const fontClass = isArabic ? 'font-arabic' : '';
+    const showTeacher = dept !== 'shariah';
+    
+    // ★ শুধু break ছাড়া ঘণ্টাগুলো
+    const periods = info.rows.filter(p => !p.isBreak);
+    
+    // ★ ম্যাট্রিক্স টেবিল হেডার
+    let headerHTML = `
+        <th style="min-width:130px;background:#065f46;color:white;padding:8px 6px;font-size:11px;border:1px solid #047857;text-align:${dir === 'rtl' ? 'right' : 'left'};">
+            ${isArabic ? 'الصف' : 'জামাত'}
+        </th>
+    `;
+    
+    periods.forEach(p => {
+        headerHTML += `
+            <th style="min-width:90px;background:#065f46;color:white;padding:8px 4px;font-size:10.5px;border:1px solid #047857;">
+                <div class="${fontClass}" dir="${dir}" style="font-weight:bold;">${p.label}</div>
+                <div style="font-weight:normal;font-size:9px;opacity:.85;margin-top:2px;">${p.time}</div>
+            </th>
+        `;
+    });
+    
+    // ★ প্রতিটি জামাতের সারি
+    let rowsHTML = '';
+    classes.forEach(cls => {
+        const clsRoutines = routines.filter(r => r.className === cls);
+        
+        // শাখা অনুযায়ী আলাদা কি না?
+        const sections = [...new Set(clsRoutines.map(r => r.section || 'নাই'))];
+        const hasMultiSection = sections.length > 1 && !sections.includes('নাই');
+        
+        // একই জামাতে একাধিক শাখার এন্ট্রি থাকলে প্রতি শাখা আলাদা সারি
+        const rowsToRender = hasMultiSection 
+            ? sections.map(s => ({ section: s, routines: clsRoutines.filter(r => (r.section || 'নাই') === s) }))
+            : [{ section: null, routines: clsRoutines }];
+        
+        rowsToRender.forEach(rowInfo => {
+            const labelSuffix = rowInfo.section && rowInfo.section !== 'নাই' 
+                ? `<div style="font-size:9px;color:#64748b;margin-top:2px;">শাখা: ${rowInfo.section}</div>` 
+                : '';
+            
+            let cellsHTML = '';
+            periods.forEach(p => {
+                const entries = rowInfo.routines.filter(r => r.periodKey === p.key);
+                
+                if (entries.length === 0) {
+                    cellsHTML += `<td style="border:1px solid #cbd5e1;background:#f8fafc;padding:4px;text-align:center;color:#cbd5e1;font-size:10px;">—</td>`;
+                } else {
+                    const cellContent = entries.map(e => {
+                        const teacherLine = showTeacher 
+                            ? `<div style="font-size:9px;color:#64748b;margin-top:2px;"><i class="fa-solid fa-user-tie"></i> ${e.teacherName}</div>` 
+                            : '';
+                        return `
+                            <div style="font-weight:bold;font-family:'Amiri','Hind Siliguri',serif;font-size:11px;line-height:1.3;${dir === 'rtl' ? 'text-align:right;' : ''}" class="${fontClass}" dir="${dir}">
+                                ${e.bookName}
+                            </div>
+                            ${teacherLine}
+                        `;
+                    }).join('<hr style="margin:3px 0;border:0;border-top:1px dashed #cbd5e1;">');
+                    
+                    cellsHTML += `<td style="border:1px solid #cbd5e1;background:#fffbeb;padding:5px 4px;text-align:${dir === 'rtl' ? 'right' : 'left'};vertical-align:middle;">${cellContent}</td>`;
+                }
+            });
+            
+            rowsHTML += `
+                <tr>
+                    <td style="border:1px solid #cbd5e1;background:#ecfdf5;padding:6px;font-weight:bold;font-size:11px;color:#065f46;${dir === 'rtl' ? 'text-align:right;' : 'text-align:left;'}" class="${fontClass}" dir="${dir}">
+                        ${cls}${labelSuffix}
+                    </td>
+                    ${cellsHTML}
+                </tr>
+            `;
+        });
+    });
+    
+    // ★ লোগো
+    const logo = settings.logo 
+        ? `<img src="${settings.logo}" style="width:55px;height:55px;object-fit:contain;border:2px solid #065f46;border-radius:50%;padding:2px;background:white;">` 
+        : '';
+    
+    container.innerHTML = `
+        <div style="background:white;padding:12px;border-radius:8px;">
+            <!-- হেডার -->
+            <div style="border:2px solid #065f46;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(to left,#ecfdf5,#fffbeb);">
+                    ${logo || '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                    <div style="flex:1;text-align:center;">
+                        <h2 class="${fontClass}" dir="rtl" style="font-size:18px;color:#064e3b;font-weight:bold;margin:0;font-family:'Amiri',serif;line-height:1.3;">
+                            ${settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم'}
+                        </h2>
+                        <h3 style="font-size:14px;color:#065f46;font-weight:bold;margin:3px 0 0;">
+                            ${settings.madrasaName || 'জামিয়া ইসলামিয়া'}
+                        </h3>
+                    </div>
+                    ${logo || '<div style="width:55px;height:55px;flex-shrink:0;"></div>'}
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#065f46;color:white;font-size:10px;text-align:center;">
+                    <div style="padding:5px;border-right:1px solid #047857;"><strong>${info.label}</strong></div>
+                    <div style="padding:5px;border-right:1px solid #047857;">শিক্ষাবর্ষ: ${year}</div>
+                    <div style="padding:5px;">সেশন: ${info.session}</div>
+                </div>
+            </div>
+            
+            <div style="background:#d97706;color:white;padding:5px 10px;text-align:center;border-radius:6px;margin-bottom:10px;">
+                <h4 style="font-size:13px;font-weight:bold;margin:0;font-family:'Amiri',serif;">جدول الحصص (الجدول الكامل)</h4>
+                <p style="font-size:10px;margin:2px 0 0;">সম্পূর্ণ ক্লাস রুটিন — একটি নজরে</p>
+            </div>
+            
+            <!-- ম্যাট্রিক্স টেবিল -->
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;table-layout:auto;" dir="${dir}">
+                    <thead>
+                        <tr>${headerHTML}</tr>
+                    </thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+            </div>
+            
+            <!-- স্বাক্ষর -->
+            <div style="margin-top:24px;display:flex;justify-content:space-around;font-size:11px;font-weight:bold;">
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع أمين التعليم' : 'শিক্ষা সচিবের স্বাক্ষর'}
+                </div>
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع الرئيس' : 'প্রধানের স্বাক্ষর'}
+                </div>
+            </div>
+            
+            <!-- ফুটার -->
+            <div style="margin-top:10px;text-align:center;font-size:9px;color:#065f46;border-top:1px solid #065f46;padding-top:6px;">
+                মাকাদীরে আসবাক (مقادير الأسباق) — শিক্ষাবর্ষ ${year}
+            </div>
+        </div>
+    `;
+}
+
+// ───────── জামাত ভিত্তিক — প্রতি জামাতে ১ পেইজ ─────────
+function buildJamatRoutineHTML(className, info, routines, dept, season, year) {
+    const isArabic = info.lang === 'ar';
+    const dir = isArabic ? 'rtl' : 'ltr';
+    const fontClass = isArabic ? 'font-arabic' : '';
+    
+    // ★ শরীয়াহ → শিক্ষকের নাম দেখাব না | বাকি দুটিতে দেখাব
+    const showTeacher = dept !== 'shariah';
+    
+    const classRoutines = routines.filter(r => r.className === className);
+    
+    // শাখা অনুযায়ী গ্রুপ
+    const bySection = {};
+    classRoutines.forEach(r => {
+        const sec = r.section || 'নাই';
+        if (!bySection[sec]) bySection[sec] = [];
+        bySection[sec].push(r);
+    });
+    
+    if (Object.keys(bySection).length === 0) {
+        bySection['নাই'] = [];
+    }
+    
+    // ★ প্রতি শাখার জন্য টেবিল
+    let sectionsHTML = '';
+    const sectionKeys = Object.keys(bySection).sort();
+    
+    sectionKeys.forEach(section => {
+        const secRoutines = bySection[section];
+        
+        let rowsHTML = '';
+        info.rows.forEach(p => {
+            if (p.isBreak) {
+                rowsHTML += `
+                    <tr class="break-row">
+                        <td colspan="3" style="text-align:center;padding:6px;">
+                            <i class="fa-solid fa-mug-hot"></i> ${p.label} — ${p.time}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            const entries = secRoutines.filter(r => r.periodKey === p.key);
+            
+            if (entries.length === 0) {
+                rowsHTML += `
+                    <tr>
+                        <td class="period-cell ${fontClass}" dir="${dir}">${p.label}</td>
+                        <td class="time-cell">${p.time}</td>
+                        <td class="empty-cell">—</td>
+                    </tr>
+                `;
+            } else {
+                // ★ একই ঘণ্টায় একাধিক এন্ট্রি হলে সাজিয়ে দেখাই
+                const cellContent = entries.map(e => {
+                    const teacherLine = showTeacher 
+                        ? `<div style="font-size:10.5px;color:#475569;margin-top:2px;"><i class="fa-solid fa-user-tie"></i> ${e.teacherName}</div>` 
+                        : '';
+                    return `
+                        <div style="padding:2px 0;">
+                            <div style="font-weight:bold;font-family:'Amiri','Hind Siliguri',serif;font-size:13px;" class="${fontClass}" dir="${dir}">${e.bookName}</div>
+                            ${teacherLine}
+                        </div>
+                    `;
+                }).join(entries.length > 1 ? '<hr style="margin:3px 0;border:0;border-top:1px dashed #cbd5e1;">' : '');
+                
+                rowsHTML += `
+                    <tr>
+                        <td class="period-cell ${fontClass}" dir="${dir}">${p.label}</td>
+                        <td class="time-cell">${p.time}</td>
+                        <td class="book-cell" style="text-align:${dir === 'rtl' ? 'right' : 'left'};padding:6px 8px;">${cellContent}</td>
+                    </tr>
+                `;
+            }
+        });
+        
+        const sectionTitle = sectionKeys.length > 1 
+            ? `${className} — শাখা: ${section}` 
+            : className;
+        
+        sectionsHTML += `
+            <div style="margin-bottom:12px;">
+                <div style="background:#065f46;color:white;padding:5px 10px;border-radius:4px 4px 0 0;font-size:12px;font-weight:bold;">
+                    <span class="${fontClass}" dir="${dir}">${sectionTitle}</span>
+                </div>
+                <table class="routine-table routine-jamat-table" dir="${dir}" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th style="width:15%;font-size:12px;padding:6px 5px;">${isArabic ? 'الحصة' : 'ঘণ্টা'}</th>
+                            <th style="width:18%;font-size:12px;padding:6px 5px;">${isArabic ? 'الوقت' : 'সময়'}</th>
+                            <th style="font-size:12px;padding:6px 5px;">${isArabic ? 'الكتاب' : 'কিতাব'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+            </div>
+        `;
+    });
+    
+    // ★ লোগো — একবার
+    const logo = settings.logo 
+        ? `<img src="${settings.logo}" style="width:60px;height:60px;object-fit:contain;border:2px solid #065f46;border-radius:50%;padding:2px;background:white;flex-shrink:0;">` 
+        : `<div style="width:60px;height:60px;flex-shrink:0;"></div>`;
+    
+    return `
+        <div class="routine-jamat-page routine-fullpage" style="page-break-after:always;min-height:275mm;background:white;padding:10mm 8mm;margin-bottom:14px;display:flex;flex-direction:column;">
+            <!-- ★ হেডার -->
+            <div style="border:2px solid #065f46;border-radius:8px;overflow:hidden;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(to left,#ecfdf5,#fffbeb);">
+                    ${logo}
+                    <div style="flex:1;text-align:center;">
+                        <h2 class="${fontClass}" dir="rtl" style="font-size:20px;color:#064e3b;font-weight:bold;margin:0;font-family:'Amiri',serif;line-height:1.3;">
+                            ${settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم'}
+                        </h2>
+                        <h3 style="font-size:15px;color:#065f46;font-weight:bold;margin:4px 0 0;">
+                            ${settings.madrasaName || 'জামিয়া ইসলামিয়া'}
+                        </h3>
+                        <p style="font-size:10px;color:#475569;margin:2px 0 0;">${settings.address || ''}</p>
+                    </div>
+                    <div style="width:60px;height:60px;flex-shrink:0;"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#065f46;color:white;font-size:10.5px;text-align:center;">
+                    <div style="padding:5px;border-right:1px solid #047857;"><strong>${info.label}</strong></div>
+                    <div style="padding:5px;border-right:1px solid #047857;">শিক্ষাবর্ষ: ${year}</div>
+                    <div style="padding:5px;">সেশন: ${info.session}</div>
+                </div>
+            </div>
+            
+            <!-- ★ টাইটেল -->
+            <div style="background:#d97706;color:white;padding:6px 10px;text-align:center;border-radius:6px;margin-bottom:12px;">
+                <h4 style="font-size:15px;font-weight:bold;margin:0;font-family:'Amiri',serif;">جدول الدروس (الصف)</h4>
+                <p style="font-size:11px;margin:2px 0 0;">জামাতভিত্তিক ক্লাস রুটিন</p>
+            </div>
+            
+            <!-- ★ কনটেন্ট -->
+            <div style="flex:1;">${sectionsHTML}</div>
+            
+            <!-- ★ স্বাক্ষর -->
+            <div style="margin-top:20px;display:flex;justify-content:space-around;font-size:12px;font-weight:bold;">
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع أمين التعليم' : 'শিক্ষা সচিবের স্বাক্ষর'}
+                </div>
+                <div style="text-align:center;border-top:1.5px solid #000;padding-top:5px;min-width:150px;">
+                    ${isArabic ? 'توقيع الرئيس' : 'প্রধানের স্বাক্ষর'}
+                </div>
+            </div>
+            
+            <!-- ★ ফুটার -->
+            <div style="margin-top:10px;text-align:center;font-size:10px;color:#065f46;border-top:1px solid #065f46;padding-top:6px;">
+                মাকাদীরে আসবাক (مقادير الأسباق) — শিক্ষাবর্ষ ${year}
+            </div>
+        </div>
+    `;
+}
+
+// ═══════════════════ প্রিন্ট/PDF হেল্পার ═══════════════════
+window.printRoutineSection = function(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) { showToast('❌ এলিমেন্ট পাওয়া যায়নি', 'error'); return; }
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>রুটিন প্রিন্ট</title>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; padding: 8mm; margin: 0; }
+                .routine-table { width:100%; border-collapse:collapse; font-size:11px; background:white; }
+                .routine-table th, .routine-table td { border:1px solid #000; padding:4px 5px; text-align:center; }
+                .routine-table th { background:#065f46 !important; color:white !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.period-cell { background:#f1f5f9 !important; font-weight:bold; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.time-cell { background:#f8fafc !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.book-cell { background:#fffbeb !important; font-family:'Amiri','Noto Naskh Arabic','Hind Siliguri',serif; font-weight:bold; -webkit-print-color-adjust:exact; print-color-adjust:exact; word-break:break-word; line-height:1.5; }
+                .routine-table tr.break-row td { background:#fef3c7 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.has-class { background:#fffbeb !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.no-class { background:#f8fafc !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-table td.teacher-name-cell { background:#ecfdf5 !important; font-weight:bold; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+                .routine-teacher-page { page-break-after:always; }
+                .routine-teacher-page:last-child { page-break-after:auto; }
+                .routine-fullpage { min-height: 275mm !important; padding: 0 !important; border: none !important; display: flex !important; flex-direction: column !important; }
+                .routine-fulltable { table-layout: fixed; }
+                .routine-fulltable td { padding: 10px 8px !important; font-size: 13px; vertical-align: middle; }
+                .routine-jamat-page { page-break-after: always; min-height: 275mm; display: flex; flex-direction: column; }
+                .routine-jamat-table td { padding: 6px 8px !important; font-size: 12px; vertical-align: middle; }
+                table { page-break-inside: avoid; }
+                tr { page-break-inside: avoid; page-break-after: auto; }
+                thead { display: table-header-group; }
+                @page { size: A4 landscape; margin: 6mm; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            </style>
+        </head>
+        <body>${el.innerHTML}</body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => { printWindow.print(); printWindow.close(); }, 600);
+};
+
+window.shareRoutinePDF = function(elementId, fileName, orientation) {
+    const el = document.getElementById(elementId);
+    if (!el) { showToast('❌ এলিমেন্ট পাওয়া যায়নি', 'error'); return; }
+    
+    showToast('📄 PDF তৈরি হচ্ছে...', 'info');
+    
+    const opt = {
+        margin: [6, 6, 8, 6],
+        filename: fileName + '_' + new Date().toISOString().split('T')[0] + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: orientation || 'portrait', compress: true },
+        pagebreak: { mode: ['css', 'legacy', 'avoid-all'] }
+    };
+    
+    html2pdf().set(opt).from(el).save().then(() => {
+        showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
+    }).catch(err => {
+        console.error(err);
+        showToast('❌ PDF তৈরিতে সমস্যা', 'error');
+    });
+};
+
+// ★ switchTab আপডেট — routine বাটন কাজ করার জন্য
+// ⚠️ বিদ্যমান switchTab ফাংশনটি Replace করবেন না, শুধু নিচের ৩টি লাইন তার ভেতরে যোগ করুন
 // ═══════════════════ TAB SWITCH ═══════════════════
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -3116,6 +5594,34 @@ function switchTab(tabId) {
     if (tabId === 'settings') updateStats();
     if (tabId === 'admin') switchAdminSub('dept');
     if (tabId === 'dashboard') renderDashboard();
+        if (tabId === 'routine') {
+        populateRoutineYearDropdown();
+    }
+        if (tabId === 'routine') {
+        // routine বাটন ক্লিক করলে ডিফল্ট entry view সেট
+        if (routineState.subView === 'entry' && currentUserData?.role !== 'admin') {
+            routineState.subView = 'teacher';
+        }
+    }
+}
+
+// ═══════════════════ ক্লাস রুটিন — Year dropdown ═══════════════════
+function populateRoutineYearDropdown() {
+    const sel = document.getElementById('routine-academic-year');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- শিক্ষাবর্ষ --</option>';
+    academicYears.forEach(y => {
+        const o = document.createElement('option');
+        o.value = y.name;
+        o.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
+        sel.appendChild(o);
+    });
+    if (cur && academicYears.some(y => y.name === cur)) sel.value = cur;
+    else sel.value = getCurrentYear();
+    
+    // auto-select current year
+    routineState.academicYear = sel.value;
 }
 
 function onDeptChange() {
@@ -6459,6 +8965,10 @@ function showApp() {
     const isAdmin = currentUserData?.role === 'admin';
     const isTeacher = currentUserData?.role === 'teacher';
 
+    // ★ ক্লাস রুটিন সবাই দেখবে
+    const routineBtn = document.getElementById('tab-btn-routine');
+    if (routineBtn) routineBtn.classList.remove('hidden');
+
     // এডমিন বাটন
     const admBtn = document.getElementById('tab-btn-admin');
     if (admBtn) admBtn.classList.toggle('hidden', !isAdmin);
@@ -8458,7 +10968,31 @@ window.filterTeacherPicker = function() {
 window.tpFinalizeSave = async function() {
     if (!_tpState.teacher) { showToast('⚠️ শিক্ষক নির্বাচন করুন', 'warn'); return; }
     if (_tpState.classes.length === 0) { showToast('⚠️ কমপক্ষে একটি জামাত নির্বাচন করুন', 'warn'); return; }
+        // ★ কনফ্লিক্ট চেক
+    const conflictsInForm = [];
+    info.rows.forEach(p => {
+        if (p.isBreak) return;
+        const card = document.getElementById('rcard-' + p.key);
+        if (card && card.classList.contains('conflict')) {
+            const bookSel = document.getElementById('rselect-' + p.key);
+            conflictsInForm.push({ periodKey: p.key, bookName: bookSel?.value });
+        }
+    });
     
+    if (conflictsInForm.length > 0) {
+        const proceed = confirm(
+            `⚠️ সতর্কতা: ${conflictsInForm.length}টি ঘণ্টায় কনফ্লিক্ট আছে!\n\n` +
+            `সম্ভাব্য কারণ:\n` +
+            `• একই শ্রেণিতে এই ঘণ্টায় ইতিমধ্যে অন্য কিতাব এন্ট্রি আছে\n` +
+            `• এই শিক্ষক ইতিমধ্যে অন্য শ্রেণিতে এই ঘণ্টায় ক্লাস নিচ্ছেন\n` +
+            `• এই কিতাব ইতিমধ্যে অন্য শিক্ষকের কাছে বন্টিত\n\n` +
+            `আপনি কি তবুও সেভ করতে চান?`
+        );
+        if (!proceed) {
+            showToast('❌ সেভ বাতিল করা হয়েছে', 'info');
+            return;
+        }
+    }
     showToast('⏳ সেভ হচ্ছে...', 'info');
     
     if (_tpState.mode === 'edit') {
