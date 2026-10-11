@@ -1598,6 +1598,9 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <button onclick="switchAdminSub('class')" id="adm-sub-class" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-graduation-cap"></i> জামাত ও কিতাব
             </button>
+            <button onclick="switchAdminSub('periods')" id="adm-sub-periods" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-clock"></i> ক্লাস রুটিন কনফিগ
+            </button>
             <button onclick="switchAdminSub('teacher')" id="adm-sub-teacher" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-users"></i> শিক্ষক
             </button>
@@ -3849,34 +3852,48 @@ function checkRoutineSlotsVisibility() {
 }
 
 // ───────── ঘণ্টা-ভিত্তিক ইনপুট রেন্ডার ─────────
+// ═══════════════════════════════════════════════════════════════
+// রুটিন এন্ট্রি স্লট রেন্ডার
+// ═══════════════════════════════════════════════════════════════
 function renderRoutineEntrySlots() {
-    const dept = routineState.dept;
-    const season = routineState.season;
-    const year = routineState.academicYear;
+    const dept    = routineState.dept;
+    const season  = routineState.season;
+    const year    = routineState.academicYear;
     const teacher = document.getElementById('rentry-teacher').value;
-    const currentClass = document.getElementById('rentry-class').value;  // এখন যে জামাত dropdown-এ
-    const currentSection = document.getElementById('rentry-section').value;
+    const currentClass   = document.getElementById('rentry-class').value;
+    const currentSection = document.getElementById('rentry-section').value || 'নাই';
+
     const info = getRoutineDeptInfo(dept, season);
-    
     const listEl = document.getElementById('routine-entry-slots-list');
     if (!listEl) return;
-    
+
     // ★ এখন যে জামাত সিলেক্ট করা আছে — তার কিতাব তালিকা
     const currentBooks = (configData?.books || {})[currentClass] || [];
-    
-    // ★ এই শিক্ষকের সব সেভড এন্ট্রি (সব জামাত মিলিয়ে)
-    const teacherSaved = routinesCache.filter(r => 
+
+    // ★ এই শ্রেণি+শাখার সব এন্ট্রি (সব শিক্ষক মিলিয়ে) — ডান দিকে দেখাব
+    const classAllEntries = routinesCache.filter(r =>
         r.academicYear === year &&
-        r.season === season &&
-        r.dept === dept &&
-        r.teacherName === teacher
+        r.season       === season &&
+        r.dept         === dept &&
+        r.className    === currentClass &&
+        (r.section || 'নাই') === currentSection
     );
-    
-    const dir = info.lang === 'ar' ? 'rtl' : 'ltr';
+
+    // ★ এই শিক্ষকের সব এন্ট্রি (সব শ্রেণি মিলিয়ে) — কনফ্লিক্ট চেকের জন্য
+    const teacherAllEntries = routinesCache.filter(r =>
+        r.academicYear === year &&
+        r.season       === season &&
+        r.dept         === dept &&
+        r.teacherName  === teacher
+    );
+
+    const dir       = info.lang === 'ar' ? 'rtl' : 'ltr';
     const fontClass = info.lang === 'ar' ? 'font-arabic' : '';
-    
+
     let html = '';
+
     info.rows.forEach(p => {
+        // ─── বিরতি (Break) ───────────────────────────────
         if (p.isBreak) {
             html += `
                 <div class="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 text-center text-xs font-bold text-amber-900">
@@ -3885,56 +3902,42 @@ function renderRoutineEntrySlots() {
             `;
             return;
         }
-        
-        // ★ এই ঘণ্টায় এই শিক্ষকের সেভড এন্ট্রি (সব জামাত মিলিয়ে)
-        const savedInPeriod = teacherSaved.filter(r => r.periodKey === p.key);
-        
-        // ★ এই ঘণ্টায় একই (currentClass + currentSection)-এর এন্ট্রি
-        const exactMatch = savedInPeriod.find(r => 
-            r.className === currentClass && (r.section || 'নাই') === currentSection
-        );
-        
-        // ★ Dropdown-এ কোন তালিকা দেখাব:
-        //    - যদি exactMatch থাকে (এখন যে জামাত+শাখা সিলেক্ট করা, সেখানে আগের এন্ট্রি):
-        //        → সেই জামাতের কিতাব + currentBooks (merge)
-        //    - নাহলে: currentBooks (এখন যে জামাতের কিতাব)
-        let dropdownBooks = currentBooks.slice();
-        
-        // সেভড এন্ট্রি থাকলে সেই কিতাবকেও তালিকায় নিশ্চিত করি
-        savedInPeriod.forEach(r => {
-            if (!dropdownBooks.includes(r.bookName)) {
-                dropdownBooks.push(r.bookName + ' ‹' + r.className + '›');
-            }
-        });
-        
-        // ★ প্রতিটি সারির জন্য কার্যকর "কোন জামাতের" — সেভড এন্ট্রি থাকলে সেটার, নাহলে current
-        const effectiveClass = exactMatch ? exactMatch.className : currentClass;
-        
-        // ★ dropdown-এ selected value নির্ধারণ
-        const selectedBook = exactMatch ? exactMatch.bookName : '';
-        
-        const bookOptions = dropdownBooks.map(b => {
-            // "‹তাকমীল›" suffix থেকে আসল নাম বের করি
-            const realName = b.replace(/\s‹.*›$/, '');
-            const suffix = b.includes('‹') ? ' ' + b.match(/‹.*›/)[0] : '';
-            const isSelected = realName === selectedBook;
-            return `<option value="${realName}" ${isSelected ? 'selected' : ''}>${realName}${suffix}</option>`;
-        }).join('');
-        
-        // ★ এই ঘণ্টায় সেভড এন্ট্রির লেবেল (ছোট)
-        const savedLabelsHTML = savedInPeriod.map(s => `
-            <div class="text-[10px] text-slate-600 mt-1 flex items-center gap-1">
-                <i class="fa-solid fa-check-circle text-emerald-600"></i>
-                <span class="font-bold">${s.className}</span>
-                ${s.section !== 'নাই' ? `<span>(${s.section})</span>` : ''}
-                —
-                <span class="font-arabic">${s.bookName}</span>
-                <button onclick="deletePeriodEntry('${s.id}')" class="text-red-500 hover:text-red-700 ml-auto" title="ডিলিট">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
-        `).join('');
-        
+
+        // এই ঘণ্টায় ঐ শ্রেণিতে সব শিক্ষকের এন্ট্রি
+        const savedInPeriod = classAllEntries.filter(r => r.periodKey === p.key);
+
+        // Dropdown options
+        const bookOptions = currentBooks.map(b =>
+            `<option value="${b}">${b}</option>`
+        ).join('');
+
+        // ডান দিকের তালিকা — প্রতিটি এন্ট্রির জন্য আলাদা লাইন + ডিলিট বাটন
+        const savedLabelsHTML = savedInPeriod.length === 0
+            ? '<div class="text-[10px] text-slate-400 italic">— খালি —</div>'
+            : savedInPeriod.map(s => {
+                const isOwn = s.teacherName === teacher;
+                return `
+                    <div class="text-[11px] ${isOwn
+                        ? 'bg-emerald-50 border-emerald-300'
+                        : 'bg-slate-50 border-slate-200'
+                    } border rounded px-2 py-1 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid ${isOwn
+                            ? 'fa-user-check text-emerald-600'
+                            : 'fa-user text-slate-500'
+                        }"></i>
+                        <span class="font-bold text-slate-700 text-[10px]">${s.teacherName}</span>
+                        <span class="text-slate-400 text-[10px]">|</span>
+                        <span class="font-arabic text-slate-800 text-[11px]" dir="rtl">${s.bookName}</span>
+                        <button onclick="deletePeriodEntry('${s.id}')"
+                                class="text-red-500 hover:text-red-700 ml-auto flex-shrink-0"
+                                title="ডিলিট">
+                            <i class="fa-solid fa-trash text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+        // ─── কার্ড ─────────────────────────────────────
         html += `
             <div class="routine-entry-card" id="rcard-${p.key}" data-period="${p.key}">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
@@ -3942,33 +3945,315 @@ function renderRoutineEntrySlots() {
                         <div class="text-xs font-bold text-emerald-800 ${fontClass}" dir="${dir}">${p.label}</div>
                         <div class="text-[10px] text-slate-500">${p.time} (${p.duration} মি)</div>
                     </div>
-                    <div class="md:col-span-7">
+                    <div class="md:col-span-5">
                         <div class="flex gap-2 items-center">
-                            <select id="rselect-${p.key}" 
+                            <select id="rselect-${p.key}"
                                     data-period="${p.key}"
+                                    onchange="onRoutineBookChange('${p.key}')"
                                     class="flex-1 rounded-lg border-slate-300 border p-2 text-sm ${fontClass}"
                                     dir="${dir}">
                                 <option value="">-- কিতাব নির্বাচন করুন --</option>
                                 ${bookOptions}
                             </select>
-                            <button onclick="addPeriodEntry('${p.key}')" 
-                                    class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex-shrink-0 font-bold text-xs" 
+                            <button onclick="addPeriodEntry('${p.key}')"
+                                    class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex-shrink-0 font-bold text-xs"
                                     title="সেভ করুন">
                                 <i class="fa-solid fa-floppy-disk"></i> সেভ
                             </button>
                         </div>
+                        <div id="rwarn-${p.key}" class="conflict-warning hidden"></div>
                     </div>
-                    <div class="md:col-span-3">
+                    <div class="md:col-span-5">
+                        <div class="text-[10px] font-bold text-slate-600 mb-1">
+                            <i class="fa-solid fa-list"></i> এই ঘণ্টায় ${currentClass}-এ সেভ করা:
+                        </div>
                         ${savedLabelsHTML}
-                        ${savedInPeriod.length === 0 ? '<div class="text-[10px] text-slate-400 italic">— খালি —</div>' : ''}
                     </div>
                 </div>
             </div>
         `;
     });
-    
+
     listEl.innerHTML = html;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// কিতাব সিলেক্ট করলে কনফ্লিক্ট চেক
+// ═══════════════════════════════════════════════════════════════
+window.onRoutineBookChange = function (periodKey) {
+    const dept    = routineState.dept;
+    const season  = routineState.season;
+    const year    = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const section   = document.getElementById('rentry-section').value || 'নাই';
+    const bookName  = document.getElementById('rselect-' + periodKey)?.value;
+
+    const warnEl = document.getElementById('rwarn-' + periodKey);
+    if (!warnEl) return;
+
+    // রিসেট
+    warnEl.classList.add('hidden');
+    warnEl.innerHTML = '';
+    warnEl.style.background  = '';
+    warnEl.style.borderColor = '';
+    warnEl.style.color       = '';
+
+    if (!bookName || !teacher || !className) return;
+
+    // ★ শিক্ষকের সব এন্ট্রি (সব শ্রেণি, সব শাখা) — নিজের চেকের জন্য
+    const normTeacher2 = (teacher || '').trim();
+    const teacherSlot = routinesCache.filter(r =>
+        r.academicYear === year &&
+        r.season       === season &&
+        r.dept         === dept &&
+        r.periodKey    === periodKey &&
+        (r.teacherName || '').trim() === normTeacher2
+    );
+
+    // ★ শ্রেণির সব এন্ট্রি (সব শিক্ষক) — অন্য শিক্ষকের চেকের জন্য
+    const classSlot = routinesCache.filter(r =>
+        r.academicYear === year &&
+        r.season       === season &&
+        r.dept         === dept &&
+        r.periodKey    === periodKey &&
+        r.className    === className &&
+        (r.section || 'নাই') === section
+    );
+
+    // ★ কিতাবের সব এন্ট্রি (সব শিক্ষক) — কিতাব বণ্টনের চেকের জন্য
+    const bookSlot = routinesCache.filter(r =>
+        r.academicYear === year &&
+        r.season       === season &&
+        r.dept         === dept &&
+        r.periodKey    === periodKey &&
+        r.bookName     === bookName
+    );
+
+    const sameSlot = [...new Set([...teacherSlot, ...classSlot, ...bookSlot])];
+    const warnings = [];
+    let isCritical = false;
+
+    // ★ চেক ১: এই শিক্ষক এই ঘণ্টায় অন্য শ্রেণিতে ক্লাস নিচ্ছেন?
+    sameSlot.forEach(c => {
+        if (c.teacherName === teacher && c.className !== className) {
+            warnings.push(
+                `🚫 এই ঘণ্টায় <strong>${teacher}</strong> ইতিমধ্যে ` +
+                `<strong>${c.className}</strong>-এ ` +
+                `<span class="font-arabic">${c.bookName}</span> পড়াচ্ছেন`
+            );
+            isCritical = true;
+        }
+    });
+
+    // ★ চেক ২: এই শ্রেণিতে এই ঘণ্টায় অন্য শিক্ষকের কিতাব?
+    sameSlot.forEach(c => {
+        if (c.className === className &&
+            (c.section || 'নাই') === section &&
+            c.teacherName !== teacher) {
+            warnings.push(
+                `⚠️ <strong>${className}</strong>-এ এই ঘণ্টায় ` +
+                `<strong>${c.teacherName}</strong> ইতিমধ্যে ` +
+                `<span class="font-arabic">${c.bookName}</span> পড়াচ্ছেন`
+            );
+        }
+    });
+
+    // ★ চেক ৩: এই কিতাব এই ঘণ্টায় অন্য কারো কাছে?
+    sameSlot.forEach(c => {
+        if (c.bookName === bookName && c.teacherName !== teacher) {
+            warnings.push(
+                `⚠️ <span class="font-arabic">${bookName}</span> এই ঘণ্টায় ` +
+                `<strong>${c.teacherName}</strong> (${c.className}) এর কাছে বন্টিত`
+            );
+        }
+    });
+
+    // ★★ চেক ৪ ও ৫ — নিজের এন্ট্রি (শিক্ষকের নাম normalize করে)
+    const normTeacher = (teacher || '').trim();
+    const ownEntries = sameSlot.filter(c =>
+        (c.teacherName || '').trim() === normTeacher &&
+        c.className === className &&
+        (c.section || 'নাই') === section
+    );
+
+    ownEntries.forEach(c => {
+        if (c.bookName === bookName) {
+            // একই কিতাব আগেই আছে — ডুপ্লিকেট
+            warnings.push(
+                `🔴 এই কিতাব (<span class="font-arabic">${bookName}</span>) ` +
+                `আপনার এই শ্রেণিতে এই ঘণ্টায় <strong>ইতিমধ্যে সেভ করা আছে</strong> — ` +
+                `একই কিতাব দুইবার সেভ হবে না`
+            );
+            isCritical = true;
+        } else {
+            // নিজের ভিন্ন কিতাব — যোগ হবে
+            warnings.push(
+                `✅ আপনার এই শ্রেণিতে এই ঘণ্টায় আগে থেকেই আছে: ` +
+                `<span class="font-arabic">${c.bookName}</span> — ` +
+                `নতুনটা এর সাথে <strong>যোগ হবে</strong> (replace হবে না)`
+            );
+        }
+    });
+
+    // ★ ডিবাগ — Console-এ লগ দেখাবে
+    console.log('🔍 Conflict check:', {
+        teacher, className, section, bookName,
+        sameSlotCount: sameSlot.length,
+        sameSlot: sameSlot.map(c => `${c.teacherName}|${c.className}|${c.periodKey}|${c.bookName}`),
+        warnings: warnings.length
+    });
+    
+    console.log('=== Conflict Check Debug ===');
+    console.log('year/season/dept/periodKey:', year, season, dept, periodKey);
+    console.log('teacher/className/section:', teacher, className, section);
+    console.log('routinesCache length:', routinesCache.length);
+    console.log('teacherSlot count:', teacherSlot.length);
+    console.log('teacherSlot books:', teacherSlot.map(c => `${c.className}|${c.bookName}`));
+    console.log('warnings:', warnings);
+    // ─── ওয়ার্নিং দেখাই ──────────────────────────────
+    if (warnings.length === 0) return;
+
+    warnEl.innerHTML = warnings.join('<br>');
+    warnEl.classList.remove('hidden');
+
+    if (isCritical) {
+        warnEl.style.background  = '#fee2e2';
+        warnEl.style.borderColor = '#fca5a5';
+        warnEl.style.color       = '#991b1b';
+    } else {
+        warnEl.style.background  = '#fef3c7';
+        warnEl.style.borderColor = '#fcd34d';
+        warnEl.style.color       = '#92400e';
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// এই ঘণ্টার এন্ট্রি সেভ — একই শিক্ষকের একাধিক কিতাব রাখা যাবে
+// ═══════════════════════════════════════════════════════════════
+window.addPeriodEntry = async function (periodKey) {
+    const dept    = routineState.dept;
+    const season  = routineState.season;
+    const year    = routineState.academicYear;
+    const teacher = document.getElementById('rentry-teacher').value;
+    const className = document.getElementById('rentry-class').value;
+    const section   = document.getElementById('rentry-section').value || 'নাই';
+    const bookName  = document.getElementById('rselect-' + periodKey)?.value;
+
+    // ─── Validation ──────────────────────────────────
+    if (!teacher || !className) {
+        showToast('⚠️ শিক্ষক ও জামাত সিলেক্ট করুন', 'warn');
+        return;
+    }
+    if (!bookName) {
+        showToast('⚠️ কিতাব সিলেক্ট করুন', 'warn');
+        return;
+    }
+
+    // ★ কনফ্লিক্ট থাকলে confirm
+    const warnEl = document.getElementById('rwarn-' + periodKey);
+    if (warnEl && !warnEl.classList.contains('hidden')) {
+        const proceed = confirm(
+            `⚠️ সতর্কতা আছে!\n\nউপরের বার্তাটি পড়ুন।\n\nতবুও কি সেভ করবেন?`
+        );
+        if (!proceed) {
+            showToast('❌ সেভ বাতিল', 'info');
+            return;
+        }
+    }
+
+    // ★ EXACT DUPLICATE চেক — এই (teacher + class + section + periodKey + bookName) আগেই আছে কি?
+    const exactDup = routinesCache.find(r =>
+        r.academicYear === year &&
+        r.season       === season &&
+        r.dept         === dept &&
+        r.className    === className &&
+        (r.section || 'নাই') === section &&
+        r.periodKey    === periodKey &&
+        r.teacherName  === teacher &&
+        r.bookName     === bookName
+    );
+
+    if (exactDup) {
+        showToast('ℹ️ এই এন্ট্রি ইতিমধ্যে আছে — ডুপ্লিকেট হবে না', 'warn');
+        return;
+    }
+
+    showToast('⏳ সেভ হচ্ছে...', 'info');
+
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+
+        // ★ ID-তে bookName যোগ — যাতে একই ঘণ্টায় একাধিক কিতাব আলাদা ID পায়
+        const safeClass    = className.replace(/[^\w]/g, '_');
+        const safeTeacher  = teacher.replace(/[^\w]/g, '_');
+        const safeSection  = section.replace(/[^\w]/g, '_');
+        const safeBook     = bookName.replace(/[^\w\u0600-\u06FF]/g, '_').slice(0, 30);
+        const id = `rt_${dept}_${year}_${season}_${safeClass}_${safeSection}_${safeTeacher}_${periodKey}_${safeBook}`;
+
+        const payload = {
+            id,
+            academicYear : year,
+            season,
+            dept,
+            className,
+            section,
+            periodKey,
+            bookName,
+            teacherName  : teacher,
+            updatedAt    : serverTimestamp(),
+            createdBy    : currentUser?.uid || 'unknown'
+        };
+
+        await setDoc(doc(window.fbDB, 'routines', id), payload, { merge: true });
+        routinesCache.push({ ...payload, updatedAt: null });
+
+        showToast(`✅ ${teacher} — ${className} — ${bookName} সেভ হয়েছে`, 'success');
+
+        // Dropdown খালি করি + warning সরাই
+        const sel = document.getElementById('rselect-' + periodKey);
+        if (sel) sel.value = '';
+
+        const warn = document.getElementById('rwarn-' + periodKey);
+        if (warn) {
+            warn.classList.add('hidden');
+            warn.innerHTML = '';
+        }
+
+        // UI refresh
+        renderRoutineEntrySlots();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+
+    } catch (err) {
+        console.error('❌ addPeriodEntry error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// এই ঘণ্টার এন্ট্রি ডিলিট
+// ═══════════════════════════════════════════════════════════════
+window.deletePeriodEntry = async function (entryId) {
+    if (!confirm('এই এন্ট্রিটি মুছে ফেলবেন?')) return;
+
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'routines', entryId));
+
+        routinesCache = routinesCache.filter(r => r.id !== entryId);
+
+        showToast('🗑️ এন্ট্রি মুছে ফেলা হয়েছে', 'info');
+
+        renderRoutineEntrySlots();
+        updateRoutineEntryProgress();
+        refreshRoutineEntrySummary();
+
+    } catch (err) {
+        console.error('❌ deletePeriodEntry error:', err);
+        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
+    }
+};
 
 // ═══════════════════ এই ঘণ্টার এন্ট্রি সেভ ═══════════════════
 window.addPeriodEntry = async function(periodKey) {
@@ -9106,6 +9391,7 @@ window.switchAdminSub = function(sub) {
     if (sub === 'dept') renderAdminDept();
     else if (sub === 'term') renderAdminTerm();
     else if (sub === 'class') renderAdminClass();
+    else if (sub === 'periods') renderAdminPeriods();
     else if (sub === 'teacher') renderAdminTeacher();
     else if (sub === 'assign') renderAdminAssign();
     else if (sub === 'users') renderAdminUsers();
@@ -9556,6 +9842,342 @@ window.deleteTerm = async function(termKey) {
 // ═══════════════════ ADMIN: জামাত ও কিতাব ═══════════════════
 let adminClassSelectedDept = '';
 let adminClassSelectedClass = '';
+// ═══════════════════ ADMIN: ক্লাস রুটিন কনফিগ (ঘণ্টা ম্যানেজার) ═══════════════════
+let adminPeriodsState = {
+    dept: 'shariah',
+    season: 'summer',
+    rows: []  // currently editing
+};
+
+window.renderAdminPeriods = function() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+    
+    // State initialize
+    if (!adminPeriodsState.dept) adminPeriodsState.dept = 'shariah';
+    if (!adminPeriodsState.season) adminPeriodsState.season = 'summer';
+    
+    // ★ বর্তমান config থেকে rows লোড
+    loadPeriodsForEdit();
+    
+    content.innerHTML = `
+        <div class="space-y-4">
+            <!-- হেডার -->
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-clock text-emerald-600"></i> ক্লাস রুটিন কনফিগ
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">এডমিন</span>
+                </h3>
+                <button onclick="resetPeriodsToDefault()" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> ডিফল্টে ফিরুন
+                </button>
+            </div>
+            
+            <!-- নির্দেশনা -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs text-blue-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    প্রতিটি বিভাগ ও মৌসুমের জন্য ঘণ্টা/সময় আলাদাভাবে সেট করতে পারবেন। নাম, সময়, duration, বিরতি — সব এখানে পরিবর্তনযোগ্য। পরিবর্তনের পর <strong>"সেভ করুন"</strong> চাপুন।
+                </p>
+            </div>
+            
+            <!-- বিভাগ + মৌসুম সিলেকশন -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 rounded-lg p-3 border border-slate-200">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">বিভাগ</label>
+                    <select id="adm-periods-dept" onchange="onAdminPeriodsDeptChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                        <option value="shariah" ${adminPeriodsState.dept === 'shariah' ? 'selected' : ''}>শরীয়াহ</option>
+                        <option value="noorani" ${adminPeriodsState.dept === 'noorani' ? 'selected' : ''}>নূরানী ও নাযেরা</option>
+                        <option value="non_res" ${adminPeriodsState.dept === 'non_res' ? 'selected' : ''}>অনাবাসিক</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">মৌসুম</label>
+                    <select id="adm-periods-season" onchange="onAdminPeriodsSeasonChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                        <option value="summer" ${adminPeriodsState.season === 'summer' ? 'selected' : ''}>☀️ গ্রীষ্মকালীন</option>
+                        <option value="winter" ${adminPeriodsState.season === 'winter' ? 'selected' : ''}>🌸 শীতকালীন</option>
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button onclick="copyWinterToSummer()" class="flex-1 px-3 py-2.5 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-semibold rounded-lg transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-clone"></i> শীত → গ্রীষ্ম কপি
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ঘণ্টা টেবিল -->
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <div class="bg-slate-100 p-3 border-b flex items-center justify-between flex-wrap gap-2">
+                    <h4 class="text-sm font-bold text-slate-700">
+                        <i class="fa-solid fa-list-ol text-emerald-600"></i> ঘণ্টার তালিকা
+                        <span id="adm-periods-count" class="badge bg-emerald-100 text-emerald-800 ml-2">${adminPeriodsState.rows.length} টি</span>
+                    </h4>
+                    <div class="flex gap-2">
+                        <button onclick="addNewPeriod()" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> নতুন ঘণ্টা
+                        </button>
+                    </div>
+                </div>
+                <div id="adm-periods-tbody" class="max-h-[500px] overflow-y-auto"></div>
+            </div>
+            
+            <!-- সেভ বাটন -->
+            <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+                <button onclick="renderAdminPeriods()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg transition">
+                    <i class="fa-solid fa-rotate-left"></i> রিসেট
+                </button>
+                <button onclick="saveAdminPeriods()" class="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> সব সেভ করুন
+                </button>
+            </div>
+        </div>
+    `;
+    
+    renderPeriodsTable();
+};
+
+// ★ Config থেকে rows লোড
+function loadPeriodsForEdit() {
+    const dept = adminPeriodsState.dept;
+    const season = adminPeriodsState.season;
+    
+    // Firestore config → memory → default
+    let source = null;
+    if (configData?.routinePeriods?.[dept]?.[season]?.rows) {
+        source = configData.routinePeriods[dept][season].rows;
+    } else if (DEFAULT_ROUTINE_PERIODS?.[dept]?.[season]?.rows) {
+        source = DEFAULT_ROUTINE_PERIODS[dept][season].rows;
+    }
+    
+    // ★ Deep copy
+    adminPeriodsState.rows = source ? JSON.parse(JSON.stringify(source)) : [];
+}
+
+// ★ ঘণ্টা টেবিল render
+function renderPeriodsTable() {
+    const tbody = document.getElementById('adm-periods-tbody');
+    if (!tbody) return;
+    
+    const rows = adminPeriodsState.rows;
+    const countEl = document.getElementById('adm-periods-count');
+    if (countEl) countEl.textContent = rows.length + ' টি';
+    
+    if (rows.length === 0) {
+        tbody.innerHTML = `
+            <div class="p-8 text-center text-slate-400">
+                <i class="fa-solid fa-info-circle text-3xl mb-2"></i>
+                <p class="text-sm">কোনো ঘণ্টা নেই — "নতুন ঘণ্টা" বাটনে ক্লিক করুন</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '<div class="divide-y divide-slate-200">';
+    
+    rows.forEach((r, idx) => {
+        const isBreak = !!r.isBreak;
+        html += `
+            <div class="p-3 hover:bg-slate-50 ${isBreak ? 'bg-amber-50' : ''}">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-center">
+                    <div class="md:col-span-1 text-center">
+                        <div class="text-xs font-bold text-slate-500">${idx + 1}</div>
+                        <div class="flex flex-col gap-0.5 mt-1">
+                            <button onclick="movePeriodUp(${idx})" class="text-slate-400 hover:text-emerald-600 text-[10px]" title="উপরে" ${idx === 0 ? 'disabled' : ''}>
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button onclick="movePeriodDown(${idx})" class="text-slate-400 hover:text-emerald-600 text-[10px]" title="নিচে" ${idx === rows.length - 1 ? 'disabled' : ''}>
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-3">
+                        <label class="text-[10px] font-semibold text-slate-500 block mb-0.5">নাম</label>
+                        <input type="text" value="${(r.label || '').replace(/"/g, '&quot;')}" 
+                               onchange="updatePeriodField(${idx}, 'label', this.value)"
+                               class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-semibold text-slate-500 block mb-0.5">সময়</label>
+                        <input type="text" value="${(r.time || '').replace(/"/g, '&quot;')}" 
+                               onchange="updatePeriodField(${idx}, 'time', this.value)"
+                               class="w-full rounded border-slate-300 border p-1.5 text-xs font-arabic" dir="rtl" placeholder="৭:৩০–৮:১৫">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-semibold text-slate-500 block mb-0.5">Duration (মিনিট)</label>
+                        <input type="number" value="${r.duration || 0}" min="0" 
+                               onchange="updatePeriodField(${idx}, 'duration', parseInt(this.value) || 0)"
+                               class="w-full rounded border-slate-300 border p-1.5 text-xs">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="text-[10px] font-semibold text-slate-500 block mb-0.5">Key (unique)</label>
+                        <input type="text" value="${(r.key || '').replace(/"/g, '&quot;')}" readonly
+                               class="w-full rounded border-slate-300 border p-1.5 text-xs bg-slate-100 font-mono text-slate-600">
+                    </div>
+                    
+                    <div class="md:col-span-2 flex items-center justify-between gap-2">
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" ${isBreak ? 'checked' : ''} 
+                                   onchange="updatePeriodField(${idx}, 'isBreak', this.checked)"
+                                   class="rounded text-amber-600 w-4 h-4">
+                            <span class="text-[10px] font-semibold text-amber-700">বিরতি</span>
+                        </label>
+                        <button onclick="deletePeriod(${idx})" class="text-red-500 hover:text-red-700 p-1" title="মুছুন">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    tbody.innerHTML = html;
+}
+
+window.onAdminPeriodsDeptChange = function() {
+    adminPeriodsState.dept = document.getElementById('adm-periods-dept').value;
+    loadPeriodsForEdit();
+    renderPeriodsTable();
+};
+
+window.onAdminPeriodsSeasonChange = function() {
+    adminPeriodsState.season = document.getElementById('adm-periods-season').value;
+    loadPeriodsForEdit();
+    renderPeriodsTable();
+};
+
+window.updatePeriodField = function(idx, field, value) {
+    if (!adminPeriodsState.rows[idx]) return;
+    adminPeriodsState.rows[idx][field] = value;
+};
+
+window.addNewPeriod = function() {
+    const now = Date.now();
+    adminPeriodsState.rows.push({
+        key: 'p_' + now,
+        label: 'الحصة الجديدة',
+        time: '',
+        duration: 45,
+        isBreak: false
+    });
+    renderPeriodsTable();
+};
+
+window.deletePeriod = function(idx) {
+    if (!confirm(`"${adminPeriodsState.rows[idx].label}" ঘণ্টাটি মুছে ফেলবেন?`)) return;
+    adminPeriodsState.rows.splice(idx, 1);
+    renderPeriodsTable();
+};
+
+window.movePeriodUp = function(idx) {
+    if (idx === 0) return;
+    const arr = adminPeriodsState.rows;
+    [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+    renderPeriodsTable();
+};
+
+window.movePeriodDown = function(idx) {
+    const arr = adminPeriodsState.rows;
+    if (idx === arr.length - 1) return;
+    [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+    renderPeriodsTable();
+};
+
+// ★ শীত → গ্রীষ্ম কপি (৩০ মিনিট শিফট সহ)
+window.copyWinterToSummer = function() {
+    const dept = adminPeriodsState.dept;
+    
+    if (!confirm('শীতকালীন রুটিন থেকে গ্রীষ্মকালীন রুটিনে কপি করবেন?\n\n(বর্তমান গ্রীষ্মকালীন ঘণ্টা মুছে যাবে)')) return;
+    
+    const winterRows = configData?.routinePeriods?.[dept]?.winter?.rows 
+                    || DEFAULT_ROUTINE_PERIODS?.[dept]?.winter?.rows;
+    
+    if (!winterRows || winterRows.length === 0) {
+        showToast('⚠️ শীতকালীন কনফিগ নেই', 'warn');
+        return;
+    }
+    
+    // Deep copy
+    adminPeriodsState.rows = JSON.parse(JSON.stringify(winterRows));
+    renderPeriodsTable();
+    showToast('✅ শীত থেকে কপি হয়েছে — এখন সময় adjust করে সেভ করুন', 'success');
+};
+
+// ★ সেভ — Firestore-এ যাবে
+window.saveAdminPeriods = async function() {
+    const dept = adminPeriodsState.dept;
+    const season = adminPeriodsState.season;
+    const rows = adminPeriodsState.rows;
+    
+    // Validation
+    if (rows.length === 0) {
+        showToast('⚠️ কমপক্ষে একটি ঘণ্টা রাখুন', 'warn');
+        return;
+    }
+    
+    for (let i = 0; i < rows.length; i++) {
+        if (!rows[i].key) {
+            showToast(`⚠️ ${i + 1} নং সারির key নেই`, 'warn');
+            return;
+        }
+    }
+    
+    showToast('⏳ সেভ হচ্ছে...', 'info');
+    
+    try {
+        // ★ Config memory-তে আপডেট
+        if (!configData) configData = {};
+        if (!configData.routinePeriods) configData.routinePeriods = {};
+        if (!configData.routinePeriods[dept]) configData.routinePeriods[dept] = {};
+        
+        // ★ আগের lang/session/label সংরক্ষণ করি
+        const existing = configData.routinePeriods[dept][season] || {};
+        const defaultSource = DEFAULT_ROUTINE_PERIODS[dept]?.[season] || {};
+        
+        configData.routinePeriods[dept][season] = {
+            label: existing.label || defaultSource.label || `${dept} — ${season === 'winter' ? 'শীতকালীন' : 'গ্রীষ্মকালীন'}`,
+            lang: existing.lang || defaultSource.lang || 'bn',
+            session: existing.session || defaultSource.session || '',
+            rows: rows
+        };
+        
+        // ★ Firestore-এ সেভ
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        const ref = doc(window.fbDB, CONFIG_DOC_PATH, CONFIG_DOC_ID);
+        await setDoc(ref, { ...configData, updatedAt: serverTimestamp(), updatedBy: currentUser?.uid || 'unknown' });
+        
+        // ★ Local cache আপডেট
+        localStorage.setItem('madrasa_config_cache_v3', JSON.stringify(configData));
+        
+        showToast(`✅ ${rows.length}টি ঘণ্টা সেভ হয়েছে`, 'success');
+        
+    } catch (err) {
+        console.error('❌ saveAdminPeriods error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ★ ডিফল্টে ফিরুন
+window.resetPeriodsToDefault = function() {
+    const dept = adminPeriodsState.dept;
+    const season = adminPeriodsState.season;
+    
+    const defaultSource = DEFAULT_ROUTINE_PERIODS[dept]?.[season]?.rows;
+    if (!defaultSource) {
+        showToast('⚠️ এই বিভাগ+মৌসুমের ডিফল্ট নেই', 'warn');
+        return;
+    }
+    
+    if (!confirm(`"${dept}" + "${season}" ডিফল্টে ফিরবেন?\n\n(বর্তমান পরিবর্তন হারিয়ে যাবে — "সেভ" না করলে Firestore-এ যাবে না)`)) return;
+    
+    adminPeriodsState.rows = JSON.parse(JSON.stringify(defaultSource));
+    renderPeriodsTable();
+    showToast('✅ ডিফল্ট লোড হয়েছে — "সেভ" চাপলে স্থায়ী হবে', 'info');
+};
 
 window.renderAdminClass = function() {
     const content = document.getElementById('adm-content');
