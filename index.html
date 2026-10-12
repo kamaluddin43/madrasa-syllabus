@@ -424,6 +424,9 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     padding: 12px;
     margin-bottom: 8px;
     transition: all .2s;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;
 }
 .routine-entry-card:hover {
     border-color: #10b981;
@@ -436,6 +439,14 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 .routine-entry-card.saved {
     border-color: #10b981;
     background: #f0fdf4;
+}
+/* ★ Grid-এর ভেতরে সব element-কে shrink হতে দাও */
+.routine-entry-card * {
+    box-sizing: border-box;
+}
+.routine-entry-card select {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .conflict-warning {
@@ -823,10 +834,9 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </div>
             <div>
                 <h1 class="text-lg md:text-xl font-bold font-arabic leading-tight flex items-center gap-2">
-                    <span>مقادير الأسباق</span>
-                    <span class="text-amber-400 text-sm font-bengali font-normal">| মাকাদীরে আসবাক v3</span>
+                    <span>আল-জামিয়া</span>
                 </h1>
-                <p id="header-madrasa-name" class="text-xs text-emerald-200 mt-0.5">পাঠ পরিমাণ ট্র্যাকিং সিস্টেম</p>
+                <p id="header-madrasa-name" class="text-xs text-emerald-200 mt-0.5"></p>
             </div>
         </div>
 
@@ -3920,14 +3930,14 @@ function renderRoutineEntrySlots() {
                     <div class="text-[11px] ${isOwn
                         ? 'bg-emerald-50 border-emerald-300'
                         : 'bg-slate-50 border-slate-200'
-                    } border rounded px-2 py-1 mb-1 flex items-center gap-1.5">
-                        <i class="fa-solid ${isOwn
+                    } border rounded px-2 py-1 mb-1 flex items-center gap-1.5 min-w-0 w-full">
+                        <i class="fa-solid flex-shrink-0 ${isOwn
                             ? 'fa-user-check text-emerald-600'
                             : 'fa-user text-slate-500'
                         }"></i>
-                        <span class="font-bold text-slate-700 text-[10px]">${s.teacherName}</span>
-                        <span class="text-slate-400 text-[10px]">|</span>
-                        <span class="font-arabic text-slate-800 text-[11px]" dir="rtl">${s.bookName}</span>
+                        <span class="font-bold text-slate-700 text-[10px] truncate flex-shrink-0" style="max-width:90px;">${s.teacherName}</span>
+                        <span class="text-slate-400 text-[10px] flex-shrink-0">|</span>
+                        <span class="font-arabic text-slate-800 text-[11px] truncate min-w-0 flex-1" dir="rtl" title="${s.bookName}">${s.bookName}</span>
                         <button onclick="deletePeriodEntry('${s.id}')"
                                 class="text-red-500 hover:text-red-700 ml-auto flex-shrink-0"
                                 title="ডিলিট">
@@ -3938,36 +3948,38 @@ function renderRoutineEntrySlots() {
             }).join('');
 
         // ─── কার্ড ─────────────────────────────────────
-        html += `
-            <div class="routine-entry-card" id="rcard-${p.key}" data-period="${p.key}">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-start">
+html += `
+            <div class="routine-entry-card" id="rcard-${p.key}" data-period="${p.key}" style="overflow:hidden;">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
                     <div class="md:col-span-2">
                         <div class="text-xs font-bold text-emerald-800 ${fontClass}" dir="${dir}">${p.label}</div>
                         <div class="text-[10px] text-slate-500">${p.time} (${p.duration} মি)</div>
                     </div>
-                    <div class="md:col-span-5">
+                    <div class="md:col-span-5 min-w-0">
                         <div class="flex gap-2 items-center">
                             <select id="rselect-${p.key}"
                                     data-period="${p.key}"
                                     onchange="onRoutineBookChange('${p.key}')"
-                                    class="flex-1 rounded-lg border-slate-300 border p-2 text-sm ${fontClass}"
+                                    class="flex-1 min-w-0 rounded-lg border-slate-300 border p-2 text-sm ${fontClass}"
                                     dir="${dir}">
                                 <option value="">-- কিতাব নির্বাচন করুন --</option>
                                 ${bookOptions}
                             </select>
                             <button onclick="addPeriodEntry('${p.key}')"
-                                    class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex-shrink-0 font-bold text-xs"
+                                    class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition flex-shrink-0 font-bold text-xs whitespace-nowrap"
                                     title="সেভ করুন">
                                 <i class="fa-solid fa-floppy-disk"></i> সেভ
                             </button>
                         </div>
                         <div id="rwarn-${p.key}" class="conflict-warning hidden"></div>
                     </div>
-                    <div class="md:col-span-5">
+                    <div class="md:col-span-5 min-w-0">
                         <div class="text-[10px] font-bold text-slate-600 mb-1">
                             <i class="fa-solid fa-list"></i> এই ঘণ্টায় ${currentClass}-এ সেভ করা:
                         </div>
-                        ${savedLabelsHTML}
+                        <div class="space-y-1 max-h-24 overflow-y-auto pr-1">
+                            ${savedLabelsHTML}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4249,102 +4261,6 @@ window.deletePeriodEntry = async function (entryId) {
         updateRoutineEntryProgress();
         refreshRoutineEntrySummary();
 
-    } catch (err) {
-        console.error('❌ deletePeriodEntry error:', err);
-        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
-    }
-};
-
-// ═══════════════════ এই ঘণ্টার এন্ট্রি সেভ ═══════════════════
-window.addPeriodEntry = async function(periodKey) {
-    const dept = routineState.dept;
-    const season = routineState.season;
-    const year = routineState.academicYear;
-    const teacher = document.getElementById('rentry-teacher').value;
-    const className = document.getElementById('rentry-class').value;
-    const section = document.getElementById('rentry-section').value;
-    const bookName = document.getElementById('rselect-' + periodKey)?.value;
-    
-    if (!teacher || !className) {
-        showToast('⚠️ শিক্ষক ও জামাত সিলেক্ট করুন', 'warn');
-        return;
-    }
-    if (!bookName) {
-        showToast('⚠️ কিতাব সিলেক্ট করুন', 'warn');
-        return;
-    }
-    
-    // ★ এই (teacher + class + section + periodKey) এর আগের এন্ট্রি থাকলে — মুছি (replace হবে)
-    const oldEntry = routinesCache.find(r => 
-        r.academicYear === year &&
-        r.season === season &&
-        r.dept === dept &&
-        r.className === className &&
-        (r.section || 'নাই') === section &&
-        r.periodKey === periodKey &&
-        r.teacherName === teacher
-    );
-    
-    showToast('⏳ সেভ হচ্ছে...', 'info');
-    
-    try {
-        const { doc, setDoc, deleteDoc, serverTimestamp } = window.fbFuncs;
-        
-        // পুরনো থাকলে মুছি
-        if (oldEntry) {
-            await deleteDoc(doc(window.fbDB, 'routines', oldEntry.id));
-            routinesCache = routinesCache.filter(r => r.id !== oldEntry.id);
-        }
-        
-        // ★ নতুন এন্ট্রি
-        const safeClass = className.replace(/[^\w]/g, '_');
-        const safeTeacher = teacher.replace(/[^\w]/g, '_');
-        const safeSection = section.replace(/[^\w]/g, '_');
-        const id = `rt_${dept}_${year}_${season}_${safeClass}_${safeSection}_${safeTeacher}_${periodKey}`;
-        
-        const payload = {
-            id: id,
-            academicYear: year,
-            season: season,
-            dept: dept,
-            className: className,
-            section: section,
-            periodKey: periodKey,
-            bookName: bookName,
-            teacherName: teacher,
-            updatedAt: serverTimestamp(),
-            createdBy: currentUser?.uid || 'unknown'
-        };
-        
-        await setDoc(doc(window.fbDB, 'routines', id), payload, { merge: true });
-        routinesCache.push({ ...payload, updatedAt: null });
-        
-        showToast(`✅ ${className} — ${bookName} সেভ হয়েছে`, 'success');
-        
-        // ★ Pেইজ রিফ্রেশ — সেভড এন্ট্রি দেখা যাবে
-        renderRoutineEntrySlots();
-        updateRoutineEntryProgress();
-        refreshRoutineEntrySummary();
-        
-    } catch (err) {
-        console.error('❌ addPeriodEntry error:', err);
-        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
-    }
-};
-
-// ═══════════════════ এই ঘণ্টার এন্ট্রি ডিলিট ═══════════════════
-window.deletePeriodEntry = async function(entryId) {
-    if (!confirm('এই এন্ট্রিটি মুছে ফেলবেন?')) return;
-    
-    try {
-        const { doc, deleteDoc } = window.fbFuncs;
-        await deleteDoc(doc(window.fbDB, 'routines', entryId));
-        routinesCache = routinesCache.filter(r => r.id !== entryId);
-        
-        showToast('🗑️ এন্ট্রি মুছে ফেলা হয়েছে', 'info');
-        renderRoutineEntrySlots();
-        updateRoutineEntryProgress();
-        refreshRoutineEntrySummary();
     } catch (err) {
         console.error('❌ deletePeriodEntry error:', err);
         showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
