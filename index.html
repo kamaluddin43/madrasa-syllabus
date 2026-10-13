@@ -825,15 +825,17 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">বিভাগ <span class="text-red-500">*</span></label>
-                    <select id="cem-dept" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                    <select id="cem-dept" onchange="onCalEventDeptChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
                         <option value="shariah_noorani">আবাসিক (শরীয়াহ ও নূরানী-নাযেরা)</option>
                         <option value="non_res">অনাবাসিক</option>
                     </select>
                 </div>
             </div>
 
-            <!-- হিজরি মাস + হিজরি তারিখ + গ্রেগরিয়ান তারিখ -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- ★★★ হিজরি-প্রধান সেকশন (শরীয়াহ + নূরানী-নাযেরার জন্য) ★★★ -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div id="cem-hijri-primary-section" class="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">হিজরি মাস <span class="text-red-500">*</span></label>
                     <select id="cem-hijri-month" onchange="onCalEventHijriMonthChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-arabic" dir="rtl">
@@ -841,14 +843,60 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">হিজরি তারিখ <span class="text-red-500">*</span></label>
-                    <select id="cem-hijri-date" onchange="onCalEventHijriDateChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-arabic" dir="rtl">
-                        <option value="">-- তারিখ --</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        হিজরি তারিখ <span class="text-red-500">*</span>
+                        <span class="text-[10px] text-slate-500 font-normal">(শুরু → শেষ, শেষটি ঐচ্ছিক)</span>
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                        <select id="cem-hijri-date-start" onchange="onCalEventHijriDateChange()" class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm font-arabic min-w-0" dir="rtl">
+                            <option value="">-- শুরু --</option>
+                        </select>
+                        <span class="text-slate-400 text-sm flex-shrink-0">→</span>
+                        <select id="cem-hijri-date-end" onchange="onCalEventHijriDateChange()" class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm font-arabic min-w-0" dir="rtl">
+                            <option value="">-- শেষ --</option>
+                        </select>
+                    </div>
+                    <p id="cem-hijri-range-info" class="text-[10px] text-emerald-700 font-semibold mt-1 hidden">
+                        <i class="fa-solid fa-circle-info"></i> <span id="cem-hijri-range-info-text"></span>
+                    </p>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">গ্রেগরিয়ান তারিখ</label>
                     <input type="text" id="cem-greg-date" readonly placeholder="অটো হিসাব হবে" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm bg-slate-50 cursor-not-allowed" title="হিজরি তারিখ সিলেক্ট করলে এই তারিখ অটো-আপডেট হবে">
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- ★★★ গ্রেগ-প্রধান সেকশন (অনাবাসিকের জন্য) — শুরুতে hidden ★★★ -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div id="cem-greg-primary-section" class="grid grid-cols-1 md:grid-cols-3 gap-3 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">গ্রেগরিয়ান মাস <span class="text-red-500">*</span></label>
+                    <select id="cem-greg-month" onchange="onCalEventGregorianMonthChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                        <!-- JS populate করবে -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        গ্রেগরিয়ান তারিখ <span class="text-red-500">*</span>
+                        <span class="text-[10px] text-slate-500 font-normal">(শুরু → শেষ, শেষটি ঐচ্ছিক)</span>
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                        <select id="cem-greg-date-start" onchange="onCalEventGregorianDateChange()" class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm min-w-0">
+                            <option value="">-- শুরু --</option>
+                        </select>
+                        <span class="text-slate-400 text-sm flex-shrink-0">→</span>
+                        <select id="cem-greg-date-end" onchange="onCalEventGregorianDateChange()" class="flex-1 rounded-lg border-slate-300 border p-2.5 text-sm min-w-0">
+                            <option value="">-- শেষ --</option>
+                        </select>
+                    </div>
+                    <p id="cem-greg-range-info" class="text-[10px] text-emerald-700 font-semibold mt-1 hidden">
+                        <i class="fa-solid fa-circle-info"></i> <span id="cem-greg-range-info-text"></span>
+                    </p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">হিজরি তারিখ (অটো)</label>
+                    <input type="text" id="cem-hijri-auto" readonly placeholder="অটো হিসাব হবে" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm bg-slate-50 cursor-not-allowed font-arabic" dir="rtl" title="গ্রেগরিয়ান তারিখ সিলেক্ট করলে এই তারিখ অটো-আপডেট হবে">
                 </div>
             </div>
 
@@ -1176,14 +1224,9 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                         <i class="fa-solid fa-calendar"></i>
                         <span>মাসওয়ারি</span>
                     </button>
-                    <button onclick="switchCalView('yearly')" id="cal-view-yearly"
-                            class="cal-view-btn flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition text-slate-600 hover:bg-slate-100 border border-slate-200 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <span>বাৎসরিক</span>
-                    </button>
                     <button onclick="switchCalView('calgrid')" id="cal-view-calgrid"
                             class="cal-view-btn flex-1 px-4 py-2.5 rounded-lg text-sm font-bold transition text-slate-600 hover:bg-slate-100 border border-slate-200 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-calendar"></i>
+                        <i class="fa-solid fa-calendar-days"></i>
                         <span>📅 ক্যালেন্ডার</span>
                     </button>
                 </div>
@@ -2362,6 +2405,569 @@ const SEED_TEACHERS = [
 
 const TEACHERS_STORAGE_KEY = 'madrasa_teachers_v3';
 
+// ═══════════════════ গ্রেগরিয়ান মাস ডাটাবেস ═══════════════════
+const GREG_MONTHS = [
+    { key: 'january',   name: 'জানুয়ারি',   english: 'January',   arabic: 'يناير',    days: 31, order: 1  },
+    { key: 'february',  name: 'ফেব্রুয়ারি', english: 'February',  arabic: 'فبراير',   days: 28, order: 2  },
+    { key: 'march',     name: 'মার্চ',       english: 'March',     arabic: 'مارس',     days: 31, order: 3  },
+    { key: 'april',     name: 'এপ্রিল',      english: 'April',     arabic: 'أبريل',    days: 30, order: 4  },
+    { key: 'may',       name: 'মে',          english: 'May',       arabic: 'مايو',     days: 31, order: 5  },
+    { key: 'june',      name: 'জুন',         english: 'June',      arabic: 'يونيو',    days: 30, order: 6  },
+    { key: 'july',      name: 'জুলাই',       english: 'July',      arabic: 'يوليو',    days: 31, order: 7  },
+    { key: 'august',    name: 'আগস্ট',       english: 'August',    arabic: 'أغسطس',    days: 31, order: 8  },
+    { key: 'september', name: 'সেপ্টেম্বর',   english: 'September', arabic: 'سبتمبر',   days: 30, order: 9  },
+    { key: 'october',   name: 'অক্টোবর',     english: 'October',   arabic: 'أكتوبر',   days: 31, order: 10 },
+    { key: 'november',  name: 'নভেম্বর',     english: 'November',  arabic: 'نوفمبر',   days: 30, order: 11 },
+    { key: 'december',  name: 'ডিসেম্বর',    english: 'December',  arabic: 'ديسمبر',   days: 31, order: 12 }
+];
+
+// ═══════════════════ গ্রেগরিয়ান মাসের দিনসংখ্যা ═══════════════════
+// ★ Leap year অটো handle করে
+function getGregorianMonthDays(monthKey, year) {
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) return 30;
+    
+    // ফেব্রুয়ারির জন্য leap year চেক
+    if (monthKey === 'february') {
+        const y = parseInt(year) || new Date().getFullYear();
+        const isLeap = (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+        return isLeap ? 29 : 28;
+    }
+    
+    return monthInfo.days;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগরিয়ান মাসের পূর্ণ গ্রিড HTML ★★★
+//     buildHijriMonthGrid এর আয়না — ছোট হিজরি তারিখ সহ
+// ═══════════════════════════════════════════════════════════════
+function buildGregorianMonthGrid(options) {
+    const {
+        monthKey,
+        year,
+        dept = 'non_res',
+        events = [],
+        monthDays,           // getGregorianMonthDaysForGrid এর রিটার্ন
+        monthName,
+        monthNameAr = '',
+        compact = false,
+        showPrintIcons = true
+    } = options;
+
+    if (!monthDays || monthDays.length === 0) {
+        return `<div style="background:white;padding:30px;text-align:center;color:#94a3b8;border:2px dashed #cbd5e1;border-radius:10px;">
+            <p>⚠️ ${monthName} মাসের তারিখ হিসাব করা যায়নি</p>
+        </div>`;
+    }
+
+    // ★★★ সংখ্যা convert helper ★★★
+    function convertToEnglishDigits(str) {
+        if (!str) return '';
+        const map = {
+            '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+            '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9',
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+        return String(str).replace(/[০-৯٠-٩]/g, d => map[d] || d);
+    }
+
+    // ★★★ session ও dept base ★★★
+    const cleanDept = String(dept || '').trim();
+
+    // ★★★ এই মাসের ইভেন্ট filter (গ্রেগ মাস ভিত্তিক) ★★★
+    const filteredEvents = events.filter(e => {
+        // dept check
+        if (e.dept && e.dept !== 'all' && cleanDept !== 'all') {
+            if (e.dept !== cleanDept) return false;
+        }
+        
+        // ★ গ্রেগ মাস check — ইভেন্টের gregorianMonth এই মাস কিনা
+        if (e.gregorianMonth && e.gregorianMonth !== monthKey) return false;
+        
+        // অথবা gregorianDate string থেকে মাস বের করি (fallback)
+        if (!e.gregorianMonth && e.gregorianDate) {
+            const gMonthInfo = GREG_MONTHS.find(m => 
+                e.gregorianDate.includes(m.name) || 
+                e.gregorianDate.toLowerCase().includes(m.english.toLowerCase())
+            );
+            if (gMonthInfo && gMonthInfo.key !== monthKey) return false;
+        }
+        
+        return true;
+    });
+
+    // ★★★ ইভেন্টকে গ্রেগ তারিখে group করি ★★★
+    const eventsByDay = {};
+    filteredEvents.forEach(e => {
+        // gregorianDate থেকে শুরু-শেষ দিন বের করি
+        const dateStr = convertToEnglishDigits(e.gregorianDate || '');
+        const matches = String(dateStr).match(/\d+/g);
+        if (!matches || matches.length === 0) return;
+        
+        // ★ প্রথম সংখ্যাটা হলো শুরুর দিন (কিন্তু হতে পারে বছরও)
+        //    তাই আমরা সব সংখ্যা নিয়ে যেগুলো 1-31 এর মধ্যে সেগুলো নিই
+        const dayNumbers = matches
+            .map(n => parseInt(n))
+            .filter(n => n >= 1 && n <= 31);
+        
+        if (dayNumbers.length === 0) return;
+        
+        const firstDay = dayNumbers[0];
+        const secondDay = dayNumbers.length > 1 ? dayNumbers[1] : firstDay;
+        
+        for (let day = firstDay; day <= secondDay; day++) {
+            if (day > 0 && day <= 31) {
+                if (!eventsByDay[day]) eventsByDay[day] = [];
+                eventsByDay[day].push(e);
+            }
+        }
+    });
+
+    // ★ প্রথম দিনের বার থেকে কতটা ফাঁকা ঘর লাগবে
+    const firstDayJs = monthDays[0].dayOfWeek;
+    const leadingBlanks = CAL_GRID_WEEK_DAYS.findIndex(d => d.jsDay === firstDayJs);
+
+    const totalCells = leadingBlanks + monthDays.length;
+    const totalWeeks = Math.ceil(totalCells / 7);
+
+    // ★ সাইজ
+    const cellMinHeight = compact ? '55px' : '80px';
+    const gregFontSize = compact ? '20px' : '28px';
+    const hijriFontSize = compact ? '8px' : '10px';
+
+    // ★★★ সাপ্তাহিক হেডার ★★★
+    const headerCells = CAL_GRID_WEEK_DAYS.map(d => {
+        const isFriday = d.jsDay === 5;
+        const bg = isFriday ? '#b91c1c' : '#065f46';
+        const borderColor = isFriday ? '#991b1b' : '#047857';
+        
+        return `<th style="padding:${compact ? '5px 2px' : '7px 4px'};
+                            background:${bg};
+                            color:white;font-size:${compact ? '10px' : '12px'};
+                            font-weight:bold;
+                            border:1px solid ${borderColor};
+                            text-align:center;
+                            line-height:1.3;">
+            ${d.bn}
+            <div style="font-family:'Amiri',serif;
+                        font-size:${compact ? '8px' : '10px'};
+                        opacity:.85;
+                        font-weight:normal;
+                        margin-top:1px;" dir="rtl">${d.ar}</div>
+        </th>`;
+    }).join('');
+
+    // ★★★ সেলগুলো রেন্ডার ★★★
+    let cellsHTML = '';
+    let dayIndex = 0;
+
+    for (let week = 0; week < totalWeeks; week++) {
+        cellsHTML += '<tr>';
+        for (let dayCol = 0; dayCol < 7; dayCol++) {
+            const cellIndex = week * 7 + dayCol;
+            const weekDayInfo = CAL_GRID_WEEK_DAYS[dayCol];
+            const isFriday = weekDayInfo.jsDay === 5;
+
+            // ★ ফাঁকা ঘর
+            if (cellIndex < leadingBlanks || dayIndex >= monthDays.length) {
+                cellsHTML += `<td style="border:1px solid #e2e8f0;background:${isFriday ? '#fef2f2' : '#f8fafc'};height:${cellMinHeight};"></td>`;
+                continue;
+            }
+
+            const dayInfo = monthDays[dayIndex];
+            const dayEvents = eventsByDay[dayInfo.gregDay] || [];
+            const hasEvents = dayEvents.length > 0;
+
+            // ★★★ ডিফল্ট রঙ (ইভেন্ট নেই) ★★★
+            let cellBg = isFriday ? '#fef2f2' : 'white';
+            let cellBorder = isFriday ? '#fca5a5' : '#e2e8f0';
+            let cellBorderWidth = '1px';
+            let gregBoxBg = isFriday ? '#fee2e2' : '#f1f5f9';
+            let gregBoxBorder = isFriday ? '#fca5a5' : '#cbd5e1';
+            let gregNumColor = isFriday ? '#b91c1c' : '#1e293b';
+
+            // ★★★ ইভেন্ট থাকলে পুরো ঘর রঙিন ★★★
+            if (hasEvents) {
+                const topCat = dayEvents[0].category;
+                const catColor = CAL_CATEGORY_COLORS[topCat] || CAL_CATEGORY_COLORS.admin;
+                
+                cellBg = catColor.bg;
+                cellBorder = catColor.border;
+                cellBorderWidth = '2px';
+                
+                gregBoxBg = catColor.border;
+                gregBoxBorder = catColor.border;
+                gregNumColor = 'white';
+            }
+
+            // ★★★ ইভেন্টের ডট ★★★
+            let marksHTML = '';
+            if (hasEvents) {
+                const uniqueCats = [...new Set(dayEvents.map(e => e.category))];
+                marksHTML = `
+                    <div style="display:flex;justify-content:center;align-items:center;gap:3px;margin-top:${compact ? '2px' : '4px'};flex-wrap:wrap;">
+                        ${uniqueCats.slice(0, 3).map(catKey => {
+                            const cat = CAL_CATEGORY_COLORS[catKey] || CAL_CATEGORY_COLORS.admin;
+                            return `<span title="${cat.label}"
+                                          style="display:inline-block;
+                                                 width:${compact ? '8px' : '10px'};
+                                                 height:${compact ? '8px' : '10px'};
+                                                 border-radius:50%;
+                                                 background:${cat.border};
+                                                 box-shadow:0 0 0 1.5px white, 0 1px 2px rgba(0,0,0,0.25);"></span>`;
+                        }).join('')}
+                        ${uniqueCats.length > 3 ? `
+                            <span style="font-size:9px;color:#475569;font-weight:bold;align-self:center;">
+                                +${uniqueCats.length - 3}
+                            </span>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // ★★★ হিজরি তারিখ (ছোট, নিচে) ★★★
+            const hijriShort = dayInfo.hijri > 0 
+                ? `${toBanglaNumber(dayInfo.hijri)} ${getHijriMonthBanglaName(dayInfo.hijriMonthKey).split(' ')[0]}`
+                : '';
+
+            // ★★★ সেল ★★★
+            cellsHTML += `
+                <td style="border:${cellBorderWidth} solid ${cellBorder};
+                            background:${cellBg};
+                            padding:${compact ? '3px' : '5px 6px'};
+                            vertical-align:top;height:${cellMinHeight};
+                            position:relative;overflow:hidden;
+                            cursor:${hasEvents ? 'pointer' : 'default'};
+                            transition:all 0.15s;"
+                    ${hasEvents ? `onclick="showDayEventsModalGreg('${monthKey}', ${dayInfo.gregDay}, ${year})"` : ''}>
+                    
+                    <!-- ★★★ উপরে গ্রেগরিয়ান তারিখ ★★★ -->
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:3px;">
+                        
+                        <!-- ★ গ্রেগ তারিখ — গাঢ় বক্সে ★ -->
+                        <div style="display:inline-flex;align-items:center;justify-content:center;
+                                    min-width:${compact ? '30px' : '40px'};
+                                    height:${compact ? '30px' : '40px'};
+                                    background:${gregBoxBg};
+                                    border:1.5px solid ${gregBoxBorder};
+                                    border-radius:${compact ? '6px' : '8px'};
+                                    padding:0 5px;
+                                    box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                            <span style="font-size:${gregFontSize};
+                                         font-weight:bold;
+                                         color:${gregNumColor};
+                                         line-height:1;
+                                         letter-spacing:-0.5px;">
+                                ${dayInfo.gregDay}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- ★★★ হিজরি তারিখ — ছোট নিচে ★★★ -->
+                    ${hijriShort ? `
+                        <div style="margin-top:${compact ? '2px' : '4px'};
+                                    font-size:${hijriFontSize};
+                                    color:${hasEvents ? '#1e293b' : '#64748b'};
+                                    font-family:'Hind Siliguri',sans-serif;
+                                    font-weight:600;
+                                    line-height:1.1;
+                                    ${compact ? 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;' : ''}">
+                            ${hijriShort}
+                        </div>
+                    ` : ''}
+                    
+                    <!-- ★★★ ইভেন্ট ডট ★★★ -->
+                    ${marksHTML}
+                </td>
+            `;
+            dayIndex++;
+        }
+        cellsHTML += '</tr>';
+    }
+
+    // ★★★ প্রিন্ট/PDF আইকন ★★★
+    const printIcons = showPrintIcons
+        ? `<div style="display:flex;gap:6px;">
+              <button onclick="event.stopPropagation(); printSingleGregMonthGrid('${monthKey}','${monthName}',${year})"
+                      style="background:white;color:#065f46;border:2px solid white;
+                             padding:6px 12px;border-radius:6px;
+                             font-size:14px;cursor:pointer;font-weight:bold;
+                             box-shadow:0 2px 4px rgba(0,0,0,0.15);
+                             display:inline-flex;align-items:center;gap:4px;">
+                  <i class="fa-solid fa-print"></i> <span style="font-size:11px;">প্রিন্ট</span>
+              </button>
+              <button onclick="event.stopPropagation(); shareSingleGregMonthPDF('${monthKey}','${monthName}',${year})"
+                      style="background:#f59e0b;color:white;border:2px solid #f59e0b;
+                             padding:6px 12px;border-radius:6px;
+                             font-size:14px;cursor:pointer;font-weight:bold;
+                             box-shadow:0 2px 4px rgba(0,0,0,0.15);
+                             display:inline-flex;align-items:center;gap:4px;">
+                  <i class="fa-solid fa-file-pdf"></i> <span style="font-size:11px;">PDF</span>
+              </button>
+           </div>`
+        : '';
+
+    return `
+        <div class="cal-grid-month greg-month" data-month="${monthKey}" data-year="${year}" style="background:white;border:2px solid #065f46;border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);page-break-inside:avoid;">
+            
+            <!-- ★★★ মাস হেডার ★★★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);color:white;
+                        padding:${compact ? '8px 12px' : '12px 16px'};
+                        display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <div>
+                    <h3 style="margin:0;
+                               font-size:${compact ? '15px' : '20px'};
+                               font-weight:bold;
+                               line-height:1.2;
+                               color:white;">
+                        ${monthName} ${toBanglaNumber(year)}
+                        ${monthNameAr ? `<span style="font-family:'Amiri',serif;
+                                     font-size:${compact ? '15px' : '19px'};
+                                     opacity:.95;
+                                     margin-left:8px;
+                                     color:#fcd34d;" dir="rtl">${monthNameAr}</span>` : ''}
+                    </h3>
+                    <p style="margin:3px 0 0;
+                              font-size:${compact ? '9px' : '11px'};
+                              opacity:.85;
+                              color:#d1fae5;">
+                        <i class="fa-solid fa-calendar-day"></i> ${toBanglaNumber(monthDays.length)} দিন
+                        <span style="margin:0 6px;">•</span>
+                        <i class="fa-solid fa-list-check"></i> ${toBanglaNumber(filteredEvents.length)}টি ইভেন্ট
+                    </p>
+                </div>
+                ${printIcons}
+            </div>
+            
+            <!-- ★★★ ক্যালেন্ডার টেবিল ★★★ -->
+            <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                <thead><tr>${headerCells}</tr></thead>
+                <tbody>${cellsHTML}</tbody>
+            </table>
+            
+            <!-- ★★★ নিচে ইভেন্ট সেকশন ★★★ -->
+            ${filteredEvents.length > 0 ? buildMonthEventsSection(monthKey, monthName, filteredEvents) : ''}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগ মাসের দিনে ক্লিক করলে ইভেন্ট মডাল ★★★
+// ═══════════════════════════════════════════════════════════════
+window.showDayEventsModalGreg = function(monthKey, gregDay, year) {
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) return;
+    
+    // ★ এই দিনের সব ইভেন্ট
+    const dayEvents = (calState.events || []).filter(e => {
+        if (e.dept && e.dept !== 'all' && calState.dept !== 'all') {
+            if (e.dept !== calState.dept) return false;
+        }
+        
+        // gregorianMonth check
+        if (e.gregorianMonth && e.gregorianMonth !== monthKey) return false;
+        
+        // তারিখ রেঞ্জ check
+        const dateStr = String(e.gregorianDate || '').replace(/[০-৯]/g, d => '০১২৩৪৫৬৭৮৯'.indexOf(d));
+        const matches = dateStr.match(/\d+/g);
+        if (!matches || matches.length === 0) return false;
+        
+        const dayNumbers = matches.map(n => parseInt(n)).filter(n => n >= 1 && n <= 31);
+        if (dayNumbers.length === 0) return false;
+        
+        const firstDay = dayNumbers[0];
+        const secondDay = dayNumbers.length > 1 ? dayNumbers[1] : firstDay;
+        
+        return gregDay >= firstDay && gregDay <= secondDay;
+    });
+    
+    if (dayEvents.length === 0) {
+        showToast('ℹ️ এই দিনে কোন ইভেন্ট নেই', 'info');
+        return;
+    }
+    
+    // ★ হিজরি তারিখ (এই গ্রেগ দিনের)
+    const hijriInfo = gregorianToHijri(year, monthInfo.order, gregDay);
+    const hijriStr = hijriInfo 
+        ? `${toBanglaNumber(hijriInfo.day)} ${getHijriMonthBanglaName(hijriInfo.monthKey)} ${toBanglaNumber(hijriInfo.year)} হিজরি`
+        : '';
+    
+    // ★ Modal তৈরি
+    const modal = document.createElement('div');
+    modal.id = 'day-events-modal';
+    modal.style.cssText = `
+        position:fixed;top:0;left:0;right:0;bottom:0;
+        background:rgba(15,23,42,0.55);
+        backdrop-filter:blur(4px);
+        z-index:9999;
+        display:flex;align-items:center;justify-content:center;
+        padding:16px;
+        animation:fadeIn 0.2s ease-out;
+    `;
+    
+    const eventsHTML = dayEvents.map(e => {
+        const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
+        return `
+            <div style="display:flex;align-items:flex-start;gap:10px;
+                        padding:12px 14px;
+                        background:${cat.bg};
+                        border-left:4px solid ${cat.border};
+                        border-radius:8px;
+                        margin-bottom:10px;">
+                <i class="fa-solid ${cat.icon}" 
+                   style="color:${cat.border};font-size:20px;margin-top:2px;flex-shrink:0;"></i>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+                        <h4 style="margin:0;font-size:15px;font-weight:bold;color:#1e293b;">
+                            ${e.title}
+                        </h4>
+                        <span style="background:white;color:${cat.text};
+                                     border:1px solid ${cat.border};
+                                     padding:2px 8px;border-radius:999px;
+                                     font-size:10px;font-weight:bold;
+                                     white-space:nowrap;">
+                            ${cat.label}
+                        </span>
+                    </div>
+                    ${e.details ? `<p style="margin:4px 0 0;font-size:12px;color:#475569;line-height:1.5;">${e.details}</p>` : ''}
+                    ${(e.time || e.location) ? `
+                        <div style="display:flex;gap:14px;margin-top:6px;font-size:11px;color:#475569;flex-wrap:wrap;">
+                            ${e.time ? `<span><i class="fa-solid fa-clock" style="color:${cat.border};"></i> ${e.time}</span>` : ''}
+                            ${e.location ? `<span><i class="fa-solid fa-location-dot" style="color:${cat.border};"></i> ${e.location}</span>` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    modal.innerHTML = `
+        <div style="background:white;border-radius:16px;
+                    max-width:520px;width:100%;
+                    max-height:85vh;overflow:hidden;
+                    display:flex;flex-direction:column;
+                    box-shadow:0 25px 50px rgba(0,0,0,0.4);
+                    animation:scaleIn 0.25s ease-out;">
+            
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);
+                        color:white;
+                        padding:14px 18px;
+                        display:flex;align-items:center;justify-content:space-between;
+                        flex-shrink:0;">
+                <div>
+                    <h3 style="margin:0;font-size:16px;font-weight:bold;line-height:1.2;">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        ${toBanglaNumber(gregDay)} ${monthInfo.name} ${toBanglaNumber(year)}
+                    </h3>
+                    ${hijriStr ? `<p style="margin:3px 0 0;font-size:11px;opacity:.9;color:#d1fae5;">${hijriStr}</p>` : ''}
+                    <p style="margin:3px 0 0;font-size:11px;opacity:.9;color:#d1fae5;">
+                        ${toBanglaNumber(dayEvents.length)}টি ইভেন্ট
+                    </p>
+                </div>
+                <button onclick="document.getElementById('day-events-modal').remove()"
+                        style="background:rgba(255,255,255,0.2);color:white;border:none;
+                               width:34px;height:34px;border-radius:50%;
+                               font-size:22px;line-height:1;cursor:pointer;
+                               display:flex;align-items:center;justify-content:center;">
+                    ×
+                </button>
+            </div>
+            
+            <div style="padding:16px;overflow-y:auto;flex:1;">
+                ${eventsHTML}
+            </div>
+            
+            <div style="padding:12px 18px;border-top:1px solid #e2e8f0;
+                        display:flex;justify-content:flex-end;
+                        background:#f8fafc;flex-shrink:0;">
+                <button onclick="document.getElementById('day-events-modal').remove()"
+                        style="padding:9px 22px;background:#065f46;color:white;
+                               border:none;border-radius:8px;
+                               font-weight:bold;cursor:pointer;font-size:13px;">
+                    বন্ধ করুন
+                </button>
+            </div>
+        </div>
+    `;
+    
+    modal.addEventListener('click', e => {
+        if (e.target === modal) modal.remove();
+    });
+    
+    const escHandler = e => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    document.body.appendChild(modal);
+};
+
+// ═══════════════════ গ্রেগরিয়ান → হিজরি conversion ═══════════════════
+// ★ Browser built-in Intl API ব্যবহার করে (Umm al-Qura calendar)
+function gregorianToHijri(year, month, day) {
+    try {
+        const date = new Date(year, month - 1, day);  // month 1-12
+        if (isNaN(date.getTime())) return null;
+        
+        // বাংলা output format-এ নিতে হবে
+        const hijriFormatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric'
+        });
+        
+        const parts = hijriFormatter.formatToParts(date);
+        const hDay = parseInt(parts.find(p => p.type === 'day')?.value) || 0;
+        const hMonth = parseInt(parts.find(p => p.type === 'month')?.value) || 0;  // 1-12
+        const hYear = parseInt(parts.find(p => p.type === 'year')?.value) || 0;
+        
+        // ইসলামিক মাসের নাম (১=মুহাররম ... ১২=জিলহজ)
+        const hijriMonthKeys = [
+            'muharram', 'safar', 'rabiul_awwal', 'rabiul_akhir',
+            'jumadal_ula', 'jumadal_akhirah', 'rajab', 'shaban',
+            'ramadan', 'shawwal', 'zilqad', 'zilhajj'
+        ];
+        
+        return {
+            year: hYear,
+            month: hMonth,
+            monthKey: hijriMonthKeys[hMonth - 1] || 'muharram',
+            day: hDay,
+            hijriDate: new Date(date)  // original date
+        };
+    } catch (err) {
+        console.error('❌ gregorianToHijri error:', err);
+        return null;
+    }
+}
+
+// ═══════════════════ হিজরি মাসের বাংলা নাম ═══════════════════
+function getHijriMonthBanglaName(monthKey) {
+    const info = HIJRI_MONTHS.find(m => m.key === monthKey);
+    return info ? info.name : monthKey;
+}
+
+// ═══════════════════ গ্রেগরিয়ান মাসের বাংলা নাম ═══════════════════
+function getGregMonthBanglaName(monthKey) {
+    const info = GREG_MONTHS.find(m => m.key === monthKey);
+    return info ? info.name : monthKey;
+}
+
+// ═══════════════════ বাংলা সংখ্যা ═══════════════════
+const BN_DIGITS = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+const BN_NUMS_1_31 = ['১','২','৩','৪','৫','৬','৭','৮','৯','১০',
+                      '১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০',
+                      '২১','২২','২৩','২৪','২৫','২৬','২৭','২৮','২৯','৩০','৩১'];
+
+function toBanglaNumber(num) {
+    if (num == null) return '';
+    return String(num).replace(/\d/g, d => BN_DIGITS[parseInt(d)]);
+}
+
 // ═══════════════════ CONFIG ═══════════════════
 const TERM_CONFIG = {
     shariah: {
@@ -2718,9 +3324,16 @@ function renderYearMasterList() {
     academicYears.forEach((y, idx) => {
         const div = document.createElement('div');
         div.className = 'flex items-center justify-between p-2 bg-white border border-slate-200 rounded-lg hover:border-emerald-300 transition';
+        
+        // ★ type badge
+        const typeBadge = y.type === 'gregorian'
+            ? '<span class="badge bg-blue-100 text-blue-700 text-[10px]">গ্রেগরিয়ান</span>'
+            : '<span class="badge bg-emerald-100 text-emerald-700 text-[10px]">হিজরি</span>';
+        
         div.innerHTML = `
-            <div class="flex items-center gap-2 flex-1">
+            <div class="flex items-center gap-2 flex-1 flex-wrap">
                 <span class="font-bold text-sm">${y.name}</span>
+                ${typeBadge}
                 ${y.isCurrent 
                     ? '<span class="badge bg-emerald-600 text-white text-[10px]"><i class="fa-solid fa-star"></i> বর্তমান</span>' 
                     : '<span class="badge bg-slate-200 text-slate-600 text-[10px]">আর্কাইভ</span>'}
@@ -2744,7 +3357,22 @@ function renderYearMasterList() {
 }
 
 window.addAcademicYear = function() {
-    const name = prompt('শিক্ষাবর্ষের নাম দিন:\nযেমন: ২০২৭-২০২৮');
+    // ★ Step 1: type জিজ্ঞেস
+    const typeChoice = prompt(
+        'শিক্ষাবর্ষের ধরন নির্বাচন করুন:\n\n' +
+        '  1 = হিজরি বর্ষ (আবাসিক বিভাগের জন্য) — যেমন: ২০২৬-২০২৭\n' +
+        '  2 = গ্রেগরিয়ান বছর (অনাবাসিক বিভাগের জন্য) — যেমন: ২০২৬\n\n' +
+        'টাইপ করুন 1 অথবা 2:',
+        '1'
+    );
+    
+    if (typeChoice === null) return;
+    
+    const type = typeChoice.trim() === '2' ? 'gregorian' : 'hijri';
+    
+    // ★ Step 2: নাম জিজ্ঞেস
+    const example = type === 'gregorian' ? '২০২৭' : '২০২৭-২০২৮';
+    const name = prompt(`শিক্ষাবর্ষের নাম দিন:\nযেমন: ${example}`);
     if (!name || !name.trim()) return;
     
     const cleanName = name.trim();
@@ -2756,13 +3384,14 @@ window.addAcademicYear = function() {
     academicYears.push({
         id: 'year_' + Date.now(),
         name: cleanName,
+        type: type,               // ★ নতুন ফিল্ড
         isCurrent: false
     });
     
     saveAcademicYearsToStorage();
     renderYearMasterList();
     populateYearDropdowns();
-    showToast('✅ শিক্ষাবর্ষ যোগ হয়েছে', 'success');
+    showToast(`✅ ${type === 'gregorian' ? 'গ্রেগরিয়ান' : 'হিজরি'} শিক্ষাবর্ষ যোগ হয়েছে`, 'success');
 };
 
 window.editAcademicYear = function(idx) {
@@ -2844,9 +3473,10 @@ window.setCurrentYear = function(idx) {
 
 // ★ সব year dropdown populate করি
 function populateYearDropdowns() {
-    const dropdowns = ['syllabus-academic-year', 'reading-academic-year', 'jamat-filter-year', 'teacher-filter-year'];
+    // ★ অন্য dropdown গুলো সব year দেখাবে (backward compatible)
+    const otherDropdowns = ['syllabus-academic-year', 'reading-academic-year', 'jamat-filter-year', 'teacher-filter-year'];
     
-    dropdowns.forEach(id => {
+    otherDropdowns.forEach(id => {
         const sel = document.getElementById(id);
         if (!sel) return;
         
@@ -2868,6 +3498,42 @@ function populateYearDropdowns() {
             sel.value = getCurrentYear();
         }
     });
+    
+    // ★ Calendar Event Modal-এর session dropdown — dept অনুযায়ী filter
+    populateCemSessionDropdown('shariah_noorani');  // default আবাসিক
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ Calendar Event Modal-এর session dropdown — dept অনুযায়ী ★★★
+// ═══════════════════════════════════════════════════════════════
+function populateCemSessionDropdown(dept) {
+    const sessSel = document.getElementById('cem-session');
+    if (!sessSel) return;
+    
+    const curVal = sessSel.value;
+    sessSel.innerHTML = '<option value="all">সব শিক্ষাবর্ষে দেখাবে (all)</option>';
+    
+    // ★ dept অনুযায়ী type filter
+    const wantType = dept === 'non_res' ? 'gregorian' : 'hijri';
+    const filteredYears = academicYears.filter(y => !y.type || y.type === wantType);
+    
+    filteredYears.forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y.name;
+        opt.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
+        sessSel.appendChild(opt);
+    });
+    
+    // ★ পুরনো ভ্যালু বৈধ হলে রাখি
+    if (curVal && filteredYears.some(y => y.name === curVal)) {
+        sessSel.value = curVal;
+    } else if (curVal === 'all') {
+        sessSel.value = 'all';
+    } else {
+        // বর্তমান year এই type-এর হলে সেটাই ডিফল্ট
+        const cur = filteredYears.find(y => y.isCurrent) || filteredYears[0];
+        sessSel.value = cur ? cur.name : 'all';
+    }
 }
 
 function onTeacherNameInput() {
@@ -6312,11 +6978,28 @@ window.populateCalendarDropdowns = function() {
 
 window.onCalSessionChange = function() {
     calState.session = document.getElementById('cal-session').value;
-    checkCalReadiness();
+    // ★ মাসের days cache reset (শিক্ষাবর্ষ পরিবর্তনে)
+    window._yearlyMonthDays = null;
+    // ★ LocalStorage calendar cache clear
+    localStorage.removeItem(CALENDAR_STORAGE_KEY);
+    // ★ বাৎসরিক ভিউতে থাকলে re-render
+    if (calState.view === 'yearly' && calState.session && calState.dept) {
+        checkCalReadiness();
+    } else {
+        checkCalReadiness();
+    }
 };
 
 window.onCalDeptChange = function() {
     calState.dept = document.getElementById('cal-dept').value;
+    
+    // ★ dept বদলালে মাস reset করি
+    if (calState.dept === 'non_res') {
+        calState.calgridMonth = 'january';
+    } else {
+        calState.calgridMonth = 'shawwal';
+    }
+    
     checkCalReadiness();
 };
 
@@ -6334,12 +7017,32 @@ function updateCalStatusText() {
     const el = document.getElementById('cal-status-text');
     if (!el) return;
     const deptName = calState.dept === 'shariah_noorani' ? 'আবাসিক' : 'অনাবাসিক';
-    const viewName = calState.view === 'monthly' ? 'মাসওয়ারি' : 'বাৎসরিক';
+    const viewNames = {
+        monthly: 'মাসওয়ারি',
+        calgrid: 'ক্যালেন্ডার গ্রিড'
+    };
+    const viewName = viewNames[calState.view] || '---';
     el.textContent = `${calState.session} | ${deptName} | ${viewName} ভিউ`;
 }
 
 window.switchCalView = function(view) {
+    // ★ শুধু 'monthly' | 'calgrid' — yearly বাদ
+    if (view !== 'monthly' && view !== 'calgrid') {
+        view = 'monthly';
+    }
     calState.view = view;
+    
+    // ★ dept-অনুযায়ী ডিফল্ট মাস reset
+    const isNonRes = calState.dept === 'non_res';
+    if (isNonRes) {
+        if (!calState.calgridMonth || !GREG_MONTHS.some(m => m.key === calState.calgridMonth)) {
+            calState.calgridMonth = 'january';
+        }
+    } else {
+        if (!calState.calgridMonth || !HIJRI_MONTHS.some(m => m.key === calState.calgridMonth)) {
+            calState.calgridMonth = 'shawwal';
+        }
+    }
 
     // বাটন হাইলাইট
     document.querySelectorAll('.cal-view-btn').forEach(b => {
@@ -6362,13 +7065,11 @@ async function loadCalendarEvents(session, dept) {
     let allEvents = null;
     let source = 'none';
 
-    // ★★★ ক্যালেন্ডার গ্রিড ভিউতে সবসময় Firestore থেকে fresh data আনি ★★★
-    //     কারণ এডমিন নতুন ইভেন্ট যোগ করেছে — cache-এ পুরনো ডাটা থাকতে পারে
-    const skipCache = (typeof calState !== 'undefined' && calState.view === 'calgrid');
+    // ★★★ সব ভিউতে fresh data আনি — cache skip ★★★
+    //     এডমিন নতুন ইভেন্ট যোগ করলে সাথে সাথে সব ভিউতে দেখাবে
+    const skipCache = true;
     
-    if (skipCache) {
-        console.log('📅 Calendar grid mode — forcing fresh data from Firestore (skipping cache)');
-    }
+    console.log('📅 Calendar: forcing fresh data from Firestore (skipping cache)');
 
     // ★ ধাপ ১: LocalStorage cache থেকে দ্রুত লোড — শুধু non-calgrid মোডে
     if (!skipCache) {
@@ -6540,8 +7241,8 @@ async function renderCalendarContent() {
         return;
     }
 
-    // ★ Sync indicator
-    if (typeof updateCalendarSyncIndicator === 'function') {
+    // ★ Sync indicator (শুধু calgrid/yearly ভিউতে)
+    if (calState.view !== 'monthly' && typeof updateCalendarSyncIndicator === 'function') {
         updateCalendarSyncIndicator();
     }
 
@@ -6549,16 +7250,18 @@ async function renderCalendarContent() {
     //     (loading message মুছে ফেলার জন্য)
     container.innerHTML = '';
 
-    // ★★★★ ভিউ অনুযায়ী render
-    if (calState.view === 'yearly') {
-        renderYearlyCalendar();
-    } else if (calState.view === 'calgrid') {
+    // ★★★★ ভিউ অনুযায়ী render — তিনটি আলাদা ভিউ অটুট ★★★★
+    if (calState.view === 'calgrid') {
+        // 📅 ক্যালেন্ডার ভিউ (প্রতি মাসের পূর্ণ হিজরি-গ্রেগরিয়ান গ্রিড)
         renderCalendarGrid();
+    } else if (calState.view === 'yearly') {
+        // বাৎসরিক সারসংক্ষেপ ভিউ (৩×৪ কার্ড গ্রিড + টাইমলাইন + লেজেন্ড)
+        await renderYearlyCalendar();
     } else {
+        // মাসওয়ারি ভিউ (হিজরি মাস অনুযায়ী সেকশন)
         renderMonthlyCalendar();
     }
 
-    // ★ ডিবাগ লগ
     console.log(`🎨 Rendering view: ${calState.view} | Events: ${calState.events.length}`);
 }
 
@@ -6831,18 +7534,93 @@ function buildEventCard(event) {
     `;
 }
 
-// ═══════════════════ বাৎসরিক ভিউ ═══════════════════
-function renderYearlyCalendar() {
+async function renderYearlyCalendar() {
     const container = document.getElementById('cal-content');
     if (!container) return;
 
-    // ★ Category filter apply
-    let filteredEvents = calState.events;
+    // ★★★ ধাপ ০: মাসের days লোড করি (cache-aware) ★★★
+    //     শিক্ষাবর্ষ বা session পরিবর্তন হলে cache reset হয় (onCalSessionChange-এ)
+    if (!window._yearlyMonthDays || 
+        !window._yearlyMonthDays._session || 
+        window._yearlyMonthDays._session !== calState.session ||
+        Object.keys(window._yearlyMonthDays).filter(k => k !== '_session').length !== 12) {
+        
+        console.log('📅 বাৎসরিক: মাসের days লোড হচ্ছে...');
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-12 text-center text-slate-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p>মাসের ডেটা লোড হচ্ছে...</p>
+            </div>`;
+        
+        try {
+            const monthDaysMap = { _session: calState.session };
+            await Promise.all(
+                HIJRI_MONTHS.map(async (m) => {
+                    try {
+                        monthDaysMap[m.key] = await getHijriMonthDays(calState.session, m.key);
+                    } catch (err) {
+                        console.warn(`⚠️ ${m.name} মাসের days লোড ব্যর্থ:`, err);
+                        monthDaysMap[m.key] = [];
+                    }
+                })
+            );
+            window._yearlyMonthDays = monthDaysMap;
+            console.log('✅ বাৎসরিক: সব মাসের days লোড হয়েছে');
+        } catch (err) {
+            console.error('❌ মাসের days লোড ব্যর্থ:', err);
+            window._yearlyMonthDays = { _session: calState.session };
+        }
+        
+        container.innerHTML = '';
+    }
+
+    // ★★★ ধাপ ১: calState.events খালি হলে Firestore থেকে লোড করি ★★★
+    if (!calState.events || calState.events.length === 0) {
+        console.log('📅 calState.events খালি — Firestore থেকে লোড করছি...');
+        container.innerHTML = `
+            <div class="bg-white rounded-lg shadow-md p-12 text-center text-slate-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p>ইভেন্ট লোড হচ্ছে...</p>
+            </div>`;
+        try {
+            calState.events = await loadAllCalendarEventsFromFS();
+            console.log(`✅ ${calState.events.length}টি ইভেন্ট লোড হয়েছে`);
+        } catch (err) {
+            console.error('❌ ইভেন্ট লোড ব্যর্থ:', err);
+            calState.events = [];
+        }
+        // কনটেইনার রিসেট
+        container.innerHTML = '';
+    }
+
+    // ★★★ ধাপ ২: Session filter ★★★
+    let filteredEvents = calState.events || [];
+    
+    if (calState.session) {
+        const cleanSession = String(calState.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+        filteredEvents = filteredEvents.filter(e => {
+            if (!e.session || e.session === 'all') return true;
+            const eSess = String(e.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+            return eSess === cleanSession;
+        });
+    }
+
+    // ★★★ ধাপ ৩: Dept filter ★★★
+    if (calState.dept) {
+        filteredEvents = filteredEvents.filter(e => {
+            if (!e.dept || e.dept === 'all') return true;
+            return e.dept === calState.dept;
+        });
+    }
+
+    // ★★★ ধাপ ৪: Category filter ★★★
     if (calCategoryFilter !== 'all') {
         filteredEvents = filteredEvents.filter(e => e.category === calCategoryFilter);
     }
 
-    // ★ হিজরি মাস অনুযায়ী group
+    console.log(`📅 বাৎসরিক ভিউ: ${filteredEvents.length}টি ইভেন্ট (from ${calState.events.length})`);
+
+    // ★★★ ধাপ ৫: হিজরি মাস অনুযায়ী group ★★★
     const eventsByMonth = {};
     HIJRI_MONTHS.forEach(m => eventsByMonth[m.key] = []);
     filteredEvents.forEach(e => {
@@ -6851,23 +7629,23 @@ function renderYearlyCalendar() {
         }
     });
 
-    // ★ পরিসংখ্যান
+    // ★★★ পরিসংখ্যান ★★★
     const totalEvents = filteredEvents.length;
     const activeMonths = HIJRI_MONTHS.filter(m => eventsByMonth[m.key].length > 0).length;
 
-    // ★ ক্যাটাগরি কাউন্ট (filter bar-এর জন্য)
+    // ★★★ ক্যাটাগরি কাউন্ট ★★★
     const categoryCounts = {};
-    calState.events.forEach(e => {
+    (calState.events || []).forEach(e => {
         categoryCounts[e.category] = (categoryCounts[e.category] || 0) + 1;
     });
 
     const filterBarHTML = buildCategoryFilterBar(categoryCounts);
 
-    // ★ হেডার
+    // ★★★ হেডার ★★★
     const deptName = calState.dept === 'shariah_noorani' ? 'আবাসিক (শরীয়াহ ও নূরানী-নাযেরা)' : 'অনাবাসিক';
     const headerHTML = buildYearlyHeader(deptName, totalEvents, activeMonths);
 
-    // ★ যদি কোনো ইভেন্ট না থাকে
+    // ★★★ যদি কোনো ইভেন্ট না থাকে ★★★
     if (totalEvents === 0) {
         container.innerHTML = headerHTML + filterBarHTML + `
             <div class="bg-white rounded-lg shadow-md p-12 text-center">
@@ -6883,22 +7661,79 @@ function renderYearlyCalendar() {
         return;
     }
 
-    // ★ ৪×৩ গ্রিড (১২ মাস)
-    const gridHTML = buildYearlyGrid(eventsByMonth);
+    // ★★★ ৩×৪ গ্রিড (১২ মাস) — নতুন ডিজাইন ★★★
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া দারুল উলূম';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || '';
+    const logo = settings.logo || '';
 
-    // ★ টাইমলাইন বার
-    const timelineHTML = buildYearlyTimeline(eventsByMonth);
+    // ★ প্রতিটি মাসের কার্ড — নতুন buildYearlyMonthCard দিয়ে ★★★
+    const monthCardsHTML = HIJRI_MONTHS.map((month, idx) => {
+        const monthDays = /* এখানে monthDays লাগবে — getHijriMonthDays async */ 
+                          // আমরা সব মাসের days আগে থেকে calState-এ রাখতে পারি, নাহলে খালি দেখাব
+                          window._yearlyMonthDays?.[month.key] || [];
+        return buildYearlyMonthCard(month, monthDays, eventsByMonth[month.key], idx + 1);
+    }).join('');
 
-    // ★ পূর্ণ গ্রিড কনটেইনার (প্রিন্ট/PDF-এর জন্য)
-    container.innerHTML = `
+    // ★★★ নিচের লেজেন্ড ★★★
+    const legendHTML = buildYearlyLegend(filteredEvents);
+
+    // ★★★ সম্পূর্ণ কনটেইনার ★★★
+    container.innerHTML = filterBarHTML + `
         <div id="yearly-calendar-print" class="bg-white rounded-xl shadow-md overflow-hidden">
-            ${headerHTML}
-            ${gridHTML}
-            ${timelineHTML}
-            ${buildYearlyFooter(totalEvents, activeMonths)}
+            
+            <!-- ★ প্রধান হেডার ★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);color:white;
+                        padding:16px 20px;
+                        display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                ${logo 
+                    ? `<img src="${logo}" alt="logo" style="width:70px;height:70px;object-fit:contain;background:white;border:3px solid #fcd34d;border-radius:50%;padding:3px;flex-shrink:0;">`
+                    : `<div style="width:70px;height:70px;background:#fcd34d;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#065f46;font-size:32px;flex-shrink:0;"><i class="fa-solid fa-book-open-reader"></i></div>`
+                }
+                <div style="flex:1;min-width:200px;text-align:center;">
+                    <h2 style="margin:0;font-size:24px;color:#fcd34d;font-family:'Amiri',serif;line-height:1.3;" dir="rtl">
+                        ${madrasaAr}
+                    </h2>
+                    <h3 style="margin:6px 0 0;font-size:18px;font-weight:bold;line-height:1.3;">
+                        ${madrasaBn}
+                    </h3>
+                    ${addr ? `<p style="margin:4px 0 0;font-size:11px;opacity:.9;">${addr}</p>` : ''}
+                    <p style="margin:8px 0 0;font-size:12px;font-weight:bold;
+                              background:rgba(252,211,77,0.2);
+                              padding:4px 14px;border-radius:999px;
+                              display:inline-block;
+                              border:1px solid rgba(252,211,77,0.4);">
+                        📅 বাৎসরিক একাডেমিক ক্যালেন্ডার — ${calState.session} | ${deptName}
+                    </p>
+                </div>
+                <div style="width:70px;height:70px;flex-shrink:0;"></div>
+            </div>
+
+            <!-- ★ ১২ মাসের গ্রিড ★ -->
+            <div style="padding:14px;background:#f8fafc;">
+                <div class="yearly-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                    ${monthCardsHTML}
+                </div>
+            </div>
+
+            <!-- ★ নিচে লেজেন্ড ★ -->
+            ${legendHTML}
+
+            <!-- ★ ফুটার ★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);
+                        color:white;
+                        padding:10px 20px;
+                        text-align:center;
+                        font-size:11px;">
+                <strong style="color:#fcd34d;">মাকাদীরে আসবাক (مقادير الأسباق)</strong>
+                <span style="opacity:.9;"> — শিক্ষাবর্ষ ${calState.session}</span>
+                <span style="opacity:.75;margin-left:8px;">| প্রিন্ট: ${new Date().toLocaleDateString('bn-BD')}</span>
+            </div>
         </div>
-        ${filterBarHTML}
     `;
+
+    // ★★★ Grid CSS inject ★★★
+    injectYearlyCalendarStyles();
 }
 
 // ═══════════════════ বাৎসরিক হেডার ═══════════════════
@@ -7151,7 +7986,7 @@ window.printCalendar = function() {
         return;
     }
 
-    const isYearly = view === 'yearly';
+    const isYearly = (calState.view === 'calgrid' && calState.calgridMode === 'yearly');
     const pageOrientation = isYearly ? 'landscape' : 'portrait';
 
     printWindow.document.write(`
@@ -7559,7 +8394,7 @@ window.shareCalendarPDF = function() {
         return new Promise(resolve => setTimeout(resolve, 500));
     }).then(() => {
         // ★ html2pdf config
-        const isYearly = view === 'yearly';
+        const isYearly = (calState.view === 'calgrid' && calState.calgridMode === 'yearly');
         const opt = {
             margin: isYearly ? [8, 6, 10, 6] : [10, 8, 12, 8],
             filename: `calendar_${session.replace(/\s+/g, '_')}_${dept}_${view}_${new Date().toISOString().split('T')[0]}.pdf`,
@@ -7636,8 +8471,10 @@ window.refreshCalendar = async function() {
     btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> <span class="hidden md:inline">লোড হচ্ছে...</span>';
 
     try {
-        // ★ LocalStorage cache clear (Firestore থেকে ফ্রেশ আনতে)
+        // ★ সব cache clear (Firestore থেকে fresh আনতে)
         localStorage.removeItem(CALENDAR_STORAGE_KEY);
+        window._yearlyMonthDays = null;
+        resetMoonSightingCache();
 
         // ★ আবার render
         await renderCalendarContent();
@@ -7828,6 +8665,44 @@ const HIJRI_REFERENCE_DEFAULTS = {
         rajab: '2027-11-30', shaban: '2027-12-29', ramadan: '2028-01-28'
     }
 };
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগরিয়ান মাসের দিনগুলো — গ্রিডের জন্য ★★★
+//     প্রতিটি দিনে: গ্রেগ তারিখ, সপ্তাহের বার, হিজরি তারিখ (auto)
+// ═══════════════════════════════════════════════════════════════
+function getGregorianMonthDaysForGrid(monthKey, year) {
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) return [];
+    
+    const monthNum = monthInfo.order;       // 1-12
+    const totalDays = getGregorianMonthDays(monthKey, year);
+    
+    const days = [];
+    for (let i = 1; i <= totalDays; i++) {
+        const d = new Date(year, monthNum - 1, i);
+        
+        // ★ হিজরি তারিখ বের করি (browser Intl API)
+        let hijriInfo = null;
+        try {
+            hijriInfo = gregorianToHijri(year, monthNum, i);
+        } catch (err) {
+            console.warn(`⚠️ Hijri conversion failed for ${year}-${monthNum}-${i}:`, err);
+        }
+        
+        days.push({
+            gregDay: i,
+            gregMonth: monthNum,
+            gregYear: year,
+            dayOfWeek: d.getDay(),    // 0=রবি, 6=শনি
+            hijri: hijriInfo?.day || 0,
+            hijriMonthKey: hijriInfo?.monthKey || '',
+            hijriYear: hijriInfo?.year || 0,
+            dateObj: d
+        });
+    }
+    
+    return days;
+}
 
 // ★ হিজরি মাসের ১ তারিখ বের করা
 async function getHijriMonthStart(academicYear, hijriMonthKey) {
@@ -8644,6 +9519,7 @@ async function renderCalendarGrid() {
     }
 }
 
+
 // ═══════════════════════════════════════════════════════════════
 // ★★★ ক্যালেন্ডার গ্রিড — Main Render ★★★
 // ═══════════════════════════════════════════════════════════════
@@ -8728,6 +9604,97 @@ window.switchCalGridMode = function(mode) {
 // ★★★ মাসিক ভিউ ★★★
 // ═══════════════════════════════════════════════════════════════
 async function renderCalGridMonthlyContent(container, subtoggleHTML) {
+    const isNonRes = calState.dept === 'non_res';
+    
+    // ★★★ Branch: dept অনুযায়ী হিজরি বা গ্রেগ মাস ★★★
+    if (isNonRes) {
+        // ═══ অনাবাসিক → গ্রেগ মাস ═══
+        const monthKey = calState.calgridMonth && GREG_MONTHS.some(m => m.key === calState.calgridMonth)
+            ? calState.calgridMonth
+            : 'january';
+        
+        const monthInfo = GREG_MONTHS.find(m => m.key === monthKey) || GREG_MONTHS[0];
+        
+        // ★ বছর নির্ধারণ (সেশন থেকে)
+        const sessVal = calState.session;
+        let year = new Date().getFullYear();
+        if (sessVal && sessVal !== 'all') {
+            const cleanYear = String(sessVal).replace(/\s*\(.*?\)\s*/g, '').trim();
+            const ym = cleanYear.match(/\d{4}/);
+            if (ym) year = parseInt(ym[0]);
+        }
+        
+        const monthDays = getGregorianMonthDaysForGrid(monthKey, year);
+        
+        // ★ এই মাসের ইভেন্ট
+        const monthEvents = (calState.events || []).filter(e => {
+            if (e.dept && e.dept !== 'all' && e.dept !== 'non_res') return false;
+            if (e.gregorianMonth && e.gregorianMonth === monthKey) return true;
+            // fallback: gregorianDate string থেকে
+            if (!e.gregorianMonth && e.gregorianDate) {
+                return e.gregorianDate.includes(monthInfo.name) ||
+                       e.gregorianDate.toLowerCase().includes(monthInfo.english.toLowerCase());
+            }
+            return false;
+        });
+        
+        const monthSelectorHTML = `
+            <div class="bg-white rounded-lg shadow-sm p-3 mb-3 no-print flex flex-wrap gap-3 items-center justify-between">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600 block mb-1">গ্রেগরিয়ান মাস:</label>
+                        <select onchange="onCalGridMonthChange(this.value)" class="rounded-lg border-slate-300 border p-2 text-sm">
+                            ${GREG_MONTHS.map(m => `<option value="${m.key}" ${m.key === monthKey ? 'selected' : ''}>${m.name} — ${m.arabic}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="flex gap-2 mt-5">
+                        <button onclick="calGridPrevMonth()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition">
+                            <i class="fa-solid fa-chevron-left"></i> আগের
+                        </button>
+                        <button onclick="calGridNextMonth()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition">
+                            পরের <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="printSingleGregMonthGrid('${monthKey}','${monthInfo.name}',${year})"
+                            class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-print"></i> এই মাস প্রিন্ট
+                    </button>
+                    <button onclick="shareSingleGregMonthPDF('${monthKey}','${monthInfo.name}',${year})"
+                            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-pdf"></i> এই মাস PDF
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        injectCalendarGridStyles();
+        
+        const gridHTML = buildGregorianMonthGrid({
+            monthKey,
+            year,
+            dept: 'non_res',
+            events: monthEvents,
+            monthDays,
+            monthName: monthInfo.name,
+            monthNameAr: monthInfo.arabic,
+            compact: false,
+            showPrintIcons: true
+        });
+        
+        container.innerHTML = subtoggleHTML + monthSelectorHTML + `
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 mb-3 text-xs text-indigo-900">
+                <i class="fa-solid fa-circle-info"></i>
+                <strong>${monthInfo.name} ${toBanglaNumber(year)}</strong> — মোট ${toBanglaNumber(monthDays.length)} দিন
+                ${monthEvents.length > 0 ? ` | ${toBanglaNumber(monthEvents.length)}টি ইভেন্ট` : ''}
+            </div>
+            ${gridHTML}
+        `;
+        return;
+    }
+    
+    // ═══ আবাসিক → হিজরি মাস (আগের মতো) ═══
     const monthIndex = HIJRI_MONTHS.findIndex(m => m.key === calState.calgridMonth);
     const monthInfo = HIJRI_MONTHS[monthIndex] || HIJRI_MONTHS[0];
     const monthKey = monthInfo.key;
@@ -8771,7 +9738,7 @@ async function renderCalGridMonthlyContent(container, subtoggleHTML) {
     const gridHTML = buildHijriMonthGrid({
         monthKey, 
         academicYear: calState.session,
-        dept: calState.dept,              // ★★★ যোগ করুন
+        dept: calState.dept,
         events: monthEvents,
         monthDays,
         monthName: monthInfo.name,
@@ -8794,11 +9761,6 @@ async function renderCalGridMonthlyContent(container, subtoggleHTML) {
     `;
 }
 
-window.onCalGridMonthChange = function(monthKey) {
-    calState.calgridMonth = monthKey;
-    renderCalendarGrid();
-};
-
 window.calGridPrevMonth = function() {
     const idx = HIJRI_MONTHS.findIndex(m => m.key === calState.calgridMonth);
     calState.calgridMonth = HIJRI_MONTHS[(idx - 1 + HIJRI_MONTHS.length) % HIJRI_MONTHS.length].key;
@@ -8812,35 +9774,120 @@ window.calGridNextMonth = function() {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// ★★★ বাৎসরিক ভিউ ★★★
+// ★★★ বাৎসরিক ক্যালেন্ডার — সম্পূর্ণ গ্রিড ভিউ (v2 — বাটন সহ) ★★★
 // ═══════════════════════════════════════════════════════════════
 async function renderCalGridYearlyContent(container, subtoggleHTML) {
-    const monthsData = await Promise.all(
-        HIJRI_MONTHS.map(async (month) => {
-            const days = await getHijriMonthDays(calState.session, month.key);
-            const events = (calState.events || []).filter(e => e.hijriMonth === month.key);
-            return { month, days, events };
-        })
-    );
+    const session = calState.session;
+    const dept = calState.dept;
+    
+    if (!session || !dept) {
+        container.innerHTML = subtoggleHTML + `
+            <div class="bg-white rounded-lg shadow-md p-12 text-center text-slate-400">
+                <i class="fa-solid fa-calendar-days text-5xl mb-4 text-indigo-300"></i>
+                <p>শিক্ষাবর্ষ ও বিভাগ সিলেক্ট করুন</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // ★ dept নির্ধারণ
+    const isNonRes = dept === 'non_res';
+    
+    container.innerHTML = subtoggleHTML + `
+        <div class="bg-white rounded-lg shadow-md p-12 text-center text-slate-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+            <p>বাৎসরিক ক্যালেন্ডার তৈরি হচ্ছে...</p>
+        </div>
+    `;
 
-    const headerHTML = `
-        <div class="bg-gradient-to-l from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-lg p-4 mb-4">
+    // ═══ বছর নির্ধারণ (সেশন থেকে) ═══
+    let year = new Date().getFullYear();
+    if (session && session !== 'all') {
+        const cleanYear = String(session).replace(/\s*\(.*?\)\s*/g, '').trim();
+        const ym = cleanYear.match(/\d{4}/);
+        if (ym) year = parseInt(ym[0]);
+    }
+
+    // ═══ ১২ মাসের ডেটা লোড — dept অনুযায়ী ═══
+    let monthsData = [];
+
+    if (isNonRes) {
+        // ═══ অনাবাসিক → গ্রেগরিয়ান ১২ মাস ═══
+        monthsData = GREG_MONTHS.map(month => {
+            const days = getGregorianMonthDaysForGrid(month.key, year);
+            const events = (calState.events || []).filter(e => {
+                // dept check
+                if (e.dept && e.dept !== 'all' && e.dept !== dept) return false;
+                // ★ গ্রেগ মাস check
+                if (e.gregorianMonth && e.gregorianMonth !== month.key) return false;
+                // session check
+                if (e.session && e.session !== 'all') {
+                    const eSess = String(e.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+                    const aSess = String(session).replace(/\s*\(.*?\)\s*/g, '').trim();
+                    if (eSess !== aSess) return false;
+                }
+                return true;
+            });
+            return { month, days, events };
+        });
+    } else {
+        // ═══ আবাসিক → হিজরি ১২ মাস (আগের মতো) ═══
+        monthsData = await Promise.all(
+            HIJRI_MONTHS.map(async (month) => {
+                const days = await getHijriMonthDays(session, month.key);
+                const events = (calState.events || []).filter(e => {
+                    if (e.hijriMonth !== month.key) return false;
+                    if (e.session && e.session !== 'all') {
+                        const eSess = String(e.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+                        const aSess = String(session).replace(/\s*\(.*?\)\s*/g, '').trim();
+                        if (eSess !== aSess) return false;
+                    }
+                    if (e.dept && e.dept !== 'all' && e.dept !== dept) return false;
+                    return true;
+                });
+                return { month, days, events };
+            })
+        );
+    }
+
+    // ★★★ বছরের সব ইভেন্ট — শুধু কাউন্টের জন্য (লেজেন্ড আর নেই) ★★★
+    const allYearEvents = [];
+    monthsData.forEach(({ events }) => allYearEvents.push(...events));
+
+    // ★★★ হেডার তথ্য ★★★
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া দারুল উলূম';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || '';
+    const logo = settings.logo || '';
+    const deptName = dept === 'non_res' ? 'অনাবাসিক' : 'আবাসিক (শরীয়াহ ও নূরানী-নাযেরা)';
+
+    // ★★★ প্রতি মাসের কার্ড তৈরি (ক্যালেন্ডার গ্রিড ভার্সন) — dept সহ ★★★
+    const monthCardsHTML = monthsData.map(({ month, days, events }, idx) => 
+        buildCalendarGridMonthCard(month, days, events, idx + 1, dept)
+    ).join('');
+
+    // ★★★ অ্যাকশন বার (নতুন — প্রিন্ট/PDF বাটন সহ) ★★★
+    const actionBarHTML = `
+        <div class="bg-white rounded-lg shadow-sm p-3 mb-3 no-print" style="border-left:4px solid #065f46;">
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                    <h3 class="text-base font-bold text-indigo-900">
-                        <i class="fa-solid fa-calendar-days"></i> বাৎসরিক ক্যালেন্ডার গ্রিড
+                    <h3 class="text-base font-bold text-slate-800">
+                        <i class="fa-solid fa-calendar-days text-emerald-700"></i> বাৎসরিক ক্যালেন্ডার
+                        <span class="badge bg-emerald-100 text-emerald-800 ml-2">
+                            ${monthsData.length}টি মাস | ${allYearEvents.length}টি ইভেন্ট
+                        </span>
                     </h3>
-                    <p class="text-xs text-indigo-700 mt-1">
-                        <strong>${calState.session}</strong> শিক্ষাবর্ষ | ১২টি হিজরি মাস
+                    <p class="text-[11px] text-slate-500 mt-1">
+                        <strong>${session}</strong> | ${deptName}
                     </p>
                 </div>
-                <div class="flex gap-2 flex-wrap">
+                <div class="flex flex-wrap gap-2">
                     <button onclick="printFullYearGrid()"
-                            class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow">
+                            class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
                         <i class="fa-solid fa-print"></i> পুরো বছর প্রিন্ট
                     </button>
                     <button onclick="shareFullYearPDF()"
-                            class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition flex items-center gap-2 shadow">
+                            class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-md">
                         <i class="fa-solid fa-file-pdf"></i> পুরো বছর PDF
                     </button>
                 </div>
@@ -8848,40 +9895,427 @@ async function renderCalGridYearlyContent(container, subtoggleHTML) {
         </div>
     `;
 
-    const monthsHTML = monthsData.map(({ month, days, events }) => 
-        buildHijriMonthGrid({
-            monthKey: month.key,
-            academicYear: calState.session,
-            dept: calState.dept,          // ★★★ যোগ করুন
-            events: events,
-            monthDays: days,
-            monthName: month.name,
-            monthNameAr: month.arabic,
-            compact: true,
-            showPrintIcons: true
-        })
-    ).join('');
-
-    const gridWrapper = `
-        <div id="cal-full-year-grid" class="cal-year-grid-wrapper">
-            <div style="text-align:center;margin-bottom:15px;padding-bottom:10px;border-bottom:3px solid #4f46e5;">
-                <h1 style="margin:0;font-size:22px;color:#312e81;font-family:'Amiri',serif;" dir="rtl">
-                    ${settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم'}
-                </h1>
-                <h2 style="margin:4px 0 0;font-size:15px;color:#4f46e5;">
-                    ${settings.madrasaName || 'জামিয়া ইসলামিয়া'}
-                </h2>
-                <p style="margin:3px 0 0;font-size:10px;color:#64748b;">একাডেমিক ক্যালেন্ডার — ${calState.session}</p>
+    // ★★★ সম্পূর্ণ বাৎসরিক ক্যালেন্ডার HTML ★★★
+    container.innerHTML = subtoggleHTML + actionBarHTML + `
+        <div id="yearly-calendar-print" class="bg-white rounded-xl shadow-md overflow-hidden">
+            
+            <!-- ★★★ প্রধান হেডার ★★★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);color:white;
+                        padding:16px 20px;
+                        display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                ${logo 
+                    ? `<img src="${logo}" alt="logo" style="width:70px;height:70px;object-fit:contain;background:white;border:3px solid #fcd34d;border-radius:50%;padding:3px;flex-shrink:0;">`
+                    : `<div style="width:70px;height:70px;background:#fcd34d;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#065f46;font-size:32px;flex-shrink:0;"><i class="fa-solid fa-book-open-reader"></i></div>`
+                }
+                <div style="flex:1;min-width:200px;text-align:center;">
+                    <h2 style="margin:0;font-size:24px;color:#fcd34d;font-family:'Amiri',serif;line-height:1.3;" dir="rtl">
+                        ${madrasaAr}
+                    </h2>
+                    <h3 style="margin:6px 0 0;font-size:18px;font-weight:bold;line-height:1.3;">
+                        ${madrasaBn}
+                    </h3>
+                    ${addr ? `<p style="margin:4px 0 0;font-size:11px;opacity:.9;">${addr}</p>` : ''}
+                    <p style="margin:8px 0 0;font-size:12px;font-weight:bold;
+                              background:rgba(252,211,77,0.2);
+                              padding:4px 14px;border-radius:999px;
+                              display:inline-block;
+                              border:1px solid rgba(252,211,77,0.4);">
+                        📅 বাৎসরিক একাডেমিক ক্যালেন্ডার — ${session} | ${deptName}
+                    </p>
+                </div>
+                <div style="width:70px;height:70px;flex-shrink:0;"></div>
             </div>
-            <div class="year-grid-inner">
-                ${monthsHTML}
+
+            <!-- ★★★ ১২ মাসের গ্রিড (৩×৪) ★★★ -->
+            <div style="padding:14px;background:#f8fafc;">
+                <div class="yearly-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                    ${monthCardsHTML}
+                </div>
+            </div>
+
+            <!-- ★★★ ফুটার ★★★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);
+                        color:white;
+                        padding:10px 20px;
+                        text-align:center;
+                        font-size:11px;">
+                <strong style="color:#fcd34d;">মাকাদীরে আসবাক (مقادير الأسباق)</strong>
+                <span style="opacity:.9;"> — শিক্ষাবর্ষ ${session}</span>
+                <span style="opacity:.75;margin-left:8px;">| প্রিন্ট: ${new Date().toLocaleDateString('bn-BD')}</span>
             </div>
         </div>
     `;
 
-    injectCalendarGridStyles();
+    // ★★★ Grid CSS inject ★★★
+    injectYearlyCalendarStyles();
+}
 
-    container.innerHTML = subtoggleHTML + headerHTML + gridWrapper;
+// ═══════════════════════════════════════════════════════════════
+// ★★★ বাৎসরিক ক্যালেন্ডার — একটি মাসের কার্ড (Safe version) ★★★
+// ═══════════════════════════════════════════════════════════════
+function buildCalendarGridMonthCard(month, monthDays, events, monthNumber, dept) {
+    // ★★★ SAFE: events array না হলে খালি array বানাই ★★★
+    if (!Array.isArray(events)) {
+        // যদি object হয় (eventsByMonth থেকে আসা), তাহলে key-গুলোতে events আছে
+        if (events && typeof events === 'object') {
+            const flat = [];
+            Object.keys(events).forEach(key => {
+                if (Array.isArray(events[key])) {
+                    flat.push(...events[key]);
+                }
+            });
+            events = flat;
+        } else {
+            events = [];
+        }
+    }
+    
+    if (!monthDays || monthDays.length === 0) {
+        return `
+            <div style="background:white;border:2px dashed #cbd5e1;border-radius:8px;padding:20px;text-align:center;">
+                <p style="margin:0;font-size:12px;color:#94a3b8;">${month?.name || 'মাস'} — ডেটা নেই</p>
+            </div>
+        `;
+    }
+
+    // ★★★ সংখ্যা convert helper ★★★
+    function toEng(str) {
+        if (!str) return '';
+        const map = {
+            '০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9',
+            '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'
+        };
+        return String(str).replace(/[০-৯٠-٩]/g, d => map[d] || d);
+    }
+
+    // ★★★ dept নির্ধারণ — হিজরি বা গ্রেগ ★★★
+    const isNonRes = dept === 'non_res';
+
+    // ★★★ ইভেন্টকে দিন অনুযায়ী group ★★★
+    const eventsByDay = {};
+    events.forEach(e => {
+        // ★★★ dept অনুযায়ী কোন ফিল্ড ★★★
+        const dateFieldStr = isNonRes ? (e.gregorianDate || '') : (e.hijriDate || '');
+        const matches = String(toEng(dateFieldStr)).match(/\d+/g);
+        if (!matches || matches.length === 0) return;
+        
+        const dayNumbers = matches.map(n => parseInt(n)).filter(n => n >= 1 && n <= 31);
+        if (dayNumbers.length === 0) return;
+        
+        const firstDay = dayNumbers[0];
+        const secondDay = dayNumbers.length > 1 ? dayNumbers[1] : firstDay;
+        
+        for (let day = firstDay; day <= secondDay; day++) {
+            if (day > 0 && day <= 31) {
+                if (!eventsByDay[day]) eventsByDay[day] = [];
+                eventsByDay[day].push(e);
+            }
+        }
+    });
+
+    // ★★★ প্রথম দিনের বার থেকে ফাঁকা ঘর ★★★
+    const firstDayJs = monthDays[0].dayOfWeek;
+    const leadingBlanks = CAL_GRID_WEEK_DAYS.findIndex(d => d.jsDay === firstDayJs);
+
+    const totalCells = leadingBlanks + monthDays.length;
+    const totalWeeks = Math.ceil(totalCells / 7);
+
+    // ★★★ সাপ্তাহিক হেডার ★★★
+    const headerCells = CAL_GRID_WEEK_DAYS.map(d => {
+        const isFriday = d.jsDay === 5;
+        return `<th style="padding:2px 1px;
+                            background:${isFriday ? '#b91c1c' : '#065f46'};
+                            color:white;
+                            font-size:9px;
+                            font-weight:bold;
+                            border:0.5px solid ${isFriday ? '#991b1b' : '#047857'};
+                            text-align:center;
+                            line-height:1.1;">
+            ${d.bn}
+        </th>`;
+    }).join('');
+
+    // ★★★ সেলগুলো ★★★
+    let cellsHTML = '';
+    let dayIndex = 0;
+
+    for (let week = 0; week < totalWeeks; week++) {
+        cellsHTML += '<tr>';
+        for (let dayCol = 0; dayCol < 7; dayCol++) {
+            const cellIndex = week * 7 + dayCol;
+            const weekDayInfo = CAL_GRID_WEEK_DAYS[dayCol];
+            const isFriday = weekDayInfo.jsDay === 5;
+
+            if (cellIndex < leadingBlanks || dayIndex >= monthDays.length) {
+                cellsHTML += `<td style="border:0.5px solid #e2e8f0;
+                                          background:${isFriday ? '#fef2f2' : '#f8fafc'};
+                                          height:26px;"></td>`;
+                continue;
+            }
+
+            const dayInfo = monthDays[dayIndex];
+            
+            // ★★★ কোন তারিখ বড় করে দেখাব ★★★
+            //   - অনাবাসিক → গ্রেগরিয়ান (gregDay)
+            //   - আবাসিক → হিজরি (hijri)
+            const mainDayNum = isNonRes ? (dayInfo.gregDay || 0) : (dayInfo.hijri || 0);
+            const dayEvents = eventsByDay[mainDayNum] || [];
+            const hasEvents = dayEvents.length > 0;
+
+            let cellBg = isFriday ? '#fef2f2' : 'white';
+            let numColor = isFriday ? '#b91c1c' : '#1e293b';
+            let numWeight = 'bold';
+
+            if (hasEvents) {
+                const topCat = dayEvents[0].category;
+                const catColor = CAL_CATEGORY_COLORS[topCat] || CAL_CATEGORY_COLORS.admin;
+                cellBg = catColor.bg;
+                numColor = catColor.text;
+                numWeight = '900';
+            }
+
+            let dotHTML = '';
+            if (hasEvents) {
+                const uniqueCats = [...new Set(dayEvents.map(e => e.category))];
+                dotHTML = uniqueCats.slice(0, 2).map(catKey => {
+                    const cat = CAL_CATEGORY_COLORS[catKey] || CAL_CATEGORY_COLORS.admin;
+                    return `<span style="display:inline-block;
+                                         width:4px;height:4px;
+                                         border-radius:50%;
+                                         background:${cat.border};
+                                         margin:0 0.5px;"></span>`;
+                }).join('');
+            }
+
+            // ★★★ ছোট করে কোন তারিখ দেখাব ★★★
+            //   - অনাবাসিক → হিজরি (dayInfo.hijri)
+            //   - আবাসিক → দেখাব না
+            let smallTextHTML = '';
+            if (isNonRes && dayInfo.hijri > 0) {
+                smallTextHTML = `
+                    <div style="font-size:7px;
+                                color:${hasEvents ? '#475569' : '#94a3b8'};
+                                line-height:1;
+                                margin-top:0.5px;">
+                        ${dayInfo.hijri}
+                    </div>
+                `;
+            }
+
+            cellsHTML += `
+                <td style="border:0.5px solid #e2e8f0;
+                            background:${cellBg};
+                            padding:1px;
+                            vertical-align:top;
+                            height:26px;
+                            text-align:center;
+                            position:relative;"
+                    ${hasEvents ? `title="${dayEvents.map(e => e.title).join(' | ')}"` : ''}>
+                    <div style="font-size:11px;
+                                font-weight:${numWeight};
+                                color:${numColor};
+                                line-height:1.1;">
+                        ${mainDayNum}
+                    </div>
+                    ${smallTextHTML}
+                    ${dotHTML ? `<div style="line-height:1;">${dotHTML}</div>` : ''}
+                </td>
+            `;
+            dayIndex++;
+        }
+        cellsHTML += '</tr>';
+    }
+
+    // ★★★ নিচে ইভেন্টের নোট (প্রতি মাসের জন্য) ★★★
+    let eventsListHTML = '';
+    if (events.length > 0) {
+        // ★ dept অনুযায়ী তারিখ দিয়ে সাজাই
+        const sortedEvents = events.slice().sort((a, b) => {
+            const dateA = isNonRes ? (a.gregorianDate || '') : (a.hijriDate || '');
+            const dateB = isNonRes ? (b.gregorianDate || '') : (b.hijriDate || '');
+            const dayA = parseInt(String(dateA).match(/\d+/)?.[0] || 0);
+            const dayB = parseInt(String(dateB).match(/\d+/)?.[0] || 0);
+            return dayA - dayB;
+        });
+
+        const eventNotes = sortedEvents.map(e => {
+            const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
+            return `
+                <div style="display:flex;align-items:flex-start;gap:4px;
+                            padding:3px 0;
+                            border-top:1px dashed #e2e8f0;
+                            font-size:10px;
+                            line-height:1.3;">
+                    <span style="display:inline-block;
+                                 width:5px;height:5px;
+                                 border-radius:50%;
+                                 background:${cat.border};
+                                 margin-top:4px;
+                                 flex-shrink:0;"></span>
+                    <div style="min-width:0;flex:1;">
+                        <span style="color:${cat.text};
+                                     font-weight:700;
+                                     font-size:9px;">
+                            ${isNonRes ? (e.gregorianDate || '') : (e.hijriDate || '')}
+                        </span>
+                        <span style="color:#1e293b;
+                                     font-weight:600;
+                                     margin-left:3px;">
+                            ${e.title}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        eventsListHTML = `
+            <div style="padding:4px 6px 6px 6px;
+                        background:#f8fafc;
+                        border-top:1px solid #e2e8f0;">
+                <div style="font-size:8px;
+                            font-weight:bold;
+                            color:#64748b;
+                            text-transform:uppercase;
+                            letter-spacing:0.5px;
+                            margin-bottom:2px;">
+                    📝 নোট
+                </div>
+                ${eventNotes}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="yearly-month-card" style="background:white;
+                                              border:2px solid #065f46;
+                                              border-radius:8px;
+                                              overflow:hidden;
+                                              display:flex;flex-direction:column;
+                                              box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+            
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);
+                        color:white;
+                        padding:5px 8px;
+                        display:flex;align-items:center;justify-content:space-between;gap:4px;">
+                <div style="display:flex;align-items:center;gap:5px;min-width:0;flex:1;">
+                    <span style="background:#fcd34d;
+                                 color:#065f46;
+                                 font-size:10px;
+                                 font-weight:900;
+                                 padding:1px 5px;
+                                 border-radius:4px;
+                                 flex-shrink:0;">
+                        ${monthNumber}
+                    </span>
+                    <div style="min-width:0;">
+                        <div style="font-size:11px;
+                                    font-weight:bold;
+                                    line-height:1.1;
+                                    overflow:hidden;
+                                    text-overflow:ellipsis;
+                                    white-space:nowrap;">
+                            ${month?.name || ''}
+                        </div>
+                        <div style="font-family:'Amiri',serif;
+                                    font-size:9px;
+                                    opacity:.9;
+                                    color:#fcd34d;
+                                    line-height:1.1;
+                                    margin-top:1px;"
+                             dir="rtl">
+                            ${month?.arabic || ''}
+                        </div>
+                    </div>
+                </div>
+                <div style="background:rgba(252,211,77,0.25);
+                            color:white;
+                            font-size:9px;
+                            font-weight:bold;
+                            padding:2px 6px;
+                            border-radius:999px;
+                            border:1px solid rgba(252,211,77,0.4);
+                            flex-shrink:0;">
+                    ${events.length}টি
+                </div>
+            </div>
+            
+            <div style="padding:4px;">
+                <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                    <thead><tr>${headerCells}</tr></thead>
+                    <tbody>${cellsHTML}</tbody>
+                </table>
+            </div>
+            
+            ${eventsListHTML}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ বাৎসরিক ক্যালেন্ডার CSS (একবারই inject হবে) ★★★
+// ═══════════════════════════════════════════════════════════════
+function injectYearlyCalendarStyles() {
+    if (document.getElementById('yearly-calendar-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'yearly-calendar-styles';
+    style.textContent = `
+        /* ★★★ গ্রিড responsive ★★★ */
+        .yearly-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        @media (max-width: 1024px) {
+            .yearly-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 10px !important;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .yearly-grid {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+        }
+
+        /* ★★★ প্রিন্ট ★★★ */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 8mm 6mm;
+            }
+            
+            .yearly-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+            }
+            
+            .yearly-month-card {
+                page-break-inside: avoid;
+                border-width: 1.5px !important;
+            }
+            
+            #yearly-calendar-print {
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
+            
+            /* ★ স্ক্রলবার হাইড ★ */
+            body { overflow: visible !important; }
+        }
+
+        /* ★ হোভার এফেক্ট ★ */
+        .yearly-month-card:hover {
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15) !important;
+            transform: translateY(-1px);
+            transition: all 0.2s;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -8919,61 +10353,6 @@ function injectCalendarGridStyles() {
     `;
     document.head.appendChild(style);
 }
-
-// ═══════════════════════════════════════════════════════════════
-// ★★★ একটা মাসের প্রিন্ট ★★★
-// ═══════════════════════════════════════════════════════════════
-window.printSingleMonthGrid = async function(monthKey, monthName) {
-    const monthDays = await getHijriMonthDays(calState.session, monthKey);
-    const monthEvents = (calState.events || []).filter(e => e.hijriMonth === monthKey);
-    const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey) || { name: monthName, arabic: '' };
-
-    const gridHTML = buildHijriMonthGrid({
-        monthKey, 
-        academicYear: calState.session,
-        dept: calState.dept,              // ★★★ যোগ করুন
-        events: monthEvents, 
-        monthDays,
-        monthName: monthInfo.name, 
-        monthNameAr: monthInfo.arabic,
-        compact: false, 
-        showPrintIcons: false
-    });
-    const printWin = window.open('', '_blank');
-    if (!printWin) {
-        showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
-        return;
-    }
-
-    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
-    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
-
-    printWin.document.write(`
-        <!DOCTYPE html>
-        <html lang="bn">
-        <head>
-            <meta charset="UTF-8">
-            <title>${monthInfo.name} — প্রিন্ট</title>
-            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-            <style>
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                body { font-family: 'Hind Siliguri', sans-serif; padding: 15mm 10mm; background: white; margin: 0; }
-                @page { size: A4 portrait; margin: 12mm 10mm; }
-            </style>
-        </head>
-        <body>
-            <div style="text-align:center;margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #4f46e5;">
-                <h1 style="margin:0;font-size:26px;color:#312e81;font-family:'Amiri',serif;" dir="rtl">${madrasaAr}</h1>
-                <h2 style="margin:6px 0 0;font-size:18px;color:#4f46e5;">${madrasaBn}</h2>
-                <p style="margin:4px 0 0;font-size:12px;color:#64748b;">একাডেমিক ক্যালেন্ডার — ${calState.session}</p>
-            </div>
-            ${gridHTML}
-        </body>
-        </html>
-    `);
-    printWin.document.close();
-    setTimeout(() => { printWin.print(); }, 600);
-};
 
 // ═══════════════════════════════════════════════════════════════
 // ★★★ একটা মাসের PDF ═★★
@@ -9029,90 +10408,296 @@ window.shareSingleMonthPDF = async function(monthKey, monthName) {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// ★★★ পুরো বছর প্রিন্ট ═★★
+// ★★★ বাৎসরিক ক্যালেন্ডার — প্রিন্ট (বড়, স্পষ্ট) ★★★
 // ═══════════════════════════════════════════════════════════════
 window.printFullYearGrid = function() {
-    const grid = document.getElementById('cal-full-year-grid');
+    const grid = document.getElementById('yearly-calendar-print');
     if (!grid) {
-        showToast('⚠️ গ্রিড পাওয়া যায়নি', 'warn');
+        showToast('⚠️ গ্রিড পাওয়া যায়নি — আগে বাৎসরিক ভিউতে যান', 'warn');
         return;
     }
 
-    showToast('🖨️ প্রিন্ট প্রস্তুত হচ্ছে...', 'info');
+    showToast('🖨️ প্রিন্ট প্রস্তুত হচ্ছে (১৮″ × ২৪″ সাইজ)...', 'info');
 
     const printWin = window.open('', '_blank');
     if (!printWin) {
-        showToast('⚠️ Popup ব্লক হয়েছে', 'warn');
+        showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
         return;
     }
+
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const session = calState.session;
 
     printWin.document.write(`
         <!DOCTYPE html>
         <html lang="bn">
         <head>
             <meta charset="UTF-8">
-            <title>বাৎসরিক ক্যালেন্ডার — ${calState.session}</title>
+            <title>বাৎসরিক ক্যালেন্ডার — ${session}</title>
             <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
             <style>
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                body { font-family: 'Hind Siliguri', sans-serif; padding: 8mm; background: white; margin: 0; }
-                .year-grid-inner { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-                .cal-grid-month { page-break-inside: avoid; margin-bottom: 0 !important; }
-                table { font-size: 9px !important; }
-                @page { size: A4 landscape; margin: 8mm; }
+                * { 
+                    -webkit-print-color-adjust: exact !important; 
+                    print-color-adjust: exact !important;
+                    box-sizing: border-box;
+                }
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+                    color: #1e293b;
+                }
+                body {
+                    padding: 10mm 8mm;
+                }
+                
+                /* ★★★ গ্রিড — বড় সাইজে ৪ কলাম ★★★ */
+                .yearly-grid {
+                    display: grid !important;
+                    grid-template-columns: repeat(4, 1fr) !important;
+                    gap: 12px !important;
+                }
+                
+                .yearly-month-card {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                    border-width: 2.5px !important;
+                }
+                
+                /* ★★★ মাস হেডার — বড় ★★★ */
+                .yearly-month-card > div:first-child {
+                    padding: 10px 14px !important;
+                }
+                
+                .yearly-month-card > div:first-child div:first-child div:first-child {
+                    font-size: 16px !important;
+                }
+                
+                /* ★★★ ক্যালেন্ডার টেবিল — বড় ★★★ */
+                .yearly-month-card table {
+                    font-size: 14px !important;
+                }
+                
+                .yearly-month-card td {
+                    height: 42px !important;
+                    padding: 4px !important;
+                    font-size: 15px !important;
+                }
+                
+                .yearly-month-card th {
+                    font-size: 13px !important;
+                    padding: 6px 4px !important;
+                }
+                
+                /* ★★★ নিচের নোট ★★★ */
+                .yearly-month-card > div:last-child {
+                    font-size: 12px !important;
+                }
+                
+                /* ★★★ প্রিন্ট সেটিং — ১৮″ × ২৪″ (কাস্টম সাইজ) ★★★ */
+                @page { 
+                    size: 18in 24in;      /* ★★★ এখানেই ম্যাজিক! ★★★ */
+                    margin: 10mm 8mm;
+                }
+                
+                /* ★★★ প্রিন্ট ★★★ */
+                @media print {
+                    body { padding: 0; }
+                    
+                    #yearly-calendar-print {
+                        box-shadow: none !important;
+                        border: none !important;
+                        border-radius: 0 !important;
+                    }
+                    
+                    [title] {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    
+                    /* ★ গ্রিড ৪ কলাম — বড় কাগজে ভালো ★ */
+                    .yearly-grid {
+                        grid-template-columns: repeat(4, 1fr) !important;
+                    }
+                }
             </style>
         </head>
-        <body>${grid.innerHTML}</body>
+        <body>
+            <div id="yearly-calendar-print" style="background:white;border:2px solid #065f46;border-radius:8px;overflow:hidden;">
+                ${grid.innerHTML}
+            </div>
+        </body>
         </html>
     `);
     printWin.document.close();
-    setTimeout(() => { printWin.print(); }, 600);
+    setTimeout(() => { 
+        printWin.print(); 
+    }, 900);
 };
 
 // ═══════════════════════════════════════════════════════════════
-// ★★★ পুরো বছর PDF ═★★
+// ★★★ বাৎসরিক ক্যালেন্ডার — PDF (Print-to-PDF পদ্ধতি) ★★★
+// ★ এই পদ্ধতিতে browser-এর নিজস্ব print engine ব্যবহার হয়
+// ★ Font cross-origin ব্লক হবে না — কোনো 404 নেই
 // ═══════════════════════════════════════════════════════════════
 window.shareFullYearPDF = function() {
-    const grid = document.getElementById('cal-full-year-grid');
+    const grid = document.getElementById('yearly-calendar-print');
     if (!grid) {
-        showToast('⚠️ গ্রিড পাওয়া যায়নি', 'warn');
+        showToast('⚠️ গ্রিড পাওয়া যায়নি — আগে বাৎসরিক ভিউতে যান', 'warn');
         return;
     }
 
-    showToast('📄 PDF তৈরি হচ্ছে... (একটু সময় লাগবে)', 'info');
+    showToast('📄 PDF উইন্ডো খুলছে (১৮″ × ২৪″) — "Save as PDF" বেছে নিন', 'info');
 
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:fixed;left:-10000px;top:0;width:1120px;padding:15px;background:white;font-family:"Hind Siliguri",sans-serif;';
-    wrapper.innerHTML = grid.outerHTML;
-
-    // ★ প্রিন্ট-আইকন বাটনগুলো মুছি
-    wrapper.querySelectorAll('button').forEach(b => b.remove());
-
-    const inner = wrapper.querySelector('.year-grid-inner');
-    if (inner) {
-        inner.style.display = 'grid';
-        inner.style.gridTemplateColumns = 'repeat(3, 1fr)';
-        inner.style.gap = '10px';
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
+        return;
     }
 
-    document.body.appendChild(wrapper);
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const session = calState.session;
+    const deptName = calState.dept === 'shariah_noorani' ? 'আবাসিক' : 'অনাবাসিক';
 
-    setTimeout(() => {
-        html2pdf().set({
-            margin: [6, 5, 8, 5],
-            filename: `Academic_Calendar_${calState.session}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 1120 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true },
-            pagebreak: { mode: ['css', 'legacy'], avoid: ['.cal-grid-month'] }
-        }).from(wrapper).save().then(() => {
-            showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
-            if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
-        }).catch(err => {
-            showToast('❌ PDF সমস্যা: ' + err.message, 'error');
-            if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
-        });
-    }, 700);
+    // ★★★ ক্লোন করি ও button/no-print সরাই ★★★
+    const clonedGrid = grid.cloneNode(true);
+    clonedGrid.querySelectorAll('button, .no-print').forEach(el => el.remove());
+    clonedGrid.querySelectorAll('[onclick]').forEach(el => el.removeAttribute('onclick'));
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>Academic_Calendar_${session.replace(/\s+/g, '_')}</title>
+            
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+            
+            <style>
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    box-sizing: border-box;
+                }
+                
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+                    color: #1e293b;
+                }
+                
+                body {
+                    padding: 12mm 10mm;
+                }
+                
+                /* ★★★ গ্রিড — বড় কাগজে ৪ কলাম ★★★ */
+                .yearly-grid {
+                    display: grid !important;
+                    grid-template-columns: repeat(4, 1fr) !important;
+                    gap: 12px !important;
+                    width: 100% !important;
+                }
+                
+                .yearly-month-card {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                    background: white !important;
+                    border: 2.5px solid #065f46 !important;
+                    border-radius: 10px !important;
+                    overflow: hidden !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                }
+                
+                /* ★★★ মাসের হেডার — বড় ★★★ */
+                .yearly-month-card > div:first-child {
+                    padding: 10px 14px !important;
+                }
+                
+                .yearly-month-card > div:first-child div:first-child div:first-child {
+                    font-size: 17px !important;
+                    font-weight: 900 !important;
+                }
+                
+                /* ★★★ টেবিল — বড় ফন্ট ★★★ */
+                .yearly-month-card table {
+                    width: 100% !important;
+                    border-collapse: collapse !important;
+                    table-layout: fixed !important;
+                    font-size: 14px !important;
+                }
+                
+                .yearly-month-card td {
+                    height: 40px !important;
+                    padding: 3px !important;
+                    font-size: 15px !important;
+                    text-align: center !important;
+                    border: 1px solid #cbd5e1 !important;
+                }
+                
+                .yearly-month-card th {
+                    font-size: 12px !important;
+                    padding: 6px 3px !important;
+                    color: white !important;
+                    text-align: center !important;
+                    border: 1px solid !important;
+                }
+                
+                /* ★★★ নিচের নোট ★★★ */
+                .yearly-month-card > div:last-child {
+                    font-size: 12px !important;
+                    padding: 6px 8px !important;
+                }
+                
+                .yearly-month-card > div:last-child > div {
+                    font-size: 12px !important;
+                }
+                
+                /* ★★★ পেজ — ১৮″ × ২৪″ কাস্টম সাইজ ★★★ */
+                @page {
+                    size: 18in 24in;      /* ★★★ এখানে কাস্টম সাইজ ★★★ */
+                    margin: 12mm 10mm;
+                }
+                
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                    
+                    .yearly-grid {
+                        grid-template-columns: repeat(4, 1fr) !important;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${clonedGrid.outerHTML}
+            
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        window.print();
+                        setTimeout(function() {
+                            window.close();
+                        }, 3000);
+                    }, 900);
+                });
+            <\/script>
+        </body>
+        </html>
+    `);
+
+    printWin.document.close();
 };
 
 window.onCalGridMonthChange = function(monthKey) {
@@ -9134,17 +10719,199 @@ window.calGridNextMonth = function() {
     renderCalendarGrid();
 };
 
-// ★ বাৎসরিক ভিউ — ৪×৩ = ১২ মাসের কমপ্যাক্ট গ্রিড (এই ধাপে আপাতত প্লেসহোল্ডার)
-async function renderCalGridYearlyContent(container, subtoggleHTML) {
-    container.innerHTML = subtoggleHTML + `
-        <div class="bg-white rounded-lg shadow-md p-12 text-center text-slate-400">
-            <i class="fa-solid fa-calendar-days text-5xl mb-4 text-indigo-300"></i>
-            <h3 class="text-lg font-bold text-slate-700 mb-2">বাৎসরিক ক্যালেন্ডার গ্রিড</h3>
-            <p class="text-sm">এই ভিউ পরের ধাপে যোগ হবে।</p>
-            <p class="text-xs mt-3">এখন "মাসিক" মোডে গিয়ে <strong>${HIJRI_MONTHS.find(m=>m.key===calState.calgridMonth)?.name || 'শাওয়াল'}</strong> মাস দেখুন।</p>
-        </div>
-    `;
-}
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগরিয়ান মাসের প্রিন্ট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.printSingleGregMonthGrid = function(monthKey, monthName, year) {
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) {
+        showToast('❌ মাস পাওয়া যায়নি', 'error');
+        return;
+    }
+    
+    // ★ গ্রেগ মাসের দিন লোড
+    const monthDays = getGregorianMonthDaysForGrid(monthKey, year);
+    if (!monthDays || monthDays.length === 0) {
+        showToast('⚠️ এই মাসের ডেটা নেই', 'warn');
+        return;
+    }
+    
+    // ★ ইভেন্ট filter
+    const monthEvents = (calState.events || []).filter(e => {
+        if (e.dept && e.dept !== 'all' && e.dept !== 'non_res') return false;
+        if (e.gregorianMonth && e.gregorianMonth === monthKey) return true;
+        if (!e.gregorianMonth && e.gregorianDate) {
+            return e.gregorianDate.includes(monthInfo.name) ||
+                   e.gregorianDate.toLowerCase().includes(monthInfo.english.toLowerCase());
+        }
+        return false;
+    });
+    
+    // ★ গ্রিড HTML
+    const gridHTML = buildGregorianMonthGrid({
+        monthKey,
+        year,
+        dept: 'non_res',
+        events: monthEvents,
+        monthDays,
+        monthName: monthInfo.name,
+        monthNameAr: monthInfo.arabic,
+        compact: false,
+        showPrintIcons: false
+    });
+    
+    const printWin = window.open('', '_blank');
+    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে', 'warn'); return; }
+    
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || '';
+    
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>${monthInfo.name} ${year} — প্রিন্ট</title>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+            <style>
+                * { 
+                    -webkit-print-color-adjust: exact !important; 
+                    print-color-adjust: exact !important;
+                    box-sizing: border-box;
+                }
+                body { 
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif; 
+                    padding: 10mm 8mm; 
+                    background: white; 
+                    margin: 0;
+                }
+                table { font-size: 14px !important; width: 100% !important; }
+                td { min-height: 90px !important; padding: 6px 8px !important; }
+                th { padding: 10px 6px !important; font-size: 14px !important; }
+                
+                @page { size: A4 portrait; margin: 10mm 8mm; }
+                @media print { body { padding: 0; } }
+            </style>
+        </head>
+        <body>
+            <div style="text-align:center;margin-bottom:16px;padding-bottom:14px;border-bottom:4px solid #065f46;">
+                <h1 style="margin:0;font-size:32px;color:#064e3b;font-family:'Amiri',serif;" dir="rtl">${madrasaAr}</h1>
+                <h2 style="margin:8px 0 0;font-size:22px;color:#065f46;font-weight:bold;">${madrasaBn}</h2>
+                ${addr ? `<p style="margin:6px 0 0;font-size:13px;color:#64748b;">${addr}</p>` : ''}
+                <p style="margin:8px 0 0;font-size:14px;color:#1e293b;font-weight:bold;">
+                    <span style="background:#ecfdf5;padding:4px 14px;border-radius:999px;border:1px solid #a7f3d0;">
+                        📅 ${monthInfo.name} ${toBanglaNumber(year)} — অনাবাসিক একাডেমিক ক্যালেন্ডার
+                    </span>
+                </p>
+            </div>
+            
+            ${gridHTML}
+            
+            <div style="margin-top:20px;padding-top:10px;border-top:2px solid #065f46;text-align:center;font-size:11px;color:#065f46;">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')}
+            </div>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+    setTimeout(() => { printWin.print(); }, 800);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগরিয়ান মাসের PDF ★★★
+// ═══════════════════════════════════════════════════════════════
+window.shareSingleGregMonthPDF = function(monthKey, monthName, year) {
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) {
+        showToast('❌ মাস পাওয়া যায়নি', 'error');
+        return;
+    }
+    
+    const monthDays = getGregorianMonthDaysForGrid(monthKey, year);
+    if (!monthDays || monthDays.length === 0) {
+        showToast('⚠️ এই মাসের ডেটা নেই', 'warn');
+        return;
+    }
+    
+    const monthEvents = (calState.events || []).filter(e => {
+        if (e.dept && e.dept !== 'all' && e.dept !== 'non_res') return false;
+        if (e.gregorianMonth && e.gregorianMonth === monthKey) return true;
+        if (!e.gregorianMonth && e.gregorianDate) {
+            return e.gregorianDate.includes(monthInfo.name) ||
+                   e.gregorianDate.toLowerCase().includes(monthInfo.english.toLowerCase());
+        }
+        return false;
+    });
+    
+    const gridHTML = buildGregorianMonthGrid({
+        monthKey,
+        year,
+        dept: 'non_res',
+        events: monthEvents,
+        monthDays,
+        monthName: monthInfo.name,
+        monthNameAr: monthInfo.arabic,
+        compact: false,
+        showPrintIcons: false
+    });
+    
+    showToast('📄 PDF উইন্ডো খুলছে — "Save as PDF" বেছে নিন', 'info');
+    
+    const printWin = window.open('', '_blank');
+    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে', 'warn'); return; }
+    
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const addr = settings.address || '';
+    
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>${monthInfo.name}_${year}</title>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+            <style>
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+                body { font-family: 'Hind Siliguri', sans-serif; padding: 12mm 10mm; margin: 0; }
+                table { font-size: 14px !important; }
+                td { min-height: 80px !important; padding: 6px 8px !important; }
+                th { padding: 10px 6px !important; font-size: 14px !important; }
+                @page { size: A4 portrait; margin: 10mm 8mm; }
+                @media print { body { padding: 0; } }
+            </style>
+        </head>
+        <body>
+            <div style="text-align:center;margin-bottom:16px;padding-bottom:14px;border-bottom:4px solid #065f46;">
+                <h1 style="margin:0;font-size:30px;color:#064e3b;font-family:'Amiri',serif;" dir="rtl">${madrasaAr}</h1>
+                <h2 style="margin:8px 0 0;font-size:20px;color:#065f46;font-weight:bold;">${madrasaBn}</h2>
+                ${addr ? `<p style="margin:6px 0 0;font-size:12px;color:#64748b;">${addr}</p>` : ''}
+                <p style="margin:10px 0 0;font-size:13px;color:#1e293b;font-weight:bold;">
+                    <span style="background:#ecfdf5;padding:5px 16px;border-radius:999px;border:1px solid #a7f3d0;">
+                        📅 ${monthInfo.name} ${toBanglaNumber(year)} — অনাবাসিক ক্যালেন্ডার
+                    </span>
+                </p>
+            </div>
+            
+            ${gridHTML}
+            
+            <div style="margin-top:22px;padding-top:12px;border-top:2px solid #065f46;text-align:center;font-size:11px;color:#065f46;">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — প্রিন্ট: ${new Date().toLocaleDateString('bn-BD')}
+            </div>
+            
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() { window.print(); setTimeout(function() { window.close(); }, 3000); }, 800);
+                });
+            <\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+};
 
 // ═══════════════════════════════════════════════════════════════
 // ★★★ একটা মাসের প্রিন্ট / PDF ★★★
@@ -9299,110 +11066,214 @@ window.printSingleMonthGrid = async function(monthKey, monthName) {
     setTimeout(() => { printWin.print(); }, 800);
 };
 
+// ═══════════════════════════════════════════════════════════════
+// ★★★ মাসিক ক্যালেন্ডার — PDF (Print-to-PDF পদ্ধতি) ★★★
+// ★ Font cross-origin block হবে না — browser-এর নিজস্ব engine ব্যবহার
+// ═══════════════════════════════════════════════════════════════
 window.shareSingleMonthPDF = async function(monthKey, monthName) {
-    showToast(`📄 ${monthName} মাসের PDF তৈরি হচ্ছে...`, 'info');
-
+    // ★★★ মাসের ডেটা লোড ★★★
     const monthDays = await getHijriMonthDays(calState.session, monthKey);
     const monthEvents = (calState.events || []).filter(e => e.hijriMonth === monthKey);
     const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey) || { name: monthName, arabic: '' };
 
+    if (!monthDays || monthDays.length === 0) {
+        showToast('⚠️ এই মাসের ডেটা নেই', 'warn');
+        return;
+    }
+
+    showToast('📄 PDF উইন্ডো খুলছে — "Save as PDF" বেছে নিন', 'info');
+
+    // ★★★ Grid HTML তৈরি (buildHijriMonthGrid কল করে) ★★★
     const gridHTML = buildHijriMonthGrid({
-        monthKey, academicYear: calState.session,
-        events: monthEvents, monthDays,
-        monthName: monthInfo.name, monthNameAr: monthInfo.arabic,
-        compact: false, showPrintIcons: false
+        monthKey, 
+        academicYear: calState.session,
+        dept: calState.dept,
+        events: monthEvents, 
+        monthDays,
+        monthName: monthInfo.name, 
+        monthNameAr: monthInfo.arabic,
+        compact: false, 
+        showPrintIcons: false     // PDF-এ print বাটন দেখাবে না
     });
 
-    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    // ★★★ নতুন window খুলি ★★★
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
+        return;
+    }
+
     const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
     const addr = settings.address || '';
+    const session = calState.session;
 
-    const wrapper = document.createElement('div');
-    // ★★★ width বাড়ালাম — A4-এ বড় দেখাবে ★★★
-    wrapper.style.cssText = `
-        position:fixed;
-        left:-10000px;
-        top:0;
-        width:230mm;
-        padding:12mm 10mm;
-        background:white;
-        font-family:'Hind Siliguri',sans-serif;
-        font-size:14px;
-    `;
-    
-    wrapper.innerHTML = `
-        <!-- ★★★ বড় প্রিন্ট হেডার ★★★ -->
-        <div style="text-align:center;
-                    margin-bottom:18px;
-                    padding-bottom:14px;
-                    border-bottom:4px solid #065f46;">
-            <h1 style="margin:0;
-                       font-size:32px;
-                       color:#064e3b;
-                       font-family:'Amiri',serif;
-                       line-height:1.2;" dir="rtl">${madrasaAr}</h1>
-            <h2 style="margin:8px 0 0;
-                       font-size:22px;
-                       color:#065f46;
-                       font-weight:bold;">${madrasaBn}</h2>
-            ${addr ? `<p style="margin:6px 0 0;font-size:13px;color:#64748b;">${addr}</p>` : ''}
-            <p style="margin:10px 0 0;
-                      font-size:14px;
-                      color:#1e293b;
-                      font-weight:bold;">
-                <span style="background:#ecfdf5;padding:5px 16px;border-radius:999px;border:1px solid #a7f3d0;">
-                    📅 একাডেমিক ক্যালেন্ডার — ${calState.session}
-                </span>
-            </p>
-        </div>
-        
-        <!-- ★★★ ক্যালেন্ডার গ্রিড ★★★ -->
-        <div style="font-size:14px;">
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>${monthInfo.name}_${session.replace(/\s+/g, '_')}</title>
+            
+            <!-- ★★★ Google Fonts সরাসরি browser-এ ★★★ -->
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+            
+            <style>
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    box-sizing: border-box;
+                }
+                
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+                    color: #1e293b;
+                }
+                
+                body {
+                    padding: 12mm 10mm;
+                }
+                
+                /* ★★★ প্রিন্ট হেডার ★★★ */
+                .pdf-header {
+                    text-align: center;
+                    margin-bottom: 16px;
+                    padding-bottom: 14px;
+                    border-bottom: 4px solid #065f46;
+                }
+                
+                .pdf-header h1 {
+                    margin: 0;
+                    font-size: 30px;
+                    color: #064e3b;
+                    font-family: 'Amiri', serif;
+                    line-height: 1.2;
+                }
+                
+                .pdf-header h2 {
+                    margin: 8px 0 0;
+                    font-size: 20px;
+                    color: #065f46;
+                    font-weight: bold;
+                }
+                
+                .pdf-header .address {
+                    margin: 6px 0 0;
+                    font-size: 12px;
+                    color: #64748b;
+                }
+                
+                .pdf-header .session-badge {
+                    margin: 10px 0 0;
+                    font-size: 13px;
+                    color: #1e293b;
+                    font-weight: bold;
+                }
+                
+                .pdf-header .session-badge span {
+                    background: #ecfdf5;
+                    padding: 5px 16px;
+                    border-radius: 999px;
+                    border: 1px solid #a7f3d0;
+                    display: inline-block;
+                }
+                
+                /* ★★★ ক্যালেন্ডার গ্রিড ★★★ */
+                .cal-grid-month {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                }
+                
+                .cal-grid-month table {
+                    width: 100% !important;
+                    border-collapse: collapse !important;
+                    table-layout: fixed !important;
+                    font-size: 13px !important;
+                }
+                
+                .cal-grid-month td {
+                    height: 75px !important;
+                    padding: 5px 6px !important;
+                    vertical-align: top !important;
+                    border: 1px solid #cbd5e1 !important;
+                    position: relative !important;
+                }
+                
+                .cal-grid-month th {
+                    padding: 8px 4px !important;
+                    font-size: 13px !important;
+                    color: white !important;
+                    font-weight: bold !important;
+                    text-align: center !important;
+                    line-height: 1.3 !important;
+                }
+                
+                /* ★★★ প্রিন্ট পেজ ★★★ */
+                @page {
+                    size: A4 portrait;
+                    margin: 10mm 8mm;
+                }
+                
+                @media print {
+                    body {
+                        padding: 0;
+                    }
+                    
+                    .cal-grid-month {
+                        border: none !important;
+                        border-radius: 0 !important;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            
+            <!-- ★★★ প্রিন্ট হেডার ★★★ -->
+            <div class="pdf-header">
+                <h1 dir="rtl">${madrasaAr}</h1>
+                <h2>${madrasaBn}</h2>
+                ${addr ? `<p class="address">${addr}</p>` : ''}
+                <p class="session-badge">
+                    <span>📅 একাডেমিক ক্যালেন্ডার — ${session}</span>
+                </p>
+            </div>
+            
+            <!-- ★★★ ক্যালেন্ডার গ্রিড ★★★ -->
             ${gridHTML}
-        </div>
-        
-        <!-- ★★★ ফুটার ★★★ -->
-        <div style="margin-top:22px;
-                    padding-top:12px;
-                    border-top:2px solid #065f46;
-                    text-align:center;
-                    font-size:12px;
-                    color:#065f46;">
-            <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — শিক্ষাবর্ষ ${calState.session}
-            <br>
-            <span style="font-size:10px;">তৈরির তারিখ: ${new Date().toLocaleDateString('bn-BD')}</span>
-        </div>
-    `;
-    document.body.appendChild(wrapper);
+            
+            <!-- ★★★ ফুটার ★★★ -->
+            <div style="margin-top:22px;padding-top:12px;border-top:2px solid #065f46;text-align:center;font-size:11px;color:#065f46;">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — শিক্ষাবর্ষ ${session}
+                <br>
+                <span style="font-size:10px;">প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')}</span>
+            </div>
+            
+            <!-- ★★★ Auto-print trigger ★★★ -->
+            <script>
+                window.addEventListener('load', function() {
+                    // Font load নিশ্চিত করতে অপেক্ষা
+                    setTimeout(function() {
+                        window.print();
+                        
+                        // Print dialog বন্ধ হলে window auto-close
+                        setTimeout(function() {
+                            window.close();
+                        }, 3000);
+                    }, 800);
+                });
+            <\/script>
+        </body>
+        </html>
+    `);
 
-    // ★★★ delay বাড়ালাম — font load হওয়ার জন্য ★★★
-    setTimeout(() => {
-        html2pdf().set({
-            margin: [10, 8, 12, 8],
-            filename: `${monthInfo.name}_${calState.session}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 3,                      // ★★★ scale 2 → 3 (আরো স্পষ্ট)
-                useCORS: true, 
-                backgroundColor: '#ffffff',
-                letterRendering: true,
-                logging: false
-            },
-            jsPDF: { 
-                unit: 'mm', 
-                format: 'a4', 
-                orientation: 'portrait',
-                compress: true
-            }
-        }).from(wrapper).save().then(() => {
-            showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
-            document.body.removeChild(wrapper);
-        }).catch(err => {
-            console.error('PDF error:', err);
-            showToast('❌ PDF সমস্যা: ' + err.message, 'error');
-            if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
-        });
-    }, 1000);
+    printWin.document.close();
 };
 
 // ═══════════════════ এডমিন — একাডেমিক ক্যালেন্ডার এডিটর ═══════════════════
@@ -9908,8 +11779,10 @@ async function renderAdminCalendarViewContent() {
 }
 
 function renderAdminCalendarUIOnly(events, container) {
-    // ★ container parameter না দিলে adm-content fallback
-    const content = container || document.getElementById('adm-content');
+    // ★ container parameter না দিলে adm-cal-view-content fallback
+    const content = container 
+        || document.getElementById('adm-cal-view-content')
+        || document.getElementById('adm-content');
     if (!content) {
         console.error('❌ renderAdminCalendarUIOnly: কোনো container পাওয়া যায়নি');
         return;
@@ -9917,18 +11790,31 @@ function renderAdminCalendarUIOnly(events, container) {
 
     // ★ Filtered events (মাস + বিভাগ)
     let filtered = events;
-    if (adminCalSelectedMonth !== 'all') {
-        filtered = filtered.filter(e => e.hijriMonth === adminCalSelectedMonth);
-    }
     if (adminCalFilterDept !== 'all') {
         filtered = filtered.filter(e => !e.dept || e.dept === adminCalFilterDept);
     }
+    if (adminCalSelectedMonth !== 'all') {
+        // ★ dept অনুযায়ী মাস ফিল্ড (হিজরি বা গ্রেগ) ★
+        const isNonResFilter = adminCalFilterDept === 'non_res';
+        filtered = filtered.filter(e => {
+            const monthKey = isNonResFilter ? e.gregorianMonth : e.hijriMonth;
+            return monthKey === adminCalSelectedMonth;
+        });
+    }
 
-    // ★ মাস অনুযায়ী group
+    // ★ মাস অনুযায়ী group — dept অনুযায়ী হিজরি বা গ্রেগ ★
+    const isNonRes = adminCalFilterDept === 'non_res';
+    const monthList = isNonRes ? GREG_MONTHS : HIJRI_MONTHS;
+    
     const eventsByMonth = {};
-    HIJRI_MONTHS.forEach(m => eventsByMonth[m.key] = []);
+    monthList.forEach(m => eventsByMonth[m.key] = []);
+    
     filtered.forEach(e => {
-        if (eventsByMonth[e.hijriMonth]) eventsByMonth[e.hijriMonth].push(e);
+        // ★ dept অনুযায়ী মাস ফিল্ড ★
+        const monthKey = isNonRes ? e.gregorianMonth : e.hijriMonth;
+        if (monthKey && eventsByMonth[monthKey]) {
+            eventsByMonth[monthKey].push(e);
+        }
     });
 
     // ★ স্ট্যাটস
@@ -9940,19 +11826,18 @@ function renderAdminCalendarUIOnly(events, container) {
     events.forEach(e => {
         catCounts[e.category] = (catCounts[e.category] || 0) + 1;
     });
-
-    // ★ মাস-ফিল্টার ড্রপডাউন
-    const monthOptsHTML = HIJRI_MONTHS.map(m => 
+    
+    const monthOptsHTML = monthList.map(m => 
         `<option value="${m.key}" ${adminCalSelectedMonth === m.key ? 'selected' : ''}>
             ${m.name} (${eventsByMonth[m.key]?.length || 0})
         </option>`
     ).join('');
 
-    // ★ মাস অনুযায়ী সেকশন
+    // ★ মাস অনুযায়ী সেকশন — dept অনুযায়ী হিজরি বা গ্রেগ
     let monthsHTML = '';
     let renderedCount = 0;
     
-    HIJRI_MONTHS.forEach(month => {
+    monthList.forEach(month => {
         const monthEvents = eventsByMonth[month.key];
         if (monthEvents.length === 0 && adminCalSelectedMonth === 'all') return;
         if (monthEvents.length === 0 && adminCalSelectedMonth !== month.key) return;
@@ -10129,44 +12014,70 @@ function buildAdminCalEventRow(event) {
 window.onAdminCalMonthChange = async function() {
     adminCalSelectedMonth = document.getElementById('adm-cal-month-filter').value;
     const events = await loadAllCalendarEventsFromFS();
-    renderAdminCalendarUI(events);
+    // ✅ সঠিক ফাংশন — এডমিন ক্যালেন্ডার UI render করে
+    const viewContainer = document.getElementById('adm-cal-view-content');
+    renderAdminCalendarUIOnly(events, viewContainer);
 };
 
 // ★ বিভাগ ফিল্টার change
 window.onAdminCalDeptChange = async function() {
     adminCalFilterDept = document.getElementById('adm-cal-dept-filter').value;
+    
+    // ★ dept বদলালে মাস reset করি (হিজরি ↔ গ্রেগ)
+    adminCalSelectedMonth = 'all';
+    
     const events = await loadAllCalendarEventsFromFS();
-    renderAdminCalendarUI(events);
+    const viewContainer = document.getElementById('adm-cal-view-content');
+    renderAdminCalendarUIOnly(events, viewContainer);
 };
 
 // ═══════════════════ এডিট মডাল খোলা ═══════════════════
 window.openCalEventModal = async function(preselectMonth) {
     _editingCalEventId = null;
 
-    // ★ শিক্ষাবর্ষ ড্রপডাউন populate
-    const sessSel = document.getElementById('cem-session');
-    sessSel.innerHTML = '<option value="all">সব শিক্ষাবর্ষে দেখাবে (all)</option>';
-    academicYears.forEach(y => {
-        const o = document.createElement('option');
-        o.value = y.name;
-        o.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
-        sessSel.appendChild(o);
-    });
-    // ডিফল্ট: বর্তমান বছর
-    sessSel.value = 'all';
+    // ★ শিক্ষাবর্ষ ড্রপডাউন — dept অনুযায়ী populate হবে
+    //   (dept reset করার পর onCalEventDeptChange কল হবে, সেটাই populate করবে)
 
     // ★ হিজরি মাস ড্রপডাউন populate
+    populateHijriMonthDropdown();
     const monthSel = document.getElementById('cem-hijri-month');
-    monthSel.innerHTML = HIJRI_MONTHS.map(m => 
-        `<option value="${m.key}">${m.name} — ${m.arabic}</option>`
-    ).join('');
-    if (preselectMonth) monthSel.value = preselectMonth;
-    
-    // ★ মাস select change হলে তারিখ dropdown populate হবে
+    if (preselectMonth && HIJRI_MONTHS.some(m => m.key === preselectMonth)) {
+        monthSel.value = preselectMonth;
+    }
     monthSel.onchange = onCalEventHijriMonthChange;
     
-    // ★ প্রাথমিক তারিখ ড্রপডাউন populate
-    onCalEventHijriMonthChange();
+    // ★ গ্রেগরিয়ান মাসেও preselect চেক করি (অনাবাসিক হলে)
+    if (preselectMonth && GREG_MONTHS.some(m => m.key === preselectMonth)) {
+        const deptSel = document.getElementById('cem-dept');
+        if (deptSel) {
+            deptSel.value = 'non_res';
+            onCalEventDeptChange();  // UI swap করবে
+        }
+        const gMonthSel = document.getElementById('cem-greg-month');
+        if (gMonthSel) {
+            gMonthSel.value = preselectMonth;
+            onCalEventGregorianMonthChange();
+        }
+    }
+    
+    // ★ গ্রেগরিয়ান মাস ড্রপডাউন populate
+    populateGregorianMonthDropdown();
+    const gregMonthSel = document.getElementById('cem-greg-month');
+    if (gregMonthSel) {
+        gregMonthSel.onchange = onCalEventGregorianMonthChange;
+        // ডিফল্ট: বর্তমান মাস
+        const curMonthIdx = new Date().getMonth(); // 0-11
+        if (curMonthIdx >= 0 && curMonthIdx < 12) {
+            gregMonthSel.value = GREG_MONTHS[curMonthIdx].key;
+        }
+    }
+    
+    // ★ বিভাগ reset — ডিফল্ট আবাসিক
+    const deptSel = document.getElementById('cem-dept');
+    if (deptSel) deptSel.value = 'shariah_noorani';
+    
+    // ★ UI swap — আবাসিক → হিজরি সেকশন দেখাবে
+    onCalEventDeptChange();
 
     // ★ ক্যাটাগরি ড্রপডাউন populate
     const catSel = document.getElementById('cem-category');
@@ -10176,10 +12087,37 @@ window.openCalEventModal = async function(preselectMonth) {
     }).join('');
     catSel.value = 'admin';
 
-    // ★ বাকি ফিল্ড reset
-    document.getElementById('cem-hijri-date').value = '';
+    // ★ সব ফিল্ড reset — হিজরি
+    const hjStart = document.getElementById('cem-hijri-date-start');
+    const hjEnd = document.getElementById('cem-hijri-date-end');
+    if (hjStart) { hjStart.value = ''; delete hjStart.dataset.selectedDay; }
+    if (hjEnd) { hjEnd.value = ''; delete hjEnd.dataset.selectedDay; }
+    
+    // ★ সব ফিল্ড reset — গ্রেগ
+    const grStart = document.getElementById('cem-greg-date-start');
+    const grEnd = document.getElementById('cem-greg-date-end');
+    if (grStart) { grStart.value = ''; delete grStart.dataset.selectedDay; }
+    if (grEnd) { grEnd.value = ''; delete grEnd.dataset.selectedDay; }
+    
+    // ★ auto fields reset
     document.getElementById('cem-greg-date').value = '';
+    const hijriAutoEl = document.getElementById('cem-hijri-auto');
+    if (hijriAutoEl) hijriAutoEl.value = '';
+    
     document.getElementById('cem-title').value = '';
+    document.getElementById('cem-details').value = '';
+    document.getElementById('cem-time').value = '';
+    document.getElementById('cem-location').value = '';
+    
+    // ★ info বক্স লুকাই
+    const hInfo = document.getElementById('cem-hijri-range-info');
+    if (hInfo) hInfo.classList.add('hidden');
+    const gInfo = document.getElementById('cem-greg-range-info');
+    if (gInfo) gInfo.classList.add('hidden');
+
+    // ★ হিজরি মাস ও গ্রেগ মাস dropdown-এ date populate করি
+    onCalEventHijriMonthChange();
+    onCalEventGregorianMonthChange();
     document.getElementById('cem-details').value = '';
     document.getElementById('cem-time').value = '';
     document.getElementById('cem-location').value = '';
@@ -10221,17 +12159,102 @@ window.editCalEvent = async function(eventId) {
     // ★ Modal খুলি (populate হবে না)
     await openCalEventModal();
 
-    // ★ সব ফিল্ড populate করি
+    // ★ সাধারণ ফিল্ড populate
     document.getElementById('cem-session').value = event.session || 'all';
-    document.getElementById('cem-dept').value = event.dept || 'shariah_noorani';
-    document.getElementById('cem-hijri-month').value = event.hijriMonth || 'shawwal';
-    document.getElementById('cem-hijri-date').value = event.hijriDate || '';
-    document.getElementById('cem-greg-date').value = event.gregorianDate || '';
     document.getElementById('cem-title').value = event.title || '';
     document.getElementById('cem-details').value = event.details || '';
     document.getElementById('cem-time').value = event.time || '';
     document.getElementById('cem-location').value = event.location || '';
     document.getElementById('cem-category').value = event.category || 'admin';
+    
+    // ★★★ Branch: dept অনুযায়ী populate
+    const dept = event.dept || 'shariah_noorani';
+    document.getElementById('cem-dept').value = dept;
+    
+    // ★ UI swap (হিজরি ↔ গ্রেগ)
+    onCalEventDeptChange();
+    
+    const numMap = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
+    
+    if (dept === 'non_res') {
+        // ═══ অনাবাসিক → গ্রেগ সেকশন populate ═══
+        
+        // ★ গ্রেগ মাস
+        const gMonthKey = event.gregorianMonth || 'january';
+        const gMonthSel = document.getElementById('cem-greg-month');
+        if (gMonthSel) gMonthSel.value = gMonthKey;
+        
+        // ★ দিন populate করি
+        onCalEventGregorianMonthChange();
+        
+        // ★ গ্রেগ তারিখ parse (event.gregorianDate: "৫-১০ জানুয়ারি ২০২৭")
+        const gDateStr = String(event.gregorianDate || '');
+        
+        // ★ রেঞ্জ pattern: "৫-১০" বা "৫ - ১০"
+        const gRangeMatch = gDateStr.match(/(\d+)\s*[-–]\s*(\d+)/);
+        
+        const gStart = document.getElementById('cem-greg-date-start');
+        const gEnd = document.getElementById('cem-greg-date-end');
+        
+        if (gRangeMatch) {
+            const s = parseInt(String(gRangeMatch[1]).replace(/[০-৯]/g, d => numMap[d] || d));
+            const e = parseInt(String(gRangeMatch[2]).replace(/[০-৯]/g, d => numMap[d] || d));
+            if (gStart) { gStart.value = s; gStart.dataset.selectedDay = s; }
+            if (gEnd) { gEnd.value = e; gEnd.dataset.selectedDay = e; }
+        } else {
+            // একক
+            const gSingle = gDateStr.match(/(\d+)/);
+            if (gSingle && gStart) {
+                const s = parseInt(String(gSingle[1]).replace(/[০-৯]/g, d => numMap[d] || d));
+                gStart.value = s;
+                gStart.dataset.selectedDay = s;
+                if (gEnd) { gEnd.value = ''; delete gEnd.dataset.selectedDay; }
+            }
+        }
+        
+        // ★ হিজরি auto আপডেট
+        onCalEventGregorianDateChange();
+        
+    } else {
+        // ═══ আবাসিক → হিজরি সেকশন populate ═══
+        
+        // ★ হিজরি মাস
+        const hjMonthKey = event.hijriMonth || 'shawwal';
+        const hjMonthSel = document.getElementById('cem-hijri-month');
+        if (hjMonthSel) hjMonthSel.value = hjMonthKey;
+        
+        // ★ দিন populate
+        onCalEventHijriMonthChange();
+        
+        // ★ হিজরি তারিখ parse
+        const hDateStr = String(event.hijriDate || '');
+        const hRangeMatch = hDateStr.match(/(\d+)\s*[-–]\s*(\d+)/);
+        
+        const hStart = document.getElementById('cem-hijri-date-start');
+        const hEnd = document.getElementById('cem-hijri-date-end');
+        
+        if (hRangeMatch) {
+            const s = parseInt(String(hRangeMatch[1]).replace(/[০-৯]/g, d => numMap[d] || d));
+            const e = parseInt(String(hRangeMatch[2]).replace(/[০-৯]/g, d => numMap[d] || d));
+            if (hStart) { hStart.value = s; hStart.dataset.selectedDay = s; }
+            if (hEnd) { hEnd.value = e; hEnd.dataset.selectedDay = e; }
+        } else {
+            const hSingle = hDateStr.match(/(\d+)/);
+            if (hSingle && hStart) {
+                const s = parseInt(String(hSingle[1]).replace(/[০-৯]/g, d => numMap[d] || d));
+                hStart.value = s;
+                hStart.dataset.selectedDay = s;
+                if (hEnd) { hEnd.value = ''; delete hEnd.dataset.selectedDay; }
+            }
+        }
+        
+        // ★ গ্রেগ auto ফিল্ডে আগের গ্রেগ তারিখ দেখাই
+        const gregDateInput = document.getElementById('cem-greg-date');
+        if (gregDateInput) gregDateInput.value = event.gregorianDate || '';
+        
+        // ★ ইনফো আপডেট
+        onCalEventHijriDateChange();
+    }
 
     // ★ মোড আপডেট
     document.getElementById('cal-event-modal-title').textContent = '✏️ ইভেন্ট এডিট করুন';
@@ -10240,18 +12263,261 @@ window.editCalEvent = async function(eventId) {
     updateCalEventPreview();
 };
 
-// ★★ হিজরি মাস change হলে দিন dropdown populate
-window.onCalEventHijriMonthChange = function() {
-    const monthKey = document.getElementById('cem-hijri-month').value;
-    const dateSel = document.getElementById('cem-hijri-date');
+// ═══════════════════════════════════════════════════════════════
+// ★★★ onCalEventDeptChange — বিভাগ বদলালে UI swap ★★★
+// ═══════════════════════════════════════════════════════════════
+window.onCalEventDeptChange = function() {
+    const dept = document.getElementById('cem-dept')?.value;
+    const hijriSection = document.getElementById('cem-hijri-primary-section');
+    const gregSection = document.getElementById('cem-greg-primary-section');
     
-    if (!dateSel) return;
+    if (!hijriSection || !gregSection) return;
     
-    dateSel.innerHTML = '<option value="">-- তারিখ --</option>';
+    // ★ Session dropdown re-populate — dept অনুযায়ী
+    populateCemSessionDropdown(dept);
+    
+    // ★ বিভাগ অনুযায়ী সেকশন show/hide
+    if (dept === 'non_res') {
+        // অনাবাসিক → গ্রেগ-প্রধান
+        hijriSection.classList.add('hidden');
+        gregSection.classList.remove('hidden');
+        
+        // গ্রেগ মাস dropdown populate (যদি আগে না হয়ে থাকে)
+        populateGregorianMonthDropdown();
+        
+        // গ্রেগ মাস select আছে কিনা চেক করে দিন populate করি
+        onCalEventGregorianMonthChange();
+    } else {
+        // আবাসিক → হিজরি-প্রধান
+        gregSection.classList.add('hidden');
+        hijriSection.classList.remove('hidden');
+        
+        // হিজরি মাস dropdown populate
+        if (typeof onCalEventHijriMonthChange === 'function') {
+            // dropdown already populated — নতুন করে populate হবে না
+            if (document.getElementById('cem-hijri-month')?.options.length <= 1) {
+                populateHijriMonthDropdown();
+            }
+            onCalEventHijriMonthChange();
+        }
+    }
+    
+    // ★ প্রিভিউ আপডেট
+    if (typeof updateCalEventPreview === 'function') updateCalEventPreview();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ হিজরি মাস dropdown populate helper ★★★
+// ═══════════════════════════════════════════════════════════════
+function populateHijriMonthDropdown() {
+    const sel = document.getElementById('cem-hijri-month');
+    if (!sel) return;
+    
+    sel.innerHTML = HIJRI_MONTHS.map(m => 
+        `<option value="${m.key}">${m.name} — ${m.arabic}</option>`
+    ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ গ্রেগরিয়ান মাস dropdown populate helper ★★★
+// ═══════════════════════════════════════════════════════════════
+function populateGregorianMonthDropdown() {
+    const sel = document.getElementById('cem-greg-month');
+    if (!sel) return;
+    
+    sel.innerHTML = GREG_MONTHS.map(m => 
+        `<option value="${m.key}">${m.name} — ${m.arabic}</option>`
+    ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ onCalEventGregorianMonthChange — গ্রেগ মাস change ★★★
+//    মাস বদলালে তারিখ অটুট থাকবে (আবাসিকের মতোই)
+// ═══════════════════════════════════════════════════════════════
+window.onCalEventGregorianMonthChange = function() {
+    const monthKey = document.getElementById('cem-greg-month')?.value;
+    const startSel = document.getElementById('cem-greg-date-start');
+    const endSel = document.getElementById('cem-greg-date-end');
+    const infoBox = document.getElementById('cem-greg-range-info');
+    
+    if (!startSel || !endSel) return;
+    
+    // ★ আগের selected দিন সংরক্ষণ করি (মাস বদলালেও থাকবে)
+    const prevStartDay = startSel.dataset.selectedDay || '';
+    const prevEndDay = endSel.dataset.selectedDay || '';
+    
+    startSel.innerHTML = '<option value="">-- শুরু --</option>';
+    endSel.innerHTML = '<option value="">-- শেষ --</option>';
     
     if (!monthKey) return;
     
-    // ★ মাস ২৯ বা ৩০ দিনের — এই মাসের জন্য হিসাব করি
+    // ★ বছর নির্ধারণ (সেশন থেকে)
+    const sessionVal = document.getElementById('cem-session')?.value;
+    let year = new Date().getFullYear();
+    if (sessionVal && sessionVal !== 'all') {
+        const cleanYear = String(sessionVal).replace(/\s*\(.*?\)\s*/g, '').trim();
+        const yearMatch = cleanYear.match(/\d{4}/);
+        if (yearMatch) year = parseInt(yearMatch[0]);
+    }
+    
+    // ★ মাসের দিনসংখ্যা (leap year অটো)
+    const totalDays = getGregorianMonthDays(monthKey, year);
+    
+    // ★ বাংলা সংখ্যা ১-৩১
+    const bnNums = BN_NUMS_1_31;
+    
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    const monthName = monthInfo ? monthInfo.name : '';
+    
+    for (let i = 1; i <= totalDays; i++) {
+        // শুরু dropdown
+        const optStart = document.createElement('option');
+        optStart.value = i;
+        optStart.textContent = `${bnNums[i-1]} ${monthName}`;
+        startSel.appendChild(optStart);
+        
+        // শেষ dropdown
+        const optEnd = document.createElement('option');
+        optEnd.value = i;
+        optEnd.textContent = `${bnNums[i-1]} ${monthName}`;
+        endSel.appendChild(optEnd);
+    }
+    
+    // ★ পুরনো দিন ফিরিয়ে আনি (বৈধ হলে)
+    if (prevStartDay && parseInt(prevStartDay) <= totalDays) {
+        startSel.value = prevStartDay;
+        startSel.dataset.selectedDay = prevStartDay;
+    }
+    if (prevEndDay && parseInt(prevEndDay) <= totalDays) {
+        endSel.value = prevEndDay;
+        endSel.dataset.selectedDay = prevEndDay;
+    }
+    
+    // ★ হিজরি auto আপডেট
+    onCalEventGregorianDateChange();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ onCalEventGregorianDateChange — গ্রেগ → হিজরি auto ★★★
+// ═══════════════════════════════════════════════════════════════
+window.onCalEventGregorianDateChange = function() {
+    const sessionVal = document.getElementById('cem-session')?.value;
+    const monthKey = document.getElementById('cem-greg-month')?.value;
+    const startSel = document.getElementById('cem-greg-date-start');
+    const endSel = document.getElementById('cem-greg-date-end');
+    const hijriAutoInput = document.getElementById('cem-hijri-auto');
+    const infoBox = document.getElementById('cem-greg-range-info');
+    const infoText = document.getElementById('cem-greg-range-info-text');
+    
+    if (!monthKey || !hijriAutoInput) return;
+    
+    // ★ selected day dataset-এ রাখি (মাস বদলালে ফিরিয়ে আনার জন্য)
+    if (startSel?.value) startSel.dataset.selectedDay = startSel.value;
+    if (endSel?.value) endSel.dataset.selectedDay = endSel.value;
+    
+    const startDay = parseInt(startSel?.value) || 0;
+    const endDay = parseInt(endSel?.value) || 0;
+    
+    // ★ বছর নির্ধারণ
+    let year = new Date().getFullYear();
+    if (sessionVal && sessionVal !== 'all') {
+        const cleanYear = String(sessionVal).replace(/\s*\(.*?\)\s*/g, '').trim();
+        const yearMatch = cleanYear.match(/\d{4}/);
+        if (yearMatch) year = parseInt(yearMatch[0]);
+    }
+    
+    // ★ মাসের index (1-12)
+    const monthInfo = GREG_MONTHS.find(m => m.key === monthKey);
+    const monthNum = monthInfo ? monthInfo.order : 1;
+    const monthName = monthInfo ? monthInfo.name : '';
+    
+    // ★ কোন ডেটা নেই → reset
+    if (startDay <= 0) {
+        hijriAutoInput.value = '';
+        if (infoBox) infoBox.classList.add('hidden');
+        return;
+    }
+    
+    // ★ Validation
+    if (endDay > 0 && endDay < startDay) {
+        hijriAutoInput.value = '';
+        if (infoBox) {
+            infoBox.classList.remove('hidden');
+            infoBox.classList.remove('text-emerald-700');
+            infoBox.classList.add('text-red-600');
+            infoText.textContent = 'শেষ তারিখ শুরুর চেয়ে ছোট হতে পারে না';
+        }
+        return;
+    }
+    
+    // ★ হিজরি conversion
+    const startHijri = gregorianToHijri(year, monthNum, startDay);
+    if (!startHijri) {
+        hijriAutoInput.value = '';
+        if (infoBox) infoBox.classList.add('hidden');
+        return;
+    }
+    
+    const bnNums = BN_NUMS_1_31;
+    const startHijriMonthName = getHijriMonthBanglaName(startHijri.monthKey);
+    
+    // ★ একক নাকি রেঞ্জ?
+    if (endDay <= 0 || endDay === startDay) {
+        // একক
+        hijriAutoInput.value = `${bnNums[startHijri.day - 1]} ${startHijriMonthName}`;
+        if (infoBox) infoBox.classList.add('hidden');
+    } else {
+        // রেঞ্জ
+        const endHijri = gregorianToHijri(year, monthNum, endDay);
+        
+        if (endHijri) {
+            const endHijriMonthName = getHijriMonthBanglaName(endHijri.monthKey);
+            
+            // ★ দুই হিজরি তারিখ ফরম্যাট
+            if (startHijri.monthKey === endHijri.monthKey) {
+                // একই হিজরি মাসে
+                hijriAutoInput.value = `${bnNums[startHijri.day - 1]}-${bnNums[endHijri.day - 1]} ${startHijriMonthName}`;
+            } else {
+                // হিজরি মাস বদলে গেছে
+                hijriAutoInput.value = `${bnNums[startHijri.day - 1]} ${startHijriMonthName} → ${bnNums[endHijri.day - 1]} ${endHijriMonthName}`;
+            }
+        } else {
+            hijriAutoInput.value = `${bnNums[startHijri.day - 1]} ${startHijriMonthName}`;
+        }
+        
+        // ★ মোট দিনের info
+        const totalDays = endDay - startDay + 1;
+        if (infoBox) {
+            infoBox.classList.remove('hidden');
+            infoBox.classList.remove('text-red-600');
+            infoBox.classList.add('text-emerald-700');
+            infoText.textContent = `${bnNums[startDay-1]} থেকে ${bnNums[endDay-1]} ${monthName} — মোট ${toBanglaNumber(totalDays)} দিন`;
+        }
+    }
+    
+    // ★ প্রিভিউ আপডেট
+    if (typeof updateCalEventPreview === 'function') updateCalEventPreview();
+};
+
+// ★★ হিজরি মাস change হলে দুই dropdown-এ দিন populate
+//    মাস বদলালে তারিখ অটুট থাকবে (আপনার পছন্দ)
+window.onCalEventHijriMonthChange = function() {
+    const monthKey = document.getElementById('cem-hijri-month').value;
+    const startSel = document.getElementById('cem-hijri-date-start');
+    const endSel = document.getElementById('cem-hijri-date-end');
+    
+    if (!startSel || !endSel) return;
+    
+    // ★ পুরনো সিলেক্টেড দিনগুলো সংরক্ষণ করি (মাস বদলালেও থাকবে)
+    const prevStartDay = startSel.dataset.selectedDay || '';
+    const prevEndDay = endSel.dataset.selectedDay || '';
+    
+    startSel.innerHTML = '<option value="">-- শুরু --</option>';
+    endSel.innerHTML = '<option value="">-- শেষ --</option>';
+    
+    if (!monthKey) return;
+    
+    // ★ মাস ২৯ বা ৩০ দিনের
     const days = getMonthDaysForPicker(monthKey);
     
     // ★ বাংলা সংখ্যা ১-৩০
@@ -10262,14 +12528,31 @@ window.onCalEventHijriMonthChange = function() {
     const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey);
     
     for (let i = 1; i <= days; i++) {
-        const opt = document.createElement('option');
-        opt.value = `${bnNums[i-1]} ${monthInfo.name}`;
-        opt.textContent = `${bnNums[i-1]} ${monthInfo.name} — ${monthInfo.arabic}`;
-        dateSel.appendChild(opt);
+        // শুরু dropdown
+        const optStart = document.createElement('option');
+        optStart.value = i;
+        optStart.textContent = `${bnNums[i-1]} ${monthInfo.name} — ${monthInfo.arabic}`;
+        startSel.appendChild(optStart);
+        
+        // শেষ dropdown
+        const optEnd = document.createElement('option');
+        optEnd.value = i;
+        optEnd.textContent = `${bnNums[i-1]} ${monthInfo.name} — ${monthInfo.arabic}`;
+        endSel.appendChild(optEnd);
     }
     
-    // ★ তারিখ change হলে গ্রেগরিয়ান অটো আপডেট হবে
-    dateSel.onchange = onCalEventHijriDateChange;
+    // ★ মাস বদলালেও পুরনো দিন সংখ্যা বৈধ হলে ফিরিয়ে আনি
+    if (prevStartDay && parseInt(prevStartDay) <= days) {
+        startSel.value = prevStartDay;
+        startSel.dataset.selectedDay = prevStartDay;
+    }
+    if (prevEndDay && parseInt(prevEndDay) <= days) {
+        endSel.value = prevEndDay;
+        endSel.dataset.selectedDay = prevEndDay;
+    }
+    
+    // ★ গ্রেগরিয়ান আপডেট
+    onCalEventHijriDateChange();
 };
 
 // ★★ এই মাসে কত দিন (২৯/৩০)
@@ -10300,44 +12583,97 @@ function getMonthDaysForPicker(monthKey) {
     return 30;
 }
 
-// ★★ হিজরি তারিখ change → গ্রেগরিয়ান অটো-আপডেট
+// ★★ হিজরি তারিখ change → গ্রেগরিয়ান অটো-আপডেট (একক + রেঞ্জ)
 window.onCalEventHijriDateChange = function() {
     const session = document.getElementById('cem-session').value;
     const monthKey = document.getElementById('cem-hijri-month').value;
-    const dateStr = document.getElementById('cem-hijri-date').value;
+    const startSel = document.getElementById('cem-hijri-date-start');
+    const endSel = document.getElementById('cem-hijri-date-end');
     const gregInput = document.getElementById('cem-greg-date');
+    const infoBox = document.getElementById('cem-hijri-range-info');
+    const infoText = document.getElementById('cem-hijri-range-info-text');
     
-    if (!session || !monthKey || !dateStr || !gregInput) return;
+    if (!session || !monthKey || !gregInput) return;
     
-    // ★ বাংলা সংখ্যা → ইংরেজি
-    const map = {'০':'0','১':'1','২':'2','৩':'3','৪':'4','৫':'5','৬':'6','৭':'7','৮':'8','৯':'9'};
-    const cleanDate = String(dateStr).replace(/[০-৯]/g, d => map[d] || d);
-    const dayNum = parseInt(cleanDate.match(/\d+/)?.[0] || 0);
+    // ★ selected day গুলো dataset-এ রাখি (মাস বদলালে ফিরিয়ে আনার জন্য)
+    if (startSel?.value) startSel.dataset.selectedDay = startSel.value;
+    if (endSel?.value) endSel.dataset.selectedDay = endSel.value;
     
-    if (dayNum <= 0) return;
+    const startDay = parseInt(startSel?.value) || 0;
+    const endDay = parseInt(endSel?.value) || 0;
     
-    // ★ গ্রেগরিয়ান তারিখ হিসাব
+    // ★ মাসের মোট দিন
+    const monthDays = getMonthDaysForPicker(monthKey);
+    const bnNums = ['১','২','৩','৪','৫','৬','৭','৮','৯','১০',
+                    '১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০',
+                    '২১','২২','২৩','২৪','২৫','২৬','২৭','২৮','২৯','৩০'];
+    
+    // ★ কোন ডেটা নেই → সব reset
+    if (startDay <= 0) {
+        gregInput.value = '';
+        if (infoBox) infoBox.classList.add('hidden');
+        return;
+    }
+    
+    // ★ Validation: শেষ < শুরু হলে error
+    if (endDay > 0 && endDay < startDay) {
+        gregInput.value = '';
+        if (infoBox) {
+            infoBox.classList.remove('hidden');
+            infoBox.classList.remove('text-emerald-700');
+            infoBox.classList.add('text-red-600');
+            infoText.textContent = 'শেষ তারিখ শুরুর চেয়ে ছোট হতে পারে না';
+        }
+        return;
+    }
+    
+    // ★ গ্রেগরিয়ান হিসাব
     const academicYear = session === 'all' ? getCurrentYear() : session;
     const cleanYear = String(academicYear).replace(/\s*\(.*?\)\s*/g, '').trim();
     const defaults = HIJRI_REFERENCE_DEFAULTS[cleanYear];
     
     if (!defaults || !defaults[monthKey]) {
         gregInput.value = '';
+        if (infoBox) infoBox.classList.add('hidden');
         return;
     }
     
-    // ★ সেই মাসের ১ তারিখ + dayNum-১ দিন
     const monthStart = new Date(defaults[monthKey] + 'T00:00:00Z');
-    const targetDate = new Date(monthStart);
-    targetDate.setUTCDate(monthStart.getUTCDate() + (dayNum - 1));
     
-    // ★ ফরম্যাট: DD-MM-YYYY বা YYYY-MM-DD
-    const yyyy = targetDate.getUTCFullYear();
-    const mm = String(targetDate.getUTCMonth() + 1).padStart(2, '0');
-    const dd = String(targetDate.getUTCDate()).padStart(2, '0');
+    const fmt = (d) => {
+        const yyyy = d.getUTCFullYear();
+        const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(d.getUTCDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    };
     
-    gregInput.value = `${yyyy}-${mm}-${dd}`;
-    console.log(`📅 Hijri "${dateStr}" → Gregorian "${yyyy}-${mm}-${dd}"`);
+    const startDate = new Date(monthStart);
+    startDate.setUTCDate(monthStart.getUTCDate() + (startDay - 1));
+    
+    // ★ একক নাকি রেঞ্জ?
+    if (endDay <= 0 || endDay === startDay) {
+        // একক দিন
+        gregInput.value = fmt(startDate);
+        if (infoBox) infoBox.classList.add('hidden');
+    } else {
+        // রেঞ্জ
+        const endDate = new Date(monthStart);
+        endDate.setUTCDate(monthStart.getUTCDate() + (endDay - 1));
+        
+        gregInput.value = `${fmt(startDate)} → ${fmt(endDate)}`;
+        
+        // মোট দিনের info
+        const totalDays = endDay - startDay + 1;
+        if (infoBox) {
+            infoBox.classList.remove('hidden');
+            infoBox.classList.remove('text-red-600');
+            infoBox.classList.add('text-emerald-700');
+            infoText.textContent = `${bnNums[startDay-1]} থেকে ${bnNums[endDay-1]} — মোট ${totalDays} দিন`;
+        }
+    }
+    
+    // ★ লাইভ প্রিভিউ আপডেট
+    if (typeof updateCalEventPreview === 'function') updateCalEventPreview();
 };
 
 // ★★ সময় picker → text field auto-fill
@@ -10390,20 +12726,107 @@ window.toggleCalEventTimeManual = function() {
 window.saveCalEvent = async function() {
     // ★ Validation
     const title = document.getElementById('cem-title').value.trim();
-    const hijriDate = document.getElementById('cem-hijri-date').value;
-    const hijriMonth = document.getElementById('cem-hijri-month').value;
+    const dept = document.getElementById('cem-dept')?.value || 'shariah_noorani';
 
     if (!title) {
         showToast('⚠️ ইভেন্টের নাম / টাইটেল দিন', 'warn');
         return;
     }
-    if (!hijriDate) {
-        showToast('⚠️ হিজরি তারিখ দিন', 'warn');
-        return;
-    }
-    if (!hijriMonth) {
-        showToast('⚠️ হিজরি মাস সিলেক্ট করুন', 'warn');
-        return;
+    
+    const bnNums = ['১','২','৩','৪','৫','৬','৭','৮','৯','১০',
+                    '১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০',
+                    '২১','২২','২৩','২৪','২৫','২৬','২৭','২৮','২৯','৩০','৩১'];
+    
+    // ★★ Branch: dept অনুযায়ী data collect
+    let hijriDate = '';
+    let gregorianDate = '';
+    let hijriMonth = '';
+    let gregorianMonth = '';
+    let gregorianYear = '';
+    
+    if (dept === 'non_res') {
+        // ═══ গ্রেগ-প্রধান (অনাবাসিক) ═══
+        const gregMonthKey = document.getElementById('cem-greg-month')?.value;
+        const gregStart = parseInt(document.getElementById('cem-greg-date-start')?.value) || 0;
+        const gregEnd = parseInt(document.getElementById('cem-greg-date-end')?.value) || 0;
+        const hijriAutoEl = document.getElementById('cem-hijri-auto');
+        
+        if (!gregMonthKey) {
+            showToast('⚠️ গ্রেগরিয়ান মাস সিলেক্ট করুন', 'warn');
+            return;
+        }
+        if (gregStart <= 0) {
+            showToast('⚠️ শুরুর তারিখ দিন', 'warn');
+            return;
+        }
+        if (gregEnd > 0 && gregEnd < gregStart) {
+            showToast('⚠️ শেষ তারিখ শুরুর চেয়ে ছোট হতে পারে না', 'error');
+            return;
+        }
+        
+        // ★ গ্রেগ মাসের নাম + বছর
+        const gMonthInfo = GREG_MONTHS.find(m => m.key === gregMonthKey);
+        const gMonthName = gMonthInfo ? gMonthInfo.name : '';
+        gregorianMonth = gregMonthKey;
+        
+        // ★ বছর নির্ধারণ
+        const sessVal = document.getElementById('cem-session')?.value;
+        let gregYear = new Date().getFullYear();
+        if (sessVal && sessVal !== 'all') {
+            const cleanYear = String(sessVal).replace(/\s*\(.*?\)\s*/g, '').trim();
+            const ym = cleanYear.match(/\d{4}/);
+            if (ym) gregYear = parseInt(ym[0]);
+        }
+        gregorianYear = gregYear;
+        
+        // ★ গ্রেগ তারিখ string
+        if (gregEnd > gregStart) {
+            gregorianDate = `${bnNums[gregStart-1]}-${bnNums[gregEnd-1]} ${gMonthName} ${toBanglaNumber(gregYear)}`;
+        } else {
+            gregorianDate = `${bnNums[gregStart-1]} ${gMonthName} ${toBanglaNumber(gregYear)}`;
+        }
+        
+        // ★ হিজরি auto থেকে নিই (আগেই compute করা আছে input-এ)
+        hijriDate = hijriAutoEl?.value || '';
+        
+        // ★ হিজরি মাস আলাদা করে বের করি (start day থেকে)
+        const startHijri = gregorianToHijri(gregYear, gMonthInfo.order, gregStart);
+        if (startHijri) {
+            hijriMonth = startHijri.monthKey;
+        }
+        
+    } else {
+        // ═══ হিজরি-প্রধান (আবাসিক) ═══
+        const startDay = parseInt(document.getElementById('cem-hijri-date-start')?.value) || 0;
+        const endDay = parseInt(document.getElementById('cem-hijri-date-end')?.value) || 0;
+        const hjMonthKey = document.getElementById('cem-hijri-month')?.value;
+        
+        if (!hjMonthKey) {
+            showToast('⚠️ হিজরি মাস সিলেক্ট করুন', 'warn');
+            return;
+        }
+        if (startDay <= 0) {
+            showToast('⚠️ হিজরি শুরুর তারিখ দিন', 'warn');
+            return;
+        }
+        if (endDay > 0 && endDay < startDay) {
+            showToast('⚠️ শেষ তারিখ শুরুর চেয়ে ছোট হতে পারে না', 'error');
+            return;
+        }
+        
+        const monthInfo = HIJRI_MONTHS.find(m => m.key === hjMonthKey);
+        const monthName = monthInfo ? monthInfo.name : '';
+        hijriMonth = hjMonthKey;
+        
+        // ★ হিজরি তারিখ string
+        if (endDay > startDay) {
+            hijriDate = `${bnNums[startDay-1]}-${bnNums[endDay-1]} ${monthName}`;
+        } else {
+            hijriDate = `${bnNums[startDay-1]} ${monthName}`;
+        }
+        
+        // ★ গ্রেগ auto ফিল্ড থেকে নিই
+        gregorianDate = document.getElementById('cem-greg-date')?.value || '';
     }
 
     // ★★★ BUG FIX: btn নাল হলে crash হবে না ★★★
@@ -10428,13 +12851,18 @@ window.saveCalEvent = async function() {
         let events = await loadAllCalendarEventsFromFS();
         console.log('📦 Current events before save:', events.length);
 
-        // ★ নতুন event ডাটা
+        // ★ নতুন event ডাটা (আগের সব ফিল্ড + নতুন গ্রেগ ফিল্ড)
         const eventData = {
             session: document.getElementById('cem-session').value || 'all',
-            dept: document.getElementById('cem-dept').value || 'shariah_noorani',
+            dept: dept,
+            // ★ হিজরি ফিল্ড (আবাসিক হলে প্রধান, অনাবাসিকে auto)
             hijriMonth: hijriMonth,
             hijriDate: hijriDate,
-            gregorianDate: document.getElementById('cem-greg-date').value.trim(),
+            // ★ গ্রেগ ফিল্ড (অনাবাসিকে প্রধান, আবাসিকে auto)
+            gregorianMonth: gregorianMonth,        // ★ নতুন
+            gregorianYear: gregorianYear,          // ★ নতুন
+            gregorianDate: gregorianDate,
+            // ★ বাকি সব
             title: title,
             details: document.getElementById('cem-details').value.trim(),
             time: document.getElementById('cem-time').value.trim(),
@@ -10553,27 +12981,75 @@ function updateCalEventPreview() {
     const previewEl = document.getElementById('cem-preview');
     if (!previewEl) return;
 
-    const title = document.getElementById('cem-title').value.trim();
-    const hijriDate = document.getElementById('cem-hijri-date').value.trim();
-    const gregDate = document.getElementById('cem-greg-date').value.trim();
-    const details = document.getElementById('cem-details').value.trim();
-    const time = document.getElementById('cem-time').value.trim();
-    const location = document.getElementById('cem-location').value.trim();
-    const category = document.getElementById('cem-category').value;
+    const title = document.getElementById('cem-title')?.value.trim() || '';
+    const details = document.getElementById('cem-details')?.value.trim() || '';
+    const time = document.getElementById('cem-time')?.value.trim() || '';
+    const location = document.getElementById('cem-location')?.value.trim() || '';
+    const category = document.getElementById('cem-category')?.value || 'admin';
+    const dept = document.getElementById('cem-dept')?.value || 'shariah_noorani';
 
-    if (!title && !hijriDate) {
+    const bnNums = ['১','২','৩','৪','৫','৬','৭','৮','৯','১০',
+                    '১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০',
+                    '২১','২২','২৩','২৪','২৫','২৬','২৭','২৮','২৯','৩০','৩১'];
+
+    let primaryDate = '';    // বড় ফন্টে
+    let secondaryDate = '';  // ছোট ফন্টে
+
+    if (dept === 'non_res') {
+        // ═══ অনাবাসিক → গ্রেগ প্রধান ═══
+        const gMonthKey = document.getElementById('cem-greg-month')?.value || '';
+        const gStart = parseInt(document.getElementById('cem-greg-date-start')?.value) || 0;
+        const gEnd = parseInt(document.getElementById('cem-greg-date-end')?.value) || 0;
+        
+        const gMonthInfo = GREG_MONTHS.find(m => m.key === gMonthKey);
+        const gMonthName = gMonthInfo?.name || '';
+        
+        if (gStart > 0) {
+            if (gEnd > gStart) {
+                primaryDate = `${bnNums[gStart-1]}-${bnNums[gEnd-1]} ${gMonthName}`;
+            } else {
+                primaryDate = `${bnNums[gStart-1]} ${gMonthName}`;
+            }
+        }
+        
+        // হিজরি auto
+        secondaryDate = document.getElementById('cem-hijri-auto')?.value.trim() || '';
+        
+    } else {
+        // ═══ আবাসিক → হিজরি প্রধান ═══
+        const hMonthKey = document.getElementById('cem-hijri-month')?.value || '';
+        const hStart = parseInt(document.getElementById('cem-hijri-date-start')?.value) || 0;
+        const hEnd = parseInt(document.getElementById('cem-hijri-date-end')?.value) || 0;
+        
+        const hMonthInfo = HIJRI_MONTHS.find(m => m.key === hMonthKey);
+        const hMonthName = hMonthInfo?.name || '';
+        
+        if (hStart > 0) {
+            if (hEnd > hStart) {
+                primaryDate = `${bnNums[hStart-1]}-${bnNums[hEnd-1]} ${hMonthName}`;
+            } else {
+                primaryDate = `${bnNums[hStart-1]} ${hMonthName}`;
+            }
+        }
+        
+        // গ্রেগ auto
+        secondaryDate = document.getElementById('cem-greg-date')?.value.trim() || '';
+    }
+
+    if (!title && !primaryDate) {
         previewEl.innerHTML = '<span class="text-xs text-slate-500 italic">উপরে তথ্য পূরণ করলে এখানে প্রিভিউ দেখাবে...</span>';
         return;
     }
 
     const cat = CAL_CATEGORY_COLORS[category] || CAL_CATEGORY_COLORS.admin;
+    const deptLabel = dept === 'non_res' ? 'অনাবাসিক' : 'আবাসিক';
 
     previewEl.innerHTML = `
         <div class="flex items-stretch gap-3 rounded-lg overflow-hidden border bg-white" style="border-color:${cat.border}40;">
             <div style="width:5px; background:${cat.border}; flex-shrink:0;"></div>
-            <div class="flex-shrink-0 flex flex-col items-center justify-center py-2 px-2" style="min-width:80px;">
-                <div class="text-[11px] font-bold" style="color:${cat.text};">${hijriDate || '---'}</div>
-                ${gregDate ? `<div class="text-[9px] text-slate-500 mt-0.5">${gregDate}</div>` : ''}
+            <div class="flex-shrink-0 flex flex-col items-center justify-center py-2 px-2" style="min-width:110px;">
+                <div class="text-[11px] font-bold text-center" style="color:${cat.text};">${primaryDate || '---'}</div>
+                ${secondaryDate ? `<div class="text-[9px] text-slate-500 mt-0.5 text-center font-arabic" dir="rtl">${secondaryDate}</div>` : ''}
             </div>
             <div class="flex-1 py-2 pr-3">
                 <div class="flex items-start justify-between gap-2 flex-wrap">
@@ -10582,6 +13058,7 @@ function updateCalEventPreview() {
                         <i class="fa-solid ${cat.icon}"></i> ${cat.label}
                     </span>
                 </div>
+                <div class="text-[9px] text-slate-500 mt-0.5">${deptLabel}</div>
                 ${details ? `<div class="text-[10px] text-slate-600 mt-1">${details}</div>` : ''}
                 ${(time || location) ? `
                     <div class="flex gap-3 mt-1 text-[10px] text-slate-600">
@@ -10596,13 +13073,25 @@ function updateCalEventPreview() {
 
 // ★ Live preview-এর জন্য সব input-এ listener
 document.addEventListener('input', function(e) {
-    const ids = ['cem-title','cem-hijri-date','cem-greg-date','cem-details','cem-time','cem-location','cem-category'];
+    const ids = [
+        'cem-title', 
+        'cem-hijri-date-start', 'cem-hijri-date-end',
+        'cem-greg-date-start', 'cem-greg-date-end',
+        'cem-greg-date', 'cem-hijri-auto',
+        'cem-details', 'cem-time', 'cem-location', 'cem-category'
+    ];
     if (ids.includes(e.target.id)) {
         updateCalEventPreview();
     }
 });
 document.addEventListener('change', function(e) {
-    const ids = ['cem-title','cem-hijri-date','cem-greg-date','cem-details','cem-time','cem-location','cem-category'];
+    const ids = [
+        'cem-title', 
+        'cem-hijri-date-start', 'cem-hijri-date-end',
+        'cem-greg-date-start', 'cem-greg-date-end',
+        'cem-greg-date', 'cem-hijri-auto',
+        'cem-details', 'cem-time', 'cem-location', 'cem-category'
+    ];
     if (ids.includes(e.target.id)) {
         updateCalEventPreview();
     }
