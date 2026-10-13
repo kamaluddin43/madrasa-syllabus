@@ -7922,10 +7922,10 @@ const CAL_GRID_WEEK_DAYS = [
 
 const CAL_GRID_GREG_MONTHS = ['জানু', 'ফেব', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টে', 'অক্টো', 'নভে', 'ডিসে'];
 
-// ★ একটা হিজরি মাসের ক্যালেন্ডার-গ্রিড HTML বিল্ডার
+// ★ একটা হিজরি মাসের ক্যালেন্ডার-গ্রিড HTML বিল্ডার (v4 — আল্টিমেট এনহান্সড + Fixed)
 function buildHijriMonthGrid(options) {
     const {
-        monthKey, academicYear, events = [],
+        monthKey, academicYear, dept = 'all', events = [],
         monthDays,
         monthName,
         monthNameAr,
@@ -7939,84 +7939,93 @@ function buildHijriMonthGrid(options) {
         </div>`;
     }
 
-    // ★ সাইজ
-    const cellMinHeight = compact ? '55px' : '95px';
-    const hijriFontSize = compact ? '14px' : '22px';
-    const gregFontSize = compact ? '8px' : '11px';
-    const eventFontSize = compact ? '7px' : '10px';
-
-    // ★★★ সব ভাষার সংখ্যা → ইংরেজি সংখ্যা convert ★★★
-    //   বাংলা: ০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯
-    //   আরবি:  ٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩
-    //   ইংরেজি: 0 1 2 3 4 5 6 7 8 9
+    // ★★★ সংখ্যা convert helper — সব ভাষার → ইংরেজি ★★★
     function convertToEnglishDigits(str) {
         if (!str) return '';
         const map = {
-            // বাংলা
             '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
             '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9',
-            // আরবি (ইস্টার্ন আরাবিক - ইন্দো-আরবি)
             '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
             '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9',
-            // ফার্সি/উর্দু (আরও একটা ভ্যারিয়েন্ট)
             '۰': '0', '۱': '1', '۲': '2', '۳': '3', '۴': '4',
             '۵': '5', '۶': '6', '۷': '7', '۸': '8', '۹': '9'
         };
         return String(str).replace(/[০-৯٠-٩۰-۹]/g, d => map[d] || d);
     }
 
-    // ★ ইভেন্টকে হিজরি তারিখে group করি
-    //   ★ range সাপোর্ট: "৫-৬ জিলকদ" → [5, 6]
-    const eventsByDay = {};
-    events.forEach(e => {
-        const dateStr = convertToEnglishDigits(e.hijriDate);
-        
-        // ★ দিন বা range extract করি (যেমন "5-6", "8", "10-12")
-        const matches = String(dateStr).match(/\d+/g);
-        
-        if (!matches || matches.length === 0) {
-            console.warn(`⚠️ Event "${e.title}" — hijriDate parse হয়নি: "${e.hijriDate}"`);
-            return;
+    // ★★★ Session ও Dept base year দিয়ে তুলনা ★★★
+    const cleanAcademicYear = String(academicYear || '').replace(/\s*\(.*?\)\s*/g, '').trim();
+    const cleanDept = String(dept || '').trim();
+
+    // ★★★ ইভেন্ট ফিল্টার — session + dept ★★★
+    const filteredEvents = events.filter(e => {
+        // Session check (suffix বাদ দিয়ে)
+        if (e.session && e.session !== 'all') {
+            const eSess = String(e.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+            if (eSess !== cleanAcademicYear) return false;
         }
         
-        // ★ প্রথম সংখ্যা
+        // Dept check
+        if (e.dept && e.dept !== 'all' && cleanDept !== 'all') {
+            if (e.dept !== cleanDept) return false;
+        }
+        
+        return true;
+    });
+
+    // ★★★ ইভেন্টকে হিজরি তারিখে group করি ★★★
+    const eventsByDay = {};
+    filteredEvents.forEach(e => {
+        const dateStr = convertToEnglishDigits(e.hijriDate);
+        const matches = String(dateStr).match(/\d+/g);
+        if (!matches || matches.length === 0) return;
+        
         const firstDay = parseInt(matches[0]);
-        // ★ দ্বিতীয় সংখ্যা (range হলে)
         const secondDay = matches.length > 1 ? parseInt(matches[1]) : firstDay;
         
-        // ★ সব দিনে event push করি (range হলে সব দিনে)
         for (let day = firstDay; day <= secondDay; day++) {
             if (day > 0 && day <= 31) {
                 if (!eventsByDay[day]) eventsByDay[day] = [];
                 eventsByDay[day].push(e);
             }
         }
-        
-        console.log(`📌 Event "${e.title}" → dates="${e.hijriDate}" → days=[${firstDay}${secondDay !== firstDay ? '..' + secondDay : ''}]`);
     });
 
     // ★ প্রথম দিনের বার থেকে কতটা ফাঁকা ঘর লাগবে
     const firstDayJs = monthDays[0].dayOfWeek;
     const leadingBlanks = CAL_GRID_WEEK_DAYS.findIndex(d => d.jsDay === firstDayJs);
 
-    // ★ মোট সপ্তাহ
     const totalCells = leadingBlanks + monthDays.length;
     const totalWeeks = Math.ceil(totalCells / 7);
 
-    // ★ হেডার সেল
+    // ★ সাইজ
+    const cellMinHeight = compact ? '52px' : '76px';
+    const hijriFontSize = compact ? '19px' : '28px';
+    const gregFontSize = compact ? '8px' : '10px';
+
+    // ★★★ সাপ্তাহিক হেডার — গাঢ় সবুজ + শুক্রবার গাঢ় লাল ★★★
     const headerCells = CAL_GRID_WEEK_DAYS.map(d => {
         const isFriday = d.jsDay === 5;
-        return `<th style="padding:${compact ? '4px 2px' : '8px 4px'};
-                           background:${isFriday ? '#dc2626' : '#4f46e5'};
-                           color:white;font-size:${compact ? '9px' : '12px'};
-                           font-weight:bold;border:1px solid ${isFriday ? '#b91c1c' : '#6366f1'};
-                           text-align:center;">
+        const bg = isFriday ? '#b91c1c' : '#065f46';
+        const borderColor = isFriday ? '#991b1b' : '#047857';
+        
+        return `<th style="padding:${compact ? '5px 2px' : '7px 4px'};
+                            background:${bg};
+                            color:white;font-size:${compact ? '10px' : '12px'};
+                            font-weight:bold;
+                            border:1px solid ${borderColor};
+                            text-align:center;
+                            line-height:1.3;">
             ${d.bn}
-            <div style="font-family:'Amiri',serif;font-size:${compact ? '7px' : '10px'};opacity:.85;font-weight:normal;" dir="rtl">${d.ar}</div>
+            <div style="font-family:'Amiri',serif;
+                        font-size:${compact ? '8px' : '10px'};
+                        opacity:.85;
+                        font-weight:normal;
+                        margin-top:1px;" dir="rtl">${d.ar}</div>
         </th>`;
     }).join('');
 
-    // ★ সেলগুলো
+    // ★★★ সেলগুলো রেন্ডার ★★★
     let cellsHTML = '';
     let dayIndex = 0;
 
@@ -8037,55 +8046,104 @@ function buildHijriMonthGrid(options) {
             const dayEvents = eventsByDay[dayInfo.hijri] || [];
             const hasEvents = dayEvents.length > 0;
 
-            // ★ ব্যাকগ্রাউন্ড
+            // ★★★ ডিফল্ট রঙ (ইভেন্ট নেই) ★★★
             let cellBg = isFriday ? '#fef2f2' : 'white';
             let cellBorder = isFriday ? '#fca5a5' : '#e2e8f0';
+            let cellBorderWidth = '1px';
+            let hijriBoxBg = isFriday ? '#fee2e2' : '#f1f5f9';
+            let hijriBoxBorder = isFriday ? '#fca5a5' : '#cbd5e1';
+            let hijriNumColor = isFriday ? '#b91c1c' : '#1e293b';
 
-            if (hasEvents && !isFriday) {
+            // ★★★ ইভেন্ট থাকলে পুরো ঘর রঙিন ★★★
+            if (hasEvents) {
                 const topCat = dayEvents[0].category;
                 const catColor = CAL_CATEGORY_COLORS[topCat] || CAL_CATEGORY_COLORS.admin;
-                cellBg = catColor.bg + '80';
+                
+                cellBg = catColor.bg;
                 cellBorder = catColor.border;
+                cellBorderWidth = '2px';
+                
+                hijriBoxBg = catColor.border;
+                hijriBoxBorder = catColor.border;
+                hijriNumColor = 'white';
             }
 
-            // ★ ইভেন্ট ব্যাজ
-            let eventsHTML = '';
+            // ★★★ ইভেন্টের ডট মার্কস (Corrected — backslash ছাড়া) ★★★
+            let marksHTML = '';
             if (hasEvents) {
-                if (compact) {
-                    eventsHTML = `
-                        <div style="display:flex;flex-wrap:wrap;gap:1px;margin-top:2px;justify-content:center;">
-                            ${dayEvents.slice(0, 3).map(e => {
-                                const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
-                                return `<span title="${e.title}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${cat.border};"></span>`;
-                            }).join('')}
-                            ${dayEvents.length > 3 ? `<span style="font-size:7px;color:#64748b;">+${dayEvents.length - 3}</span>` : ''}
-                        </div>
-                    `;
-                } else {
-                    eventsHTML = dayEvents.slice(0, 2).map(e => {
-                        const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
-                        const shortTitle = e.title.length > 18 ? e.title.slice(0, 18) + '…' : e.title;
-                        return `<div title="${e.title}" style="background:${cat.bg};color:${cat.text};border-left:3px solid ${cat.border};padding:1px 4px;border-radius:3px;font-size:${eventFontSize};font-weight:600;line-height:1.15;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                            ${shortTitle}
-                        </div>`;
-                    }).join('');
-                    if (dayEvents.length > 2) {
-                        eventsHTML += `<div style="font-size:9px;color:#64748b;font-style:italic;margin-top:1px;">আরও ${dayEvents.length - 2}টি...</div>`;
-                    }
-                }
+                const uniqueCats = [...new Set(dayEvents.map(e => e.category))];
+                marksHTML = `
+                    <div style="display:flex;justify-content:center;align-items:center;gap:3px;margin-top:${compact ? '2px' : '4px'};flex-wrap:wrap;">
+                        ${uniqueCats.slice(0, 3).map(catKey => {
+                            const cat = CAL_CATEGORY_COLORS[catKey] || CAL_CATEGORY_COLORS.admin;
+                            return `<span title="${cat.label}"
+                                          style="display:inline-block;
+                                                 width:${compact ? '8px' : '10px'};
+                                                 height:${compact ? '8px' : '10px'};
+                                                 border-radius:50%;
+                                                 background:${cat.border};
+                                                 box-shadow:0 0 0 1.5px white, 0 1px 2px rgba(0,0,0,0.25);"></span>`;
+                        }).join('')}
+                        ${uniqueCats.length > 3 ? `
+                            <span style="font-size:9px;color:#475569;font-weight:bold;align-self:center;">
+                                +${uniqueCats.length - 3}
+                            </span>
+                        ` : ''}
+                    </div>
+                `;
             }
 
+            // ★★★ সেল — ইভেন্ট থাকলে ক্লিকযোগ্য ★★★
             cellsHTML += `
-                <td style="border:1px solid ${cellBorder};background:${cellBg};padding:${compact ? '2px' : '4px 5px'};vertical-align:top;height:${cellMinHeight};position:relative;overflow:hidden;">
-                    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:2px;">
-                        <span style="font-family:'Amiri',serif;font-size:${hijriFontSize};font-weight:bold;color:${isFriday ? '#991b1b' : '#1e293b'};line-height:1;">
-                            ${dayInfo.hijri}
-                        </span>
-                        <span style="font-size:${gregFontSize};color:${isFriday ? '#991b1b' : '#64748b'};font-weight:600;line-height:1;white-space:nowrap;">
+                <td style="border:${cellBorderWidth} solid ${cellBorder};
+                            background:${cellBg};
+                            padding:${compact ? '3px' : '5px 6px'};
+                            vertical-align:top;height:${cellMinHeight};
+                            position:relative;overflow:hidden;
+                            cursor:${hasEvents ? 'pointer' : 'default'};
+                            transition:all 0.15s;"
+                    ${hasEvents ? `onclick="showDayEventsModal('${monthKey}', ${dayInfo.hijri})"` : ''}>
+                    
+                    <!-- ★★★ উপরে তারিখ ★★★ -->
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:3px;">
+                        
+                        <!-- ★ হিজরি তারিখ — গাঢ় বক্সে ★ -->
+                        <div style="display:inline-flex;align-items:center;justify-content:center;
+                                    min-width:${compact ? '28px' : '38px'};
+                                    height:${compact ? '28px' : '38px'};
+                                    background:${hijriBoxBg};
+                                    border:1.5px solid ${hijriBoxBorder};
+                                    border-radius:${compact ? '6px' : '8px'};
+                                    padding:0 5px;
+                                    box-shadow:0 1px 3px rgba(0,0,0,0.12);">
+                            <span style="font-family:'Amiri',serif;
+                                         font-size:${hijriFontSize};
+                                         font-weight:bold;
+                                         color:${hijriNumColor};
+                                         line-height:1;
+                                         letter-spacing:-0.5px;">
+                                ${dayInfo.hijri}
+                            </span>
+                        </div>
+                        
+                        <!-- ★ ছোট ইংরেজি তারিখ ★ -->
+                        <div style="display:inline-flex;align-items:center;justify-content:center;
+                                    background:${hasEvents ? 'white' : (isFriday ? '#fee2e2' : '#f8fafc')};
+                                    border:1px solid ${hasEvents ? cellBorder : '#e2e8f0'};
+                                    border-radius:4px;
+                                    padding:2px 4px;
+                                    font-size:${gregFontSize};
+                                    font-weight:700;
+                                    color:${hasEvents ? '#1e293b' : (isFriday ? '#b91c1c' : '#64748b')};
+                                    line-height:1;
+                                    white-space:nowrap;
+                                    margin-top:1px;">
                             ${dayInfo.gregDay} ${CAL_GRID_GREG_MONTHS[dayInfo.gregMonth - 1]}
-                        </span>
+                        </div>
                     </div>
-                    ${eventsHTML}
+                    
+                    <!-- ★★★ নিচে রঙিন ডট ★★★ -->
+                    ${marksHTML}
                 </td>
             `;
             dayIndex++;
@@ -8093,38 +8151,438 @@ function buildHijriMonthGrid(options) {
         cellsHTML += '</tr>';
     }
 
-    // ★ প্রিন্ট/PDF আইকন (হেডারে)
+    // ★★★ প্রিন্ট/PDF আইকন ★★★
     const printIcons = showPrintIcons
-        ? `<div style="display:flex;gap:4px;">
+        ? `<div style="display:flex;gap:6px;">
               <button onclick="event.stopPropagation(); printSingleMonthGrid('${monthKey}','${monthName}')"
-                      style="background:rgba(255,255,255,0.25);color:white;border:none;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;">
-                  🖨️
+                      style="background:white;color:#065f46;border:2px solid white;
+                             padding:6px 12px;border-radius:6px;
+                             font-size:14px;cursor:pointer;font-weight:bold;
+                             box-shadow:0 2px 4px rgba(0,0,0,0.15);
+                             display:inline-flex;align-items:center;gap:4px;">
+                  <i class="fa-solid fa-print"></i> <span style="font-size:11px;">প্রিন্ট</span>
               </button>
               <button onclick="event.stopPropagation(); shareSingleMonthPDF('${monthKey}','${monthName}')"
-                      style="background:rgba(255,255,255,0.25);color:white;border:none;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;">
-                  📄
+                      style="background:#f59e0b;color:white;border:2px solid #f59e0b;
+                             padding:6px 12px;border-radius:6px;
+                             font-size:14px;cursor:pointer;font-weight:bold;
+                             box-shadow:0 2px 4px rgba(0,0,0,0.15);
+                             display:inline-flex;align-items:center;gap:4px;">
+                  <i class="fa-solid fa-file-pdf"></i> <span style="font-size:11px;">PDF</span>
               </button>
            </div>`
         : '';
 
     return `
-        <div class="cal-grid-month" data-month="${monthKey}" style="background:white;border:2px solid #4f46e5;border-radius:10px;overflow:hidden;margin-bottom:12px;">
-            <div style="background:linear-gradient(135deg, #4f46e5, #6366f1);color:white;padding:${compact ? '6px 10px' : '10px 14px'};display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <div class="cal-grid-month" data-month="${monthKey}" style="background:white;border:2px solid #065f46;border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);page-break-inside:avoid;">
+            
+            <!-- ★★★ মাস হেডার — গাঢ় সবুজ ★★★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);color:white;
+                        padding:${compact ? '8px 12px' : '12px 16px'};
+                        display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                 <div>
-                    <h3 style="margin:0;font-size:${compact ? '13px' : '18px'};font-weight:bold;line-height:1.2;">
+                    <h3 style="margin:0;
+                               font-size:${compact ? '15px' : '20px'};
+                               font-weight:bold;
+                               line-height:1.2;
+                               color:white;">
                         ${monthName}
-                        <span style="font-family:'Amiri',serif;font-size:${compact ? '12px' : '16px'};opacity:.9;margin-left:6px;" dir="rtl">${monthNameAr}</span>
+                        <span style="font-family:'Amiri',serif;
+                                     font-size:${compact ? '15px' : '19px'};
+                                     opacity:.95;
+                                     margin-left:8px;
+                                     color:#fcd34d;" dir="rtl">${monthNameAr}</span>
                     </h3>
-                    <p style="margin:2px 0 0;font-size:${compact ? '8px' : '10px'};opacity:.85;">
-                        ${monthDays.length} দিন | ${events.length}টি ইভেন্ট
+                    <p style="margin:3px 0 0;
+                              font-size:${compact ? '9px' : '11px'};
+                              opacity:.85;
+                              color:#d1fae5;">
+                        <i class="fa-solid fa-calendar-day"></i> ${monthDays.length} দিন
+                        <span style="margin:0 6px;">•</span>
+                        <i class="fa-solid fa-list-check"></i> ${filteredEvents.length}টি ইভেন্ট
                     </p>
                 </div>
                 ${printIcons}
             </div>
+            
+            <!-- ★★★ ক্যালেন্ডার টেবিল ★★★ -->
             <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
                 <thead><tr>${headerCells}</tr></thead>
                 <tbody>${cellsHTML}</tbody>
             </table>
+            
+            <!-- ★★★ নিচে ইভেন্ট সেকশন ★★★ -->
+            ${filteredEvents.length > 0 ? buildMonthEventsSection(monthKey, monthName, filteredEvents) : ''}
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ দিনের ইভেন্ট দেখানোর মডাল (নতুন — ক্যালেন্ডারে ক্লিক করলে আসবে) ★★★
+// ═══════════════════════════════════════════════════════════════
+window.showDayEventsModal = function(monthKey, hijriDay) {
+    const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey);
+    if (!monthInfo) {
+        console.warn('⚠️ Month পাওয়া যায়নি:', monthKey);
+        return;
+    }
+    
+    // ★★★ এই দিনের সব ইভেন্ট খুঁজি (একই filter logic) ★★★
+    const cleanSession = String(calState.session || '').replace(/\s*\(.*?\)\s*/g, '').trim();
+    
+    // সংখ্যা convert helper
+    function toEng(str) {
+        if (!str) return '';
+        const map = {
+            '০': '0', '১': '1', '২': '2', '৩': '3', '৪': '4',
+            '৫': '5', '৬': '6', '৭': '7', '৮': '8', '৯': '9',
+            '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+            '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+        };
+        return String(str).replace(/[০-৯٠-٩]/g, d => map[d] || d);
+    }
+    
+    const dayEvents = (calState.events || []).filter(e => {
+        // মাস check
+        if (e.hijriMonth !== monthKey) return false;
+        
+        // session check
+        if (e.session && e.session !== 'all') {
+            const eSess = String(e.session).replace(/\s*\(.*?\)\s*/g, '').trim();
+            if (eSess !== cleanSession) return false;
+        }
+        
+        // dept check
+        if (e.dept && e.dept !== 'all' && calState.dept !== 'all') {
+            if (e.dept !== calState.dept) return false;
+        }
+        
+        // তারিখ range check
+        const dateStr = toEng(e.hijriDate);
+        const matches = String(dateStr).match(/\d+/g);
+        if (!matches || matches.length === 0) return false;
+        
+        const firstDay = parseInt(matches[0]);
+        const secondDay = matches.length > 1 ? parseInt(matches[1]) : firstDay;
+        
+        return hijriDay >= firstDay && hijriDay <= secondDay;
+    });
+    
+    if (dayEvents.length === 0) {
+        showToast('ℹ️ এই দিনে কোন ইভেন্ট নেই', 'info');
+        return;
+    }
+    
+    // ★★★ Modal HTML ★★★
+    const eventsHTML = dayEvents.map(e => {
+        const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
+        return `
+            <div style="display:flex;align-items:flex-start;gap:10px;
+                        padding:12px 14px;
+                        background:${cat.bg};
+                        border-left:4px solid ${cat.border};
+                        border-radius:8px;
+                        margin-bottom:10px;">
+                <i class="fa-solid ${cat.icon}" 
+                   style="color:${cat.border};font-size:20px;margin-top:2px;flex-shrink:0;"></i>
+                <div style="flex:1;min-width:0;">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
+                        <h4 style="margin:0;font-size:15px;font-weight:bold;color:#1e293b;">
+                            ${e.title}
+                        </h4>
+                        <span style="background:white;color:${cat.text};
+                                     border:1px solid ${cat.border};
+                                     padding:2px 8px;border-radius:999px;
+                                     font-size:10px;font-weight:bold;
+                                     white-space:nowrap;">
+                            ${cat.label}
+                        </span>
+                    </div>
+                    ${e.details ? `
+                        <p style="margin:4px 0 0;font-size:12px;color:#475569;line-height:1.5;">
+                            ${e.details}
+                        </p>
+                    ` : ''}
+                    ${(e.time || e.location) ? `
+                        <div style="display:flex;gap:14px;margin-top:6px;font-size:11px;color:#475569;flex-wrap:wrap;">
+                            ${e.time ? `
+                                <span style="display:inline-flex;align-items:center;gap:4px;">
+                                    <i class="fa-solid fa-clock" style="color:${cat.border};"></i>
+                                    <span>${e.time}</span>
+                                </span>
+                            ` : ''}
+                            ${e.location ? `
+                                <span style="display:inline-flex;align-items:center;gap:4px;">
+                                    <i class="fa-solid fa-location-dot" style="color:${cat.border};"></i>
+                                    <span>${e.location}</span>
+                                </span>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // ★★★ Modal তৈরি ★★★
+    const modal = document.createElement('div');
+    modal.id = 'day-events-modal';
+    modal.style.cssText = `
+        position:fixed;top:0;left:0;right:0;bottom:0;
+        background:rgba(15,23,42,0.55);
+        backdrop-filter:blur(4px);
+        z-index:9999;
+        display:flex;align-items:center;justify-content:center;
+        padding:16px;
+        animation:fadeIn 0.2s ease-out;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background:white;border-radius:16px;
+                    max-width:520px;width:100%;
+                    max-height:85vh;overflow:hidden;
+                    display:flex;flex-direction:column;
+                    box-shadow:0 25px 50px rgba(0,0,0,0.4);
+                    animation:scaleIn 0.25s ease-out;">
+            
+            <!-- ★ হেডার ★ -->
+            <div style="background:linear-gradient(135deg, #064e3b, #065f46);
+                        color:white;
+                        padding:14px 18px;
+                        display:flex;align-items:center;justify-content:space-between;
+                        flex-shrink:0;">
+                <div>
+                    <h3 style="margin:0;font-size:16px;font-weight:bold;line-height:1.2;">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        ${monthInfo.name} — ${hijriDay} তারিখ
+                        <span style="font-family:'Amiri',serif;opacity:.85;font-size:14px;margin-left:6px;" dir="rtl">
+                            ${monthInfo.arabic}
+                        </span>
+                    </h3>
+                    <p style="margin:3px 0 0;font-size:11px;opacity:.9;color:#d1fae5;">
+                        ${dayEvents.length}টি ইভেন্ট
+                    </p>
+                </div>
+                <button onclick="document.getElementById('day-events-modal').remove()"
+                        style="background:rgba(255,255,255,0.2);
+                               color:white;border:none;
+                               width:34px;height:34px;border-radius:50%;
+                               font-size:22px;line-height:1;cursor:pointer;
+                               display:flex;align-items:center;justify-content:center;
+                               transition:background 0.15s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.35)'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                    ×
+                </button>
+            </div>
+            
+            <!-- ★ ইভেন্ট লিস্ট (স্ক্রলযোগ্য) ★ -->
+            <div style="padding:16px;overflow-y:auto;flex:1;">
+                ${eventsHTML}
+            </div>
+            
+            <!-- ★ ফুটার ★ -->
+            <div style="padding:12px 18px;
+                        border-top:1px solid #e2e8f0;
+                        display:flex;justify-content:flex-end;
+                        background:#f8fafc;flex-shrink:0;">
+                <button onclick="document.getElementById('day-events-modal').remove()"
+                        style="padding:9px 22px;
+                               background:#065f46;color:white;
+                               border:none;border-radius:8px;
+                               font-weight:bold;cursor:pointer;font-size:13px;
+                               transition:background 0.15s;"
+                        onmouseover="this.style.background='#047857'"
+                        onmouseout="this.style.background='#065f46'">
+                    বন্ধ করুন
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // ★ ব্যাকড্রপে ক্লিক করলে বন্ধ
+    modal.addEventListener('click', e => {
+        if (e.target === modal) modal.remove();
+    });
+    
+    // ★ ESC key দিয়েও বন্ধ
+    const escHandler = e => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+    
+    document.body.appendChild(modal);
+};
+
+// ★★★ Modal animation CSS (একবারই যোগ হবে) ★★★
+if (!document.getElementById('day-events-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'day-events-modal-styles';
+    style.textContent = `
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        @keyframes scaleIn { 
+            from { opacity: 0; transform: scale(0.92); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// ★★★ মাসের ইভেন্ট সেকশন বিল্ডার (ক্যালেন্ডারের নিচে) ★★★
+function buildMonthEventsSection(monthKey, monthName, events) {
+    if (!events || events.length === 0) return '';
+    
+    // ★ সাজাই — হিজরি তারিখ অনুযায়ী
+    const sortedEvents = events.slice().sort((a, b) => {
+        const dayA = parseInt(String(a.hijriDate || '').match(/\d+/)?.[0] || 0);
+        const dayB = parseInt(String(b.hijriDate || '').match(/\d+/)?.[0] || 0);
+        return dayA - dayB;
+    });
+    
+    // ★ ক্যাটাগরি অনুযায়ী রঙিন ইভেন্ট কার্ড
+    const eventRowsHTML = sortedEvents.map(e => {
+        const cat = CAL_CATEGORY_COLORS[e.category] || CAL_CATEGORY_COLORS.admin;
+        
+        return `
+            <div style="display:flex;align-items:stretch;gap:10px;
+                        padding:10px 12px;
+                        border-bottom:1px dashed #e2e8f0;
+                        background:white;">
+                
+                <!-- ★ বাম দিকে রঙিন বার -->
+                <div style="width:5px;background:${cat.border};border-radius:3px;flex-shrink:0;"></div>
+                
+                <!-- ★ তারিখ বক্স -->
+                <div style="flex-shrink:0;min-width:80px;
+                            background:${cat.bg};
+                            border:1.5px solid ${cat.border};
+                            border-radius:6px;
+                            padding:6px 8px;
+                            text-align:center;
+                            display:flex;flex-direction:column;justify-content:center;">
+                    <div style="font-family:'Hind Siliguri',sans-serif;
+                                font-size:11px;
+                                font-weight:bold;
+                                color:${cat.text};
+                                line-height:1.2;
+                                white-space:nowrap;">
+                        ${e.hijriDate || '---'}
+                    </div>
+                    ${e.gregorianDate ? `
+                        <div style="font-size:9px;color:#64748b;margin-top:2px;line-height:1.2;">
+                            ${e.gregorianDate}
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <!-- ★ মূল কনটেন্ট -->
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;">
+                    <div style="display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;">
+                        <h4 style="margin:0;
+                                   font-size:13px;
+                                   font-weight:bold;
+                                   color:#1e293b;
+                                   line-height:1.3;
+                                   flex:1;min-width:0;">
+                            ${e.title}
+                        </h4>
+                        <span style="background:${cat.bg};
+                                     color:${cat.text};
+                                     border:1px solid ${cat.border};
+                                     padding:2px 8px;
+                                     border-radius:999px;
+                                     font-size:9px;
+                                     font-weight:bold;
+                                     white-space:nowrap;
+                                     flex-shrink:0;">
+                            <i class="fa-solid ${cat.icon}"></i> ${cat.label}
+                        </span>
+                    </div>
+                    
+                    ${e.details ? `
+                        <div style="font-size:11px;color:#64748b;margin-top:3px;line-height:1.4;">
+                            ${e.details}
+                        </div>
+                    ` : ''}
+                    
+                    ${(e.time || e.location) ? `
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;font-size:10px;color:#475569;">
+                            ${e.time ? `
+                                <span style="display:inline-flex;align-items:center;gap:4px;">
+                                    <i class="fa-solid fa-clock" style="color:${cat.border};"></i>
+                                    <span>${e.time}</span>
+                                </span>
+                            ` : ''}
+                            ${e.location ? `
+                                <span style="display:inline-flex;align-items:center;gap:4px;">
+                                    <i class="fa-solid fa-location-dot" style="color:${cat.border};"></i>
+                                    <span>${e.location}</span>
+                                </span>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // ★ ক্যাটাগরি সারাংশ (উপরে)
+    const catCounts = {};
+    events.forEach(e => {
+        catCounts[e.category] = (catCounts[e.category] || 0) + 1;
+    });
+    
+    const catSummaryHTML = Object.keys(catCounts).map(catKey => {
+        const cat = CAL_CATEGORY_COLORS[catKey];
+        if (!cat) return '';
+        return `
+            <span style="display:inline-flex;align-items:center;gap:4px;
+                         background:${cat.bg};color:${cat.text};
+                         border:1px solid ${cat.border}80;
+                         padding:2px 8px;border-radius:999px;
+                         font-size:10px;font-weight:bold;">
+                <i class="fa-solid ${cat.icon}"></i>
+                ${cat.label} (${catCounts[catKey]})
+            </span>
+        `;
+    }).join('');
+    
+    return `
+        <div style="background:#f8fafc;border-top:2px solid #4f46e5;">
+            <!-- ★ সেকশন হেডার -->
+            <div style="background:linear-gradient(to left, #eef2ff, #e0e7ff);
+                        padding:8px 12px;
+                        border-bottom:1px solid #c7d2fe;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <i class="fa-solid fa-list-check" style="color:#4f46e5;font-size:14px;"></i>
+                        <h4 style="margin:0;font-size:12px;font-weight:bold;color:#312e81;">
+                            ${monthName} মাসের ইভেন্টসমূহ
+                        </h4>
+                        <span style="background:#4f46e5;color:white;
+                                     font-size:9px;font-weight:bold;
+                                     padding:2px 7px;border-radius:999px;">
+                            ${events.length}টি
+                        </span>
+                    </div>
+                </div>
+                ${catSummaryHTML ? `
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;">
+                        ${catSummaryHTML}
+                    </div>
+                ` : ''}
+            </div>
+            
+            <!-- ★ ইভেন্ট লিস্ট -->
+            <div style="background:white;padding:4px 0;">
+                ${eventRowsHTML}
+            </div>
         </div>
     `;
 }
@@ -8311,7 +8769,9 @@ async function renderCalGridMonthlyContent(container, subtoggleHTML) {
     injectCalendarGridStyles();
 
     const gridHTML = buildHijriMonthGrid({
-        monthKey, academicYear: calState.session,
+        monthKey, 
+        academicYear: calState.session,
+        dept: calState.dept,              // ★★★ যোগ করুন
         events: monthEvents,
         monthDays,
         monthName: monthInfo.name,
@@ -8392,6 +8852,7 @@ async function renderCalGridYearlyContent(container, subtoggleHTML) {
         buildHijriMonthGrid({
             monthKey: month.key,
             academicYear: calState.session,
+            dept: calState.dept,          // ★★★ যোগ করুন
             events: events,
             monthDays: days,
             monthName: month.name,
@@ -8468,16 +8929,16 @@ window.printSingleMonthGrid = async function(monthKey, monthName) {
     const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey) || { name: monthName, arabic: '' };
 
     const gridHTML = buildHijriMonthGrid({
-        monthKey,
+        monthKey, 
         academicYear: calState.session,
-        events: monthEvents,
+        dept: calState.dept,              // ★★★ যোগ করুন
+        events: monthEvents, 
         monthDays,
-        monthName: monthInfo.name,
+        monthName: monthInfo.name, 
         monthNameAr: monthInfo.arabic,
-        compact: false,
+        compact: false, 
         showPrintIcons: false
     });
-
     const printWin = window.open('', '_blank');
     if (!printWin) {
         showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
@@ -8695,17 +9156,23 @@ window.printSingleMonthGrid = async function(monthKey, monthName) {
     const monthInfo = HIJRI_MONTHS.find(m => m.key === monthKey) || { name: monthName, arabic: '' };
 
     const gridHTML = buildHijriMonthGrid({
-        monthKey, academicYear: calState.session,
-        events: monthEvents, monthDays,
-        monthName: monthInfo.name, monthNameAr: monthInfo.arabic,
-        compact: false, showPrintIcons: false
+        monthKey, 
+        academicYear: calState.session,
+        dept: calState.dept,              // ★★★ যোগ করুন
+        events: monthEvents, 
+        monthDays,
+        monthName: monthInfo.name, 
+        monthNameAr: monthInfo.arabic,
+        compact: false, 
+        showPrintIcons: false
     });
 
     const printWin = window.open('', '_blank');
-    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে', 'warn'); return; }
+    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn'); return; }
 
     const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
     const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || '';
 
     printWin.document.write(`
         <!DOCTYPE html>
@@ -8716,23 +9183,120 @@ window.printSingleMonthGrid = async function(monthKey, monthName) {
             <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
             <style>
-                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                body { font-family: 'Hind Siliguri', sans-serif; padding: 15mm 10mm; background: white; }
-                @page { size: A4 portrait; margin: 12mm 10mm; }
+                * { 
+                    -webkit-print-color-adjust: exact !important; 
+                    print-color-adjust: exact !important;
+                    box-sizing: border-box;
+                }
+                body { 
+                    font-family: 'Hind Siliguri', sans-serif; 
+                    padding: 10mm 8mm; 
+                    background: white; 
+                    margin: 0;
+                    font-size: 14px;
+                }
+                
+                /* ★★★ প্রিন্টে সব কিছু বড় করি ★★★ */
+                table {
+                    font-size: 14px !important;
+                    width: 100% !important;
+                }
+                
+                /* ক্যালেন্ডার সেল */
+                td {
+                    min-height: 90px !important;
+                    padding: 6px 8px !important;
+                }
+                
+                /* তারিখ বক্স */
+                td > div > div:first-child {
+                    min-width: 45px !important;
+                    height: 45px !important;
+                }
+                
+                /* তারিখ সংখ্যা */
+                td span[style*="font-family:'Amiri'"] {
+                    font-size: 30px !important;
+                }
+                
+                /* সাপ্তাহিক হেডার */
+                th {
+                    padding: 10px 6px !important;
+                    font-size: 14px !important;
+                }
+                
+                /* মাস হেডার */
+                .cal-grid-month > div:first-child {
+                    padding: 15px 20px !important;
+                }
+                
+                .cal-grid-month > div:first-child h3 {
+                    font-size: 24px !important;
+                }
+                
+                /* ইভেন্ট সেকশন */
+                .cal-grid-month > div:last-child {
+                    font-size: 13px !important;
+                }
+                
+                @page { 
+                    size: A4 portrait; 
+                    margin: 10mm 8mm;
+                }
+                
+                @media print {
+                    body { padding: 0; }
+                    .cal-grid-month { 
+                        page-break-inside: avoid; 
+                        border-width: 3px !important;
+                    }
+                }
             </style>
         </head>
         <body>
-            <div style="text-align:center;margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #4f46e5;">
-                <h1 style="margin:0;font-size:26px;color:#312e81;font-family:'Amiri',serif;" dir="rtl">${madrasaAr}</h1>
-                <h2 style="margin:6px 0 0;font-size:18px;color:#4f46e5;">${madrasaBn}</h2>
-                <p style="margin:4px 0 0;font-size:12px;color:#64748b;">একাডেমিক ক্যালেন্ডার — ${calState.session}</p>
+            <!-- ★★★ প্রিন্ট হেডার — বড় ও স্পষ্ট ★★★ -->
+            <div style="text-align:center;
+                        margin-bottom:16px;
+                        padding-bottom:14px;
+                        border-bottom:4px solid #065f46;">
+                <h1 style="margin:0;
+                           font-size:32px;
+                           color:#064e3b;
+                           font-family:'Amiri',serif;
+                           line-height:1.2;" dir="rtl">${madrasaAr}</h1>
+                <h2 style="margin:8px 0 0;
+                           font-size:22px;
+                           color:#065f46;
+                           font-weight:bold;">${madrasaBn}</h2>
+                ${addr ? `<p style="margin:6px 0 0;font-size:13px;color:#64748b;">${addr}</p>` : ''}
+                <p style="margin:8px 0 0;
+                          font-size:14px;
+                          color:#1e293b;
+                          font-weight:bold;">
+                    <span style="background:#ecfdf5;padding:4px 14px;border-radius:999px;border:1px solid #a7f3d0;">
+                        📅 একাডেমিক ক্যালেন্ডার — ${calState.session}
+                    </span>
+                </p>
             </div>
+            
             ${gridHTML}
+            
+            <!-- ★★★ প্রিন্ট ফুটার ★★★ -->
+            <div style="margin-top:20px;
+                        padding-top:10px;
+                        border-top:2px solid #065f46;
+                        text-align:center;
+                        font-size:11px;
+                        color:#065f46;">
+                <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — শিক্ষাবর্ষ ${calState.session}
+                <br>
+                প্রিন্টের তারিখ: ${new Date().toLocaleDateString('bn-BD')}
+            </div>
         </body>
         </html>
     `);
     printWin.document.close();
-    setTimeout(() => { printWin.print(); }, 600);
+    setTimeout(() => { printWin.print(); }, 800);
 };
 
 window.shareSingleMonthPDF = async function(monthKey, monthName) {
@@ -8751,34 +9315,94 @@ window.shareSingleMonthPDF = async function(monthKey, monthName) {
 
     const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
     const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية دار العلوم';
+    const addr = settings.address || '';
 
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;padding:15mm 10mm;background:white;font-family:"Hind Siliguri",sans-serif;';
+    // ★★★ width বাড়ালাম — A4-এ বড় দেখাবে ★★★
+    wrapper.style.cssText = `
+        position:fixed;
+        left:-10000px;
+        top:0;
+        width:230mm;
+        padding:12mm 10mm;
+        background:white;
+        font-family:'Hind Siliguri',sans-serif;
+        font-size:14px;
+    `;
+    
     wrapper.innerHTML = `
-        <div style="text-align:center;margin-bottom:20px;padding-bottom:12px;border-bottom:3px solid #4f46e5;">
-            <h1 style="margin:0;font-size:26px;color:#312e81;font-family:'Amiri',serif;" dir="rtl">${madrasaAr}</h1>
-            <h2 style="margin:6px 0 0;font-size:18px;color:#4f46e5;">${madrasaBn}</h2>
-            <p style="margin:4px 0 0;font-size:12px;color:#64748b;">একাডেমিক ক্যালেন্ডার — ${calState.session}</p>
+        <!-- ★★★ বড় প্রিন্ট হেডার ★★★ -->
+        <div style="text-align:center;
+                    margin-bottom:18px;
+                    padding-bottom:14px;
+                    border-bottom:4px solid #065f46;">
+            <h1 style="margin:0;
+                       font-size:32px;
+                       color:#064e3b;
+                       font-family:'Amiri',serif;
+                       line-height:1.2;" dir="rtl">${madrasaAr}</h1>
+            <h2 style="margin:8px 0 0;
+                       font-size:22px;
+                       color:#065f46;
+                       font-weight:bold;">${madrasaBn}</h2>
+            ${addr ? `<p style="margin:6px 0 0;font-size:13px;color:#64748b;">${addr}</p>` : ''}
+            <p style="margin:10px 0 0;
+                      font-size:14px;
+                      color:#1e293b;
+                      font-weight:bold;">
+                <span style="background:#ecfdf5;padding:5px 16px;border-radius:999px;border:1px solid #a7f3d0;">
+                    📅 একাডেমিক ক্যালেন্ডার — ${calState.session}
+                </span>
+            </p>
         </div>
-        ${gridHTML}
+        
+        <!-- ★★★ ক্যালেন্ডার গ্রিড ★★★ -->
+        <div style="font-size:14px;">
+            ${gridHTML}
+        </div>
+        
+        <!-- ★★★ ফুটার ★★★ -->
+        <div style="margin-top:22px;
+                    padding-top:12px;
+                    border-top:2px solid #065f46;
+                    text-align:center;
+                    font-size:12px;
+                    color:#065f46;">
+            <strong>মাকাদীরে আসবাক (مقادير الأسباق)</strong> — শিক্ষাবর্ষ ${calState.session}
+            <br>
+            <span style="font-size:10px;">তৈরির তারিখ: ${new Date().toLocaleDateString('bn-BD')}</span>
+        </div>
     `;
     document.body.appendChild(wrapper);
 
+    // ★★★ delay বাড়ালাম — font load হওয়ার জন্য ★★★
     setTimeout(() => {
         html2pdf().set({
-            margin: [12, 10, 14, 10],
+            margin: [10, 8, 12, 8],
             filename: `${monthInfo.name}_${calState.session}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            html2canvas: { 
+                scale: 3,                      // ★★★ scale 2 → 3 (আরো স্পষ্ট)
+                useCORS: true, 
+                backgroundColor: '#ffffff',
+                letterRendering: true,
+                logging: false
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: 'a4', 
+                orientation: 'portrait',
+                compress: true
+            }
         }).from(wrapper).save().then(() => {
             showToast('✅ PDF সংরক্ষিত হয়েছে', 'success');
             document.body.removeChild(wrapper);
         }).catch(err => {
+            console.error('PDF error:', err);
             showToast('❌ PDF সমস্যা: ' + err.message, 'error');
             if (document.body.contains(wrapper)) document.body.removeChild(wrapper);
         });
-    }, 500);
+    }, 1000);
 };
 
 // ═══════════════════ এডমিন — একাডেমিক ক্যালেন্ডার এডিটর ═══════════════════
@@ -8904,8 +9528,16 @@ window.renderAdminMoonSighting = async function() {
 };
 
 function renderMoonSightingUI(container) {
-    const content = container || document.getElementById('adm-cal-view-content');
-    if (!content) return;
+    // ★ ৩টি fallback — কোনো একটাও কাজ করলে হবে
+    const content = container 
+        || document.getElementById('adm-cal-view-content')
+        || document.getElementById('adm-content');
+    
+    if (!content) {
+        console.error('❌ MoonSighting UI: কোনো container পাওয়া যায়নি');
+        showToast('❌ UI কনটেইনার পাওয়া যায়নি', 'error');
+        return;
+    }
 
     const academicYear = _moonsightingState.academicYear;
     const overrides = _moonsightingState.localEdits;
@@ -9141,23 +9773,86 @@ async function persistMoonSightings() {
     console.log('✅ Moon sightings সেভ হয়েছে:', Object.keys(_moonsightingState.localEdits).length, 'টি');
 }
 
+// ═══════════════════════════════════════════════════════════════
+// ★★ টগল বারের নিচে কনটেন্ট রেন্ডার — Main Dispatcher ★★
+// ═══════════════════════════════════════════════════════════════
+async function renderAdminCalViewContent() {
+    const viewContainer = document.getElementById('adm-cal-view-content');
+    if (!viewContainer) {
+        console.error('❌ adm-cal-view-content কনটেইনার পাওয়া যায়নি');
+        showToast('❌ UI কনটেইনার পাওয়া যায়নি', 'error');
+        return;
+    }
+
+    const mode = _adminCalendarMode || 'events';
+    const titleEl = document.getElementById('adm-cal-title');
+
+    console.log('🎨 renderAdminCalViewContent → mode:', mode);
+
+    if (mode === 'moonsighting') {
+        if (titleEl) titleEl.textContent = 'চাঁদ দেখার তারিখ';
+        await renderMoonSightingView(viewContainer);
+    } else {
+        if (titleEl) titleEl.textContent = 'একাডেমিক ক্যালেন্ডার এডিটর';
+        await renderEventsView(viewContainer);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★ ইভেন্ট মোড — ভিউ কনটেইনারে রেন্ডার ★★
+// ═══════════════════════════════════════════════════════════════
+async function renderEventsView(container) {
+    container.innerHTML = `<div class="text-center py-12 text-slate-400">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+        <p>ইভেন্ট লোড হচ্ছে...</p>
+    </div>`;
+
+    // ★ Firestore থেকে সব events লোড
+    const allEvents = await loadAllCalendarEventsFromFS();
+
+    // ★ খালি হলে ডিফল্ট initialize
+    let events = allEvents;
+    if (events.length === 0) {
+        events = DEFAULT_CALENDAR_EVENTS.map((e, i) => ({
+            ...e,
+            id: 'default_' + i + '_' + Date.now(),
+            session: 'all',
+            dept: 'shariah_noorani'
+        }));
+        await saveAllCalendarEventsToFS(events);
+        showToast('📅 ডিফল্ট ক্যালেন্ডার initialize হয়েছে', 'info');
+    }
+
+    // ★ স্টেট reset
+    adminCalSelectedMonth = 'all';
+    adminCalFilterDept = 'all';
+
+    // ★ সরাসরি container parameter পাঠাই — monkey-patch ছাড়া
+    renderAdminCalendarUIOnly(events, container);
+}
+
 // ═══════════════════ এডমিন ক্যালেন্ডার ভিউ ═══════════════════
 window.renderAdminCalendar = async function() {
     const content = document.getElementById('adm-content');
-    if (!content) return;
+    if (!content) {
+        console.error('❌ adm-content নেই!');
+        return;
+    }
 
-    // ★★ টগল বার + কনটেইনার একবারই render করি ★★
+    console.log('📅 renderAdminCalendar শুরু');
+
     const isEvents = (_adminCalendarMode || 'events') === 'events';
-    
+
+    // ★★★ শুধু একবার render — টগল বার + খালি ভিউ কনটেইনার ★★★
     content.innerHTML = `
         <div class="space-y-4">
-            <!-- ★ টগল বার — সবসময় থাকবে ★ -->
+            <!-- টগল বার -->
             <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 border-indigo-600">
                 <div class="flex items-center justify-between flex-wrap gap-3">
                     <div>
                         <h3 class="text-base font-bold text-slate-800">
                             <i class="fa-solid fa-calendar-days text-indigo-600"></i> 
-                            <span id="adm-cal-title">একাডেমিক ক্যালেন্ডার এডিটর</span>
+                            <span id="adm-cal-title">${isEvents ? 'একাডেমিক ক্যালেন্ডার এডিটর' : 'চাঁদ দেখার তারিখ'}</span>
                         </h3>
                         <p class="text-[11px] text-slate-500 mt-1">
                             সব শিক্ষক এই ক্যালেন্ডার দেখতে পাবেন। Firestore-এ sync হয়।
@@ -9175,8 +9870,8 @@ window.renderAdminCalendar = async function() {
                     </button>
                 </div>
             </div>
-            
-            <!-- ★ ভিউ কনটেইনার — এখানে events বা moonsighting render হবে ★ -->
+
+            <!-- ভিউ কনটেইনার — এটা কখনো মুছবে না -->
             <div id="adm-cal-view-content">
                 <div class="text-center py-12 text-slate-400">
                     <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
@@ -9185,9 +9880,11 @@ window.renderAdminCalendar = async function() {
             </div>
         </div>
     `;
-    
-    // ★ mode অনুযায়ী কনটেন্ট রেন্ডার করি ★
-    await renderAdminCalendarViewContent();
+
+    console.log('✅ টগল বার + কনটেইনার রেন্ডার হয়েছে');
+
+    // ★ mode অনুযায়ী ভিউ কনটেইনারে render
+    await renderAdminCalViewContent();
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -9210,38 +9907,13 @@ async function renderAdminCalendarViewContent() {
     }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ★★ ইভেন্ট মোড ভিউ ★★
-// ═══════════════════════════════════════════════════════════════
-async function renderEventsView(container) {
-    container.innerHTML = `<div class="text-center py-12 text-slate-400">
-        <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
-        <p>ইভেন্ট লোড হচ্ছে...</p>
-    </div>`;
-    
-    // ★ Firestore থেকে সব events লোড
-    const allEvents = await loadAllCalendarEventsFromFS();
-    
-    // ★ খালি হলে ডিফল্ট initialize
-    let events = allEvents;
-    if (events.length === 0) {
-        events = DEFAULT_CALENDAR_EVENTS.map((e, i) => ({
-            ...e,
-            id: 'default_' + i + '_' + Date.now(),
-            session: 'all',
-            dept: 'shariah_noorani'
-        }));
-        await saveAllCalendarEventsToFS(events);
-        showToast('📅 ডিফল্ট ক্যালেন্ডার initialize হয়েছে', 'info');
+function renderAdminCalendarUIOnly(events, container) {
+    // ★ container parameter না দিলে adm-content fallback
+    const content = container || document.getElementById('adm-content');
+    if (!content) {
+        console.error('❌ renderAdminCalendarUIOnly: কোনো container পাওয়া যায়নি');
+        return;
     }
-    
-    // ★ পুরনো renderAdminCalendarUI কল করি — কিন্তু টগল বার ছাড়া
-    renderAdminCalendarUIOnly(events);
-}
-
-function renderAdminCalendarUIOnly(events) {
-    const content = document.getElementById('adm-content');
-    if (!content) return;
 
     // ★ Filtered events (মাস + বিভাগ)
     let filtered = events;
@@ -9325,28 +9997,17 @@ function renderAdminCalendarUIOnly(events) {
         `;
     }
 
+    // ★★★ টগল বার এখান থেকে সম্পূর্ণ বাদ ★★★
+    //    (টগল বার এখন renderAdminCalendar()-এ থাকে)
     content.innerHTML = `
         <div class="space-y-4">
-            <!-- টপ বার -->
+            <!-- টপ বার (টগল বার ছাড়া) -->
             <div class="flex items-center justify-between flex-wrap gap-3">
                 <div>
                     <h3 class="text-base font-bold text-slate-800">
                         <i class="fa-solid fa-calendar-days text-indigo-600"></i> একাডেমিক ক্যালেন্ডার এডিটর
                         <span class="badge bg-indigo-100 text-indigo-800 ml-2">${totalEvents}টি ইভেন্ট</span>
                     </h3>
-                    <p class="text-[11px] text-slate-500 mt-1">
-                        সব শিক্ষক এই ক্যালেন্ডার দেখতে পাবেন। Firestore-এ sync হয়।
-                    </p>
-                    <div class="flex flex-wrap gap-2 mt-3">
-                        <button onclick="switchAdminCalendarMode('events')" id="adm-cal-mode-events"
-                                class="px-4 py-2 rounded-lg text-xs font-bold transition bg-indigo-700 text-white shadow">
-                            <i class="fa-solid fa-calendar-days"></i> 📅 ইভেন্ট
-                        </button>
-                        <button onclick="switchAdminCalendarMode('moonsighting')" id="adm-cal-mode-moonsighting"
-                                class="px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:bg-slate-100 border border-slate-200">
-                            <i class="fa-solid fa-moon"></i> 🌙 চাঁদ দেখার তারিখ
-                        </button>
-                    </div>
                 </div>
                 <div class="flex gap-2 flex-wrap">
                     <button onclick="resetCalendarToDefault()" class="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-semibold rounded-lg transition flex items-center gap-1.5">
