@@ -2461,7 +2461,158 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </div>
         </div>
     </div>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- ★★★ বাংলা প্রশ্ন মেকার ★★★                                       -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div id="exam-view-bangla-qm" class="exam-view hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
+            
+            <!-- ★ হেডার -->
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
+                <h3 class="text-lg font-bold text-emerald-900 flex items-center gap-3">
+                    <i class="fa-solid fa-file-pen text-emerald-600 text-xl"></i>
+                    <span>বাংলা প্রশ্ন মেকার</span>
+                </h3>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="loadSavedBmqSets()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open"></i> সেভ করা
+                    </button>
+                    <button onclick="resetBanglaQm()" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> রিসেট
+                    </button>
+                </div>
+            </div>
 
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- ★ STEP 1: হেডিং                                        -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div class="bg-gradient-to-br from-emerald-50 to-blue-50 p-4 rounded-xl border-2 border-emerald-200 mb-5">
+                <h4 class="text-sm font-bold text-emerald-900 border-b border-emerald-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-heading"></i>
+                    <span>ধাপ ১: প্রশ্নপত্রের হেডিং</span>
+                    <span class="text-[10px] font-normal text-emerald-700">(সব ঘর এডিটযোগ্য)</span>
+                </h4>
+                
+                <!-- Row 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            শিক্ষাবর্ষ <span class="text-red-500">*</span>
+                        </label>
+                        <select id="bmq-year" onchange="onBmqHeaderChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                            <option value="">-- শিক্ষাবর্ষ --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            পরীক্ষার ধরন <span class="text-red-500">*</span>
+                        </label>
+                        <select id="bmq-exam-type" onchange="onBmqExamTypeChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                            <option value="">-- পরীক্ষার ধরন --</option>
+                            <option value="term1">১ম সাময়িক</option>
+                            <option value="term2">২য় সাময়িক</option>
+                            <option value="model">মডেল টেস্ট</option>
+                            <option value="qurbani">কুরবানী পরীক্ষা</option>
+                            <option value="annual">বার্ষিক পরীক্ষা</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            শ্রেণি <span class="text-red-500">*</span>
+                        </label>
+                        <select id="bmq-class" onchange="onBmqClassChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-arabic">
+                            <option value="">-- শ্রেণি --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            কিতাব <span class="text-red-500">*</span>
+                            <span class="text-[10px] text-slate-500 font-normal">(একাধিক সিলেক্ট করা যাবে)</span>
+                        </label>
+                        <div id="bmq-books-container" class="bg-white border border-slate-300 rounded-lg p-2 max-h-32 overflow-y-auto">
+                            <p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            বিষয় <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="bmq-subject-text" onchange="onBmqHeaderChange()" placeholder="যেমন: বাংলা" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            তারিখ
+                        </label>
+                        <input type="date" id="bmq-date" onchange="onBmqHeaderChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            পূর্ণমান
+                        </label>
+                        <input type="number" id="bmq-total-marks" onchange="onBmqHeaderChange()" value="100" min="1" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm">
+                    </div>
+                </div>
+
+                <!-- Row 4 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            সময়
+                        </label>
+                        <input type="text" id="bmq-time" onchange="onBmqHeaderChange()" value="৩ ঘণ্টা" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- ★ STEP 2: বিভাগ ও প্রশ্ন                                -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div id="bmq-divisions-wrapper" class="hidden space-y-4">
+                
+                <!-- তথ্য বার -->
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between flex-wrap gap-2">
+                    <p class="text-xs text-amber-900 flex-1">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span>প্রতিটি বিভাগে প্রশ্ন যোগ করুন। খালি প্রশ্ন auto-hide হবে।</span>
+                    </p>
+                    <div class="flex gap-2">
+                        <button onclick="addBmqDivision()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> নতুন বিভাগ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- বিভাগগুলো এখানে JS বসাবে -->
+                <div id="bmq-divisions-container" class="space-y-3"></div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- ★ STEP 3: অ্যাকশন বার                                 -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <div id="bmq-action-bar" class="hidden mt-5 pt-4 border-t border-slate-200 flex justify-end gap-2 flex-wrap no-print">
+                <button onclick="previewBanglaQm()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-eye"></i> প্রিভিউ
+                </button>
+                <button onclick="printBanglaQm()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> প্রিন্ট
+                </button>
+                <button onclick="shareBanglaQmPDF()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </button>
+                <button onclick="saveBanglaQm()" class="px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold rounded-lg shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> ফাইনাল সেভ
+                </button>
+            </div>
+        </div>
+    </div>
         <!-- Exam Routine View -->
         <div id="exam-view-exam-routine" class="exam-view hidden">
             <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
@@ -13385,6 +13536,1655 @@ document.addEventListener('change', function(e) {
 });
 
 // ═══════════════════════════════════════════════════════════════
+// ★★★ বাংলা প্রশ্ন মেকার — স্টেট ও কনফিগ ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let bmqState = {
+    subject: 'bangla',
+    year: '',
+    examType: '',
+    className: '',
+    books: [],
+    subjectText: '',
+    date: '',
+    totalMarks: 100,
+    time: '৩ ঘণ্টা',
+    divisions: []
+};
+
+// ★ উপ-প্রশ্নের লেবেল (বাংলা অক্ষর)
+const BMQ_SUB_LABELS = ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ'];
+
+// ★ বাংলা কমন প্রশ্নের টেমপ্লেট
+const BMQ_COMMON_QUESTIONS = [
+    'রচনামূলক প্রশ্নের উত্তর দাও: (যে কোনো ৩টি)',
+    'সংক্ষেপে উত্তর দাও: (যে কোনো ৩টি)',
+    'শূন্যস্থান পূরণ কর: (যে কোনো ১০টি)',
+    'এক কথায় উত্তর দাও: (যে কোনো ১০টি)',
+    'বর্ণ কাকে বলে? বর্ণ কত প্রকার ও কী কী? প্রত্যেকটির সংজ্ঞা লেখো।',
+    'পদ কাকে বলে? পদ কত প্রকার ও কি কি? অব্যয় পদ বলতে কী বোঝ?',
+    'বিশেষ্য পদ কাকে বলে? তা কত প্রকার ও কি কি? প্রত্যেকটির একটি করে উদাহরণ লেখো।',
+    'বাক্য রচনা করো: (যে কোনো ৫টি)',
+    'শব্দার্থ লেখো: (যে কোনো ১০টি)',
+    'কবিতা ও কবির নাম (মুখস্থ ও প্রথম ৮ লাইন):',
+    'বই ক্রয়ের জন্য টাকা চেয়ে পিতার নিকট একটি পত্র লেখো।',
+    'রচনা লেখো: (যে কোনো ১টি) (ক) ধান (খ) বাংলাদেশের সোনালী আঁশ (পাট)',
+    'প্রসঙ্গ উল্লেখ করে ব্যাখ্যা লেখো: (যে কোনো ১টি)'
+];
+
+// ★ ডিফল্ট বিভাগসমূহ (বিষয় অনুযায়ী)
+const BMQ_DEFAULT_DIVISIONS = {
+    'bangla': [
+        { name: 'সাহিত্য', totalMarks: 60 },
+        { name: 'ব্যাকরণ', totalMarks: 40 }
+    ],
+    'history-geography': [
+        { name: 'ইতিহাস', totalMarks: 50 },
+        { name: 'ভূগোল ও সমাজ পরিচিতি', totalMarks: 50 }
+    ]
+};
+
+// ★ নতুন বিভাগ তৈরি
+function createBmqDivision(name, totalMarks) {
+    return {
+        id: 'div_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        name: name || 'নতুন বিভাগ',
+        totalMarks: totalMarks || 0,
+        questions: []
+    };
+}
+
+// ★ নতুন প্রশ্ন তৈরি
+function createBmqQuestion() {
+    return {
+        id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        text: '',
+        marks: '',
+        subQuestions: []
+    };
+}
+
+// ═══════════════════ বাংলা init ═══════════════════
+window.initBanglaQm = function() {
+    console.log('🔄 initBanglaQm শুরু');
+    
+    // ★ শিক্ষাবর্ষ dropdown populate
+    populateBmqYearDropdown();
+    
+    // ★ শ্রেণি dropdown populate
+    populateBmqClassDropdown();
+    
+    console.log('✅ initBanglaQm শেষ');
+};
+
+// ═══════════════════ শিক্ষাবর্ষ dropdown ═══════════════════
+function populateBmqYearDropdown() {
+    const sel = document.getElementById('bmq-year');
+    if (!sel) return;
+    
+    sel.innerHTML = '<option value="">-- শিক্ষাবর্ষ --</option>';
+    
+    (academicYears || []).forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y.name;
+        opt.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
+        sel.appendChild(opt);
+    });
+    
+    const current = getCurrentYear();
+    if (current) sel.value = current;
+    bmqState.year = sel.value;
+}
+
+// ═══════════════════ শ্রেণি dropdown ═══════════════════
+function populateBmqClassDropdown() {
+    const sel = document.getElementById('bmq-class');
+    if (!sel) return;
+    
+    sel.innerHTML = '<option value="">-- শ্রেণি --</option>';
+    
+    // ★ সব শ্রেণি (configData.classes থেকে unique)
+    const allClasses = new Set();
+    Object.keys(configData?.classes || {}).forEach(dept => {
+        (configData.classes[dept] || []).forEach(c => allClasses.add(c));
+    });
+    
+    Array.from(allClasses).sort().forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+    });
+}
+
+// ═══════════════════ বিষয় পরিবর্তনের handler ═══════════════════
+// ★ switchQmSubject থেকে কল হবে — বাংলা সিলেক্ট হলে
+window.onBmqSubjectActivated = function() {
+    // ★ বাংলা UI দেখাই
+    const arabicView = document.getElementById('exam-view-question-maker');
+    const banglaView = document.getElementById('exam-view-bangla-qm');
+    const placeholder = document.getElementById('qm-other-subject-placeholder');
+    
+    if (arabicView) arabicView.classList.add('hidden');
+    if (banglaView) banglaView.classList.remove('hidden');
+    if (placeholder) placeholder.classList.add('hidden');
+    
+    // ★ init করি
+    initBanglaQm();
+};
+
+// ═══════════════════ হেডিং — পরিবর্তন handler ═══════════════════
+window.onBmqHeaderChange = function() {
+    bmqState.year = document.getElementById('bmq-year')?.value || '';
+    bmqState.subjectText = document.getElementById('bmq-subject-text')?.value || '';
+    bmqState.date = document.getElementById('bmq-date')?.value || '';
+    bmqState.totalMarks = parseInt(document.getElementById('bmq-total-marks')?.value) || 100;
+    bmqState.time = document.getElementById('bmq-time')?.value || '';
+};
+
+// ═══════════════════ পরীক্ষার ধরন পরিবর্তন ═══════════════════
+window.onBmqExamTypeChange = function() {
+    const sel = document.getElementById('bmq-exam-type');
+    bmqState.examType = sel.value;
+    
+    const wrapper = document.getElementById('bmq-divisions-wrapper');
+    const actionBar = document.getElementById('bmq-action-bar');
+    
+    if (!bmqState.examType) {
+        if (wrapper) wrapper.classList.add('hidden');
+        if (actionBar) actionBar.classList.add('hidden');
+        return;
+    }
+    
+    // ★ UI দেখাই
+    if (wrapper) wrapper.classList.remove('hidden');
+    if (actionBar) actionBar.classList.remove('hidden');
+    
+    // ★ যদি এখনো কোনো বিভাগ না থাকে — ডিফল্ট যোগ করি
+    if (bmqState.divisions.length === 0) {
+        addDefaultBmqDivisions();
+    } else {
+        renderBmqDivisions();
+    }
+};
+
+// ═══════════════════ শ্রেণি পরিবর্তন → কিতাব লোড ═══════════════════
+window.onBmqClassChange = function() {
+    const sel = document.getElementById('bmq-class');
+    bmqState.className = sel.value;
+    bmqState.books = [];
+    
+    renderBmqBooksList();
+    onBmqHeaderChange();
+};
+
+// ★ কিতাব checkbox লিস্ট
+function renderBmqBooksList() {
+    const container = document.getElementById('bmq-books-container');
+    if (!container) return;
+    
+    if (!bmqState.className) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>';
+        return;
+    }
+    
+    const booksList = (configData?.books || {})[bmqState.className] || [];
+    
+    if (booksList.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">এই শ্রেণিতে কোন কিতাব নেই</p>';
+        return;
+    }
+    
+    container.innerHTML = booksList.map(book => `
+        <label class="flex items-center gap-2 p-1.5 hover:bg-emerald-50 rounded cursor-pointer border-b border-slate-100 last:border-b-0">
+            <input type="checkbox" 
+                   class="bmq-book-cb w-4 h-4 rounded text-emerald-600" 
+                   value="${book.replace(/"/g, '&quot;')}"
+                   onchange="onBmqBookToggle(this)">
+            <span class="text-xs">${book}</span>
+        </label>
+    `).join('');
+}
+
+// ★ কিতাব টগল
+window.onBmqBookToggle = function(cb) {
+    const book = cb.value;
+    if (cb.checked) {
+        if (!bmqState.books.includes(book)) bmqState.books.push(book);
+    } else {
+        bmqState.books = bmqState.books.filter(b => b !== book);
+    }
+    onBmqHeaderChange();
+};
+
+// ═══════════════════ ডিফল্ট বিভাগ যোগ ═══════════════════
+window.addDefaultBmqDivisions = function() {
+    const subjectKey = bmqState.subject; // 'bangla' বা 'history-geography'
+    const defaults = BMQ_DEFAULT_DIVISIONS[subjectKey] || BMQ_DEFAULT_DIVISIONS['bangla'];
+    
+    bmqState.divisions = [];
+    defaults.forEach(d => {
+        const div = createBmqDivision(d.name, d.totalMarks);
+        // ★ প্রতিটি বিভাগে ২টি খালি প্রশ্ন দিই
+        div.questions.push(createBmqQuestion());
+        div.questions.push(createBmqQuestion());
+        bmqState.divisions.push(div);
+    });
+    
+    renderBmqDivisions();
+    showToast('✅ ডিফল্ট বিভাগ লোড হয়েছে', 'success');
+};
+
+// ═══════════════════ নতুন বিভাগ যোগ ═══════════════════
+window.addBmqDivision = function() {
+    const name = prompt('বিভাগের নাম:', 'নতুন বিভাগ');
+    if (!name || !name.trim()) return;
+    
+    const marks = parseInt(prompt('এই বিভাগের মোট মান:', '0') || '0');
+    
+    const div = createBmqDivision(name.trim(), marks);
+    div.questions.push(createBmqQuestion());
+    bmqState.divisions.push(div);
+    
+    renderBmqDivisions();
+    showToast('✅ নতুন বিভাগ যোগ হয়েছে', 'success');
+};
+
+// ═══════════════════ বিভাগসমূহ Render ═══════════════════
+function renderBmqDivisions() {
+    const container = document.getElementById('bmq-divisions-container');
+    if (!container) return;
+    
+    if (bmqState.divisions.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-lg">
+                <i class="fa-solid fa-inbox text-4xl mb-2"></i>
+                <p class="text-sm">কোন বিভাগ নেই</p>
+                <p class="text-xs mt-1">"ডিফল্ট বিভাগ" বা "নতুন বিভাগ" ক্লিক করুন</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = bmqState.divisions.map((div, divIdx) => 
+        renderBmqDivision(div, divIdx)
+    ).join('');
+}
+
+// ★ একটি বিভাগের HTML
+function renderBmqDivision(div, divIdx) {
+    // ★ এই বিভাগের মোট নম্বর যোগ
+    let currentTotal = 0;
+    div.questions.forEach(q => {
+        if (typeof q.marks === 'number') currentTotal += q.marks;
+        else if (typeof q.marks === 'string' && q.marks.includes('=')) {
+            const m = q.marks.match(/=\s*(\d+)/);
+            if (m) currentTotal += parseInt(m[1]) || 0;
+        } else if (typeof q.marks === 'string' && q.marks.trim()) {
+            const m = parseInt(q.marks);
+            if (!isNaN(m)) currentTotal += m;
+        }
+    });
+    
+    // ★ মোট মান মিলছে কি না
+    const isMatching = currentTotal === div.totalMarks;
+    const totalBadge = isMatching
+        ? `<span class="badge bg-emerald-100 text-emerald-800 text-[10px]">✅ ${currentTotal} / ${div.totalMarks}</span>`
+        : `<span class="badge bg-red-100 text-red-800 text-[10px]">⚠️ ${currentTotal} / ${div.totalMarks}</span>`;
+    
+    // ★ প্রতিটি প্রশ্ন render
+    const questionsHTML = div.questions.map((q, qIdx) => 
+        renderBmqQuestion(div, divIdx, q, qIdx)
+    ).join('');
+    
+    return `
+        <div class="bg-white border-2 border-emerald-200 rounded-xl overflow-hidden" data-division-idx="${divIdx}">
+            
+            <!-- ★ বিভাগ হেডার -->
+            <div class="bg-emerald-100 px-3 py-2 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <span class="text-xs font-bold bg-emerald-700 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0">
+                        ${divIdx + 1}
+                    </span>
+                    <input type="text"
+                           value="${(div.name || '').replace(/"/g, '&quot;')}"
+                           onchange="updateBmqDivisionField(${divIdx}, 'name', this.value)"
+                           placeholder="বিভাগের নাম"
+                           class="flex-1 min-w-0 font-bold text-sm bg-transparent border-0 border-b border-emerald-300 focus:border-emerald-600 focus:outline-none p-1">
+                    <span class="text-[10px] text-emerald-800 font-semibold whitespace-nowrap">মোট মান</span>
+                    <input type="number"
+                           value="${div.totalMarks || 0}"
+                           onchange="updateBmqDivisionField(${divIdx}, 'totalMarks', parseInt(this.value) || 0)"
+                           min="0"
+                           class="w-16 text-xs border border-emerald-300 rounded px-1.5 py-1 text-center font-bold bg-white">
+                    ${totalBadge}
+                </div>
+                <div class="flex gap-1">
+                    ${bmqState.divisions.length > 1 ? `
+                        <button onclick="deleteBmqDivision(${divIdx})" 
+                                class="text-red-500 hover:text-red-700 p-1" 
+                                title="বিভাগ মুছুন">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <!-- ★ প্রশ্ন লিস্ট -->
+            <div class="p-3 space-y-2">
+                ${questionsHTML}
+                
+                <!-- ★ প্রশ্ন যোগ বাটন -->
+                <div class="flex gap-2 pt-2 border-t border-emerald-100">
+                    <button onclick="addBmqQuestion(${divIdx})" 
+                            class="flex-1 py-1.5 border-2 border-dashed border-emerald-300 text-emerald-600 hover:bg-emerald-50 text-xs font-semibold rounded-lg transition">
+                        <i class="fa-solid fa-plus"></i> নতুন প্রশ্ন
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ★ একটি প্রশ্নের HTML
+function renderBmqQuestion(div, divIdx, q, qIdx) {
+    // ★ কমন প্রশ্নের ড্রপডাউন অপশন
+    const commonOptions = BMQ_COMMON_QUESTIONS.map(qText => {
+        const shortLabel = qText.length > 70 ? qText.substring(0, 70) + '...' : qText;
+        return `<option value="${qText.replace(/"/g, '&quot;')}">${shortLabel}</option>`;
+    }).join('');
+    
+    // ★ প্রশ্নের ক্রমিক নম্বর (বাংলা)
+    const bnOrdinal = toBanglaNumber(qIdx + 1);
+    
+    // ★ উপ-প্রশ্নসমূহ
+    const subQHTML = q.subQuestions.map((sq, sqIdx) => `
+        <div class="flex items-center gap-2 pl-6">
+            <span class="text-xs font-bold text-slate-600 flex-shrink-0">(${sq.label})</span>
+            <input type="text"
+                   value="${(sq.text || '').replace(/"/g, '&quot;')}"
+                   onchange="updateBmqSubQuestionText(${divIdx}, ${qIdx}, ${sqIdx}, this.value)"
+                   placeholder="উপ-প্রশ্ন লিখুন..."
+                   class="flex-1 text-sm bg-slate-50 border border-slate-300 rounded px-2 py-1 focus:border-emerald-500 focus:outline-none">
+            <button onclick="deleteBmqSubQuestion(${divIdx}, ${qIdx}, ${sqIdx})" 
+                    class="text-red-400 hover:text-red-600 p-0.5 flex-shrink-0"
+                    title="উপ-প্রশ্ন মুছুন">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+    `).join('');
+    
+    // ★ উপ-প্রশ্ন যোগ বাটন
+    const addSubBtn = q.subQuestions.length < BMQ_SUB_LABELS.length
+        ? `<button onclick="addBmqSubQuestion(${divIdx}, ${qIdx})" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold ml-6">
+              <i class="fa-solid fa-plus"></i> উপ-প্রশ্ন যোগ
+           </button>`
+        : '';
+    
+    return `
+        <div class="bg-slate-50 rounded-lg p-2 border border-slate-200 space-y-1.5" data-q-idx="${qIdx}">
+            
+            <!-- ★ প্রশ্ন সারি -->
+            <div class="flex items-start gap-2">
+                <span class="text-xs font-bold text-slate-600 flex-shrink-0 mt-2 whitespace-nowrap">
+                    প্রশ্ন: ${bnOrdinal}।
+                </span>
+                
+                <div class="flex-1 min-w-0 space-y-1.5">
+                    <!-- ★ কমন প্রশ্নের ড্রপডাউন -->
+                    <select onchange="onBmqCommonQuestionSelect(${divIdx}, ${qIdx}, this.value)"
+                            class="w-full text-[11px] bg-blue-50 border border-blue-200 rounded px-2 py-1 focus:border-blue-500 focus:outline-none"
+                            title="কমন প্রশ্ন বাছুন">
+                        <option value="">📋 কমন প্রশ্ন বাছুন (অথবা টাইপ করুন)...</option>
+                        ${commonOptions}
+                    </select>
+                    
+                    <!-- ★ প্রশ্ন textarea -->
+                    <textarea rows="1"
+                              onchange="updateBmqQuestionText(${divIdx}, ${qIdx}, this.value)"
+                              oninput="autoGrowBmqTextarea(this)"
+                              placeholder="প্রশ্ন লিখুন..."
+                              class="w-full text-sm bg-white border border-slate-300 rounded px-2 py-1.5 focus:border-emerald-500 focus:outline-none resize-none">${q.text || ''}</textarea>
+                </div>
+                
+                <!-- ★ নম্বর -->
+                <input type="text"
+                       value="${(q.marks || '').toString().replace(/"/g, '&quot;')}"
+                       onchange="updateBmqQuestionMarks(${divIdx}, ${qIdx}, this.value)"
+                       placeholder="10"
+                       class="w-24 text-xs border border-amber-300 rounded px-1.5 py-1.5 text-center font-bold bg-amber-50 flex-shrink-0 mt-6"
+                       title="নম্বর (একক: 10, বা গুণ: 2 × 5 = 10)">
+                
+                <!-- ★ প্রশ্ন মুছুন -->
+                ${div.questions.length > 1 ? `
+                    <button onclick="deleteBmqQuestion(${divIdx}, ${qIdx})" 
+                            class="text-red-400 hover:text-red-600 p-0.5 flex-shrink-0 mt-7"
+                            title="প্রশ্ন মুছুন">
+                        <i class="fa-solid fa-xmark text-xs"></i>
+                    </button>
+                ` : ''}
+            </div>
+            
+            <!-- ★ উপ-প্রশ্নসমূহ -->
+            ${subQHTML}
+            
+            <!-- ★ উপ-প্রশ্ন যোগ বাটন -->
+            ${addSubBtn}
+        </div>
+    `;
+}
+
+// ★ প্রশ্ন textarea auto-grow
+window.autoGrowBmqTextarea = function(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+};
+
+// ═══════════════════ হ্যান্ডলার — বিভাগ ═══════════════════
+window.updateBmqDivisionField = function(divIdx, field, value) {
+    if (!bmqState.divisions[divIdx]) return;
+    bmqState.divisions[divIdx][field] = value;
+    // ★ মোট মান চেক করতে re-render
+    renderBmqDivisions();
+};
+
+window.deleteBmqDivision = function(divIdx) {
+    if (bmqState.divisions.length <= 1) {
+        showToast('⚠️ কমপক্ষে একটি বিভাগ থাকতে হবে', 'warn');
+        return;
+    }
+    if (!confirm(`"${bmqState.divisions[divIdx].name}" বিভাগটি মুছে ফেলবেন?`)) return;
+    
+    bmqState.divisions.splice(divIdx, 1);
+    renderBmqDivisions();
+    showToast('🗑️ বিভাগ মুছে ফেলা হয়েছে', 'info');
+};
+
+// ═══════════════════ হ্যান্ডলার — প্রশ্ন ═══════════════════
+window.addBmqQuestion = function(divIdx) {
+    const div = bmqState.divisions[divIdx];
+    if (!div) return;
+    
+    div.questions.push(createBmqQuestion());
+    renderBmqDivisions();
+};
+
+window.deleteBmqQuestion = function(divIdx, qIdx) {
+    const div = bmqState.divisions[divIdx];
+    if (!div) return;
+    if (div.questions.length <= 1) {
+        showToast('⚠️ কমপক্ষে একটি প্রশ্ন থাকতে হবে', 'warn');
+        return;
+    }
+    
+    if (!confirm(`প্রশ্ন ${toBanglaNumber(qIdx + 1)} মুছে ফেলবেন?`)) return;
+    
+    div.questions.splice(qIdx, 1);
+    renderBmqDivisions();
+};
+
+window.updateBmqQuestionText = function(divIdx, qIdx, value) {
+    const q = bmqState.divisions[divIdx]?.questions[qIdx];
+    if (q) q.text = value;
+};
+
+window.updateBmqQuestionMarks = function(divIdx, qIdx, value) {
+    const q = bmqState.divisions[divIdx]?.questions[qIdx];
+    if (!q) return;
+    
+    // ★ সংখ্যা হলে number হিসেবে, নাহলে string
+    const trimmed = (value || '').trim();
+    if (/^\d+$/.test(trimmed)) {
+        q.marks = parseInt(trimmed);
+    } else {
+        q.marks = trimmed;
+    }
+    
+    renderBmqDivisions();
+};
+
+// ★ কমন প্রশ্ন সিলেক্ট করলে textarea-তে বসবে
+window.onBmqCommonQuestionSelect = function(divIdx, qIdx, value) {
+    if (!value) return;
+    
+    const q = bmqState.divisions[divIdx]?.questions[qIdx];
+    if (!q) return;
+    
+    q.text = value;
+    renderBmqDivisions();
+    showToast('✅ কমন প্রশ্ন যোগ হয়েছে', 'success');
+};
+
+// ═══════════════════ হ্যান্ডলার — উপ-প্রশ্ন ═══════════════════
+window.addBmqSubQuestion = function(divIdx, qIdx) {
+    const q = bmqState.divisions[divIdx]?.questions[qIdx];
+    if (!q) return;
+    
+    if (q.subQuestions.length >= BMQ_SUB_LABELS.length) {
+        showToast(`⚠️ সর্বোচ্চ ${BMQ_SUB_LABELS.length}টি উপ-প্রশ্ন যোগ করা যাবে`, 'warn');
+        return;
+    }
+    
+    const newLabel = BMQ_SUB_LABELS[q.subQuestions.length];
+    q.subQuestions.push({ label: newLabel, text: '' });
+    renderBmqDivisions();
+};
+
+window.deleteBmqSubQuestion = function(divIdx, qIdx, sqIdx) {
+    const q = bmqState.divisions[divIdx]?.questions[qIdx];
+    if (!q) return;
+    
+    q.subQuestions.splice(sqIdx, 1);
+    // ★ লেবেল renumber
+    q.subQuestions.forEach((sq, i) => { sq.label = BMQ_SUB_LABELS[i]; });
+    
+    renderBmqDivisions();
+};
+
+window.updateBmqSubQuestionText = function(divIdx, qIdx, sqIdx, value) {
+    const sq = bmqState.divisions[divIdx]?.questions[qIdx]?.subQuestions[sqIdx];
+    if (sq) sq.text = value;
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ বাংলা প্রশ্নপত্র — HTML Builder (প্রিভিউ ও প্রিন্টের জন্য) ★★★
+// ═══════════════════════════════════════════════════════════════
+function buildBanglaQuestionPaperHTML() {
+    const s = bmqState;
+    
+    if (!s.divisions || s.divisions.length === 0) return null;
+    
+    // ★ পরীক্ষার ধরন
+    const examTypeNames = {
+        term1: '১ম সাময়িক',
+        term2: '২য় সাময়িক',
+        model: 'মডেল টেস্ট',
+        qurbani: 'কুরবানী',
+        annual: 'বার্ষিক'
+    };
+    const examTypeBn = examTypeNames[s.examType] || 'পরীক্ষা';
+    
+    // ★ মাদরাসার তথ্য
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية';
+    
+    // ★ হেডিং
+    const headingHTML = `
+        <div class="bmq-heading">
+            <h2 class="bmq-madrasa-ar" dir="rtl">${madrasaAr}</h2>
+            <h3 class="bmq-madrasa-bn">${madrasaBn}</h3>
+            <p class="bmq-exam-title">${examTypeBn} পরীক্ষা-${s.year || '________'} ইং</p>
+            <div class="bmq-meta-row">
+                <span><b>কিতাব:</b> ${s.books.length > 0 ? s.books.join(' / ') : '________'}</span>
+                <span><b>বিষয়:</b> ${s.subjectText || '________'}</span>
+            </div>
+            <div class="bmq-meta-row">
+                <span><b>শ্রেণি:</b> ${s.className || '________'}</span>
+                <span><b>তারিখ:</b> ${s.date || '________'}</span>
+            </div>
+            <div class="bmq-meta-row">
+                <span><b>পূর্ণমান:</b> ${s.totalMarks || 100}</span>
+                <span><b>সময়:</b> ${s.time || '৩ ঘণ্টা'}</span>
+            </div>
+        </div>
+    `;
+    
+    // ★ প্রতিটি বিভাগ
+    let divisionsHTML = '';
+    
+    s.divisions.forEach((div, divIdx) => {
+        // ★ শুধু যেসব প্রশ্নে text আছে
+        const visibleQuestions = div.questions.filter(q => (q.text || '').trim() !== '');
+        
+        if (visibleQuestions.length === 0) return;
+        
+        // ★ প্রশ্নগুলো render
+        let questionsHTML = '';
+        let qCounter = 0;
+        
+        visibleQuestions.forEach(q => {
+            qCounter++;
+            const bnNo = toBanglaNumber(qCounter);
+            
+            // ★ নম্বর display
+            let marksDisplay = '';
+            if (typeof q.marks === 'number') {
+                marksDisplay = q.marks;
+            } else if (typeof q.marks === 'string' && q.marks.trim()) {
+                marksDisplay = q.marks;
+            }
+            
+            // ★ উপ-প্রশ্ন
+            const visibleSubQ = q.subQuestions.filter(sq => (sq.text || '').trim() !== '');
+            const subQHTML = visibleSubQ.map(sq => 
+                `<div class="bmq-subq"><b>(${sq.label})</b> ${escapeBmqHtml(sq.text)}</div>`
+            ).join('');
+            
+            questionsHTML += `
+                <div class="bmq-question">
+                    <div class="bmq-q-row">
+                        <div class="bmq-q-content">
+                            <b>প্রশ্ন: ${bnNo}।</b> ${escapeBmqHtml(q.text)}
+                        </div>
+                        <div class="bmq-q-marks">${marksDisplay}</div>
+                    </div>
+                    ${subQHTML ? `<div class="bmq-subq-list">${subQHTML}</div>` : ''}
+                </div>
+            `;
+        });
+        
+        // ★ বিভাগ title
+        divisionsHTML += `
+            <div class="bmq-division">
+                <div class="bmq-division-title">
+                    <span class="bmq-div-name">${div.name}</span>
+                    <span class="bmq-div-marks">মান- ${div.totalMarks || 0}</span>
+                </div>
+                ${questionsHTML}
+            </div>
+        `;
+    });
+    
+    return `
+        <div class="bmq-page" id="bmq-print-paper">
+            ${headingHTML}
+            <div class="bmq-divisions-area">
+                ${divisionsHTML}
+            </div>
+        </div>
+    `;
+}
+
+// ★ HTML escape
+function escapeBmqHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/\n/g, '<br>');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ Word-এর জন্য HTML (আসল টেবিল) ★★★
+// ═══════════════════════════════════════════════════════════════
+function buildBanglaWordFriendlyHTML() {
+    const s = bmqState;
+    if (!s.divisions || s.divisions.length === 0) return null;
+    
+    const examTypeNames = {
+        term1: '১ম সাময়িক',
+        term2: '২য় সাময়িক',
+        model: 'মডেল টেস্ট',
+        qurbani: 'কুরবানী',
+        annual: 'বার্ষিক'
+    };
+    const examTypeBn = examTypeNames[s.examType] || 'পরীক্ষা';
+    
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الإسلامية';
+    
+    // ★ হেডিং (Word-এ border none, শুধু নিচে রেখা)
+    const headingHTML = `
+        <div style="border:none;border-bottom:1.5pt solid #1e293b;padding:0 0 10pt 0;margin-bottom:14pt;text-align:center;">
+            <h2 dir="rtl" style="margin:0 0 4pt 0;font-family:'Amiri','Traditional Arabic',serif;font-size:18pt;">${madrasaAr}</h2>
+            <h3 style="margin:0 0 6pt 0;font-size:14pt;font-weight:bold;">${madrasaBn}</h3>
+            <p style="margin:0 0 8pt 0;font-size:13pt;font-weight:bold;">${examTypeBn} পরীক্ষা-${s.year || '________'} ইং</p>
+            
+            <table cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:none;margin:3pt 0;">
+                <tr>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>কিতাব:</b> ${s.books.length > 0 ? s.books.join(' / ') : '________'}
+                    </td>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>বিষয়:</b> ${s.subjectText || '________'}
+                    </td>
+                </tr>
+            </table>
+            
+            <table cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:none;margin:3pt 0;">
+                <tr>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>শ্রেণি:</b> ${s.className || '________'}
+                    </td>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>তারিখ:</b> ${s.date || '________'}
+                    </td>
+                </tr>
+            </table>
+            
+            <table cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:none;margin:3pt 0;">
+                <tr>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>পূর্ণমান:</b> ${s.totalMarks || 100}
+                    </td>
+                    <td style="width:50%;border:none;padding:2pt 4pt;text-align:center;font-size:12.5pt;">
+                        <b>সময়:</b> ${s.time || '৩ ঘণ্টা'}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    `;
+    
+    // ★ বিভাগসমূহ
+    let divisionsHTML = '';
+    
+    s.divisions.forEach(div => {
+        const visibleQuestions = div.questions.filter(q => (q.text || '').trim() !== '');
+        if (visibleQuestions.length === 0) return;
+        
+        let questionsHTML = '';
+        let qCounter = 0;
+        
+        visibleQuestions.forEach(q => {
+            qCounter++;
+            const bnNo = toBanglaNumber(qCounter);
+            
+            let marksDisplay = '';
+            if (typeof q.marks === 'number') marksDisplay = q.marks;
+            else if (typeof q.marks === 'string' && q.marks.trim()) marksDisplay = q.marks;
+            
+            const visibleSubQ = q.subQuestions.filter(sq => (sq.text || '').trim() !== '');
+            
+            // ★ প্রতি প্রশ্নে টেবিল (প্রশ্ন ডানে, নম্বর বামে)
+            questionsHTML += `
+                <table class="bmq-word-qtable" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:none;margin-bottom:6pt;">
+                    <tr>
+                        <td style="width:88%;border:none;padding:2pt 6pt;text-align:left;vertical-align:top;font-size:12pt;">
+                            <b>প্রশ্ন: ${bnNo}।</b> ${escapeBmqHtml(q.text)}
+                            ${visibleSubQ.length > 0 ? '<br>' + visibleSubQ.map(sq => 
+                                `&nbsp;&nbsp;&nbsp;&nbsp;<b>(${sq.label})</b> ${escapeBmqHtml(sq.text)}`
+                            ).join('<br>') : ''}
+                        </td>
+                        <td style="width:12%;border:none;padding:2pt 6pt;text-align:center;vertical-align:top;font-size:12pt;font-weight:bold;">
+                            ${marksDisplay}
+                        </td>
+                    </tr>
+                </table>
+            `;
+        });
+        
+        // ★ বিভাগ title (Word-safe — শুধু border-top ও border-bottom)
+        divisionsHTML += `
+            <div style="margin-top:10pt;margin-bottom:6pt;border-top:1.5pt solid #1e293b;border-bottom:1.5pt solid #1e293b;padding:4pt 0;">
+                <table cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;border:none;">
+                    <tr>
+                        <td style="border:none;padding:0;text-align:left;font-size:13pt;font-weight:bold;">
+                            ${div.name}
+                        </td>
+                        <td style="border:none;padding:0;text-align:right;font-size:13pt;font-weight:bold;">
+                            মান- ${div.totalMarks || 0}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            ${questionsHTML}
+        `;
+    });
+    
+    return `
+        <div class="bmq-page" id="bmq-print-paper">
+            ${headingHTML}
+            <div class="bmq-divisions-area">
+                ${divisionsHTML}
+            </div>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ CSS inject ★★★
+// ═══════════════════════════════════════════════════════════════
+function injectBmqPrintStyles() {
+    if (document.getElementById('bmq-print-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'bmq-print-styles';
+    style.textContent = `
+        .bmq-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12mm 10mm 15mm 10mm;
+            margin: 0 auto 20px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+            color: #1e293b;
+            box-sizing: border-box;
+        }
+        
+        /* ★ হেডিং */
+        .bmq-heading {
+            text-align: center;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .bmq-madrasa-ar {
+            margin: 0 0 4px 0;
+            font-family: 'Amiri', serif;
+            font-size: 22px;
+            color: #064e3b;
+            font-weight: bold;
+        }
+        
+        .bmq-madrasa-bn {
+            margin: 0 0 6px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #065f46;
+        }
+        
+        .bmq-exam-title {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        
+        .bmq-meta-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 12px;
+            margin: 4px 0;
+            font-size: 13px;
+        }
+        
+        .bmq-meta-row > span {
+            flex: 1;
+            text-align: center;
+        }
+        
+        /* ★ বিভাগ */
+        .bmq-division {
+            margin-bottom: 14px;
+        }
+        
+        .bmq-division-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1.5px solid #1e293b;
+            border-bottom: 1.5px solid #1e293b;
+            padding: 5px 8px;
+            margin-bottom: 8px;
+            background: #f1f5f9;
+        }
+        
+        .bmq-div-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #064e3b;
+        }
+        
+        .bmq-div-marks {
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        /* ★ প্রশ্ন */
+        .bmq-question {
+            page-break-inside: avoid;
+            margin-bottom: 8px;
+        }
+        
+        .bmq-q-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .bmq-q-content {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.7;
+            text-align: left;
+        }
+        
+        .bmq-q-marks {
+            flex-shrink: 0;
+            width: 60px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .bmq-subq-list {
+            padding-left: 30px;
+            margin-top: 4px;
+        }
+        
+        .bmq-subq {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 3px;
+        }
+        
+        /* ★ প্রিভিউ মোড */
+        @media screen {
+            .bmq-page {
+                max-width: 100%;
+                width: 100%;
+                min-height: auto;
+                padding: 20px;
+            }
+        }
+        
+        /* ★ প্রিন্ট */
+        @media print {
+            body * { visibility: hidden; }
+            #bmq-print-paper, #bmq-print-paper * { visibility: visible; }
+            #bmq-print-paper {
+                position: absolute;
+                top: 0; left: 0; right: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 12mm 10mm !important;
+            }
+            @page { size: A4 portrait; margin: 0; }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ প্রিভিউ ★★★
+// ═══════════════════════════════════════════════════════════════
+window.previewBanglaQm = function() {
+    if (!bmqState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildBanglaQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ প্রিভিউ দেখানোর মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    injectBmqPrintStyles();
+    
+    const oldModal = document.getElementById('bmq-preview-modal');
+    if (oldModal) oldModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'bmq-preview-modal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);z-index:9999;display:flex;flex-direction:column;padding:16px;overflow-y:auto;';
+    
+    modal.innerHTML = `
+        <div style="max-width:900px;margin:0 auto;width:100%;">
+            <div style="background:#1e293b;color:white;padding:12px 18px;border-radius:10px 10px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:10;">
+                <div>
+                    <h3 style="margin:0;font-size:16px;">
+                        <i class="fa-solid fa-eye"></i> প্রিভিউ — বাংলা প্রশ্নপত্র
+                    </h3>
+                    <p style="margin:3px 0 0;font-size:11px;opacity:0.8;">A4 পোর্ট্রেট</p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button onclick="printBanglaQm()" style="background:#059669;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="shareBanglaQmPDF()" style="background:#d97706;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                    <button onclick="downloadBanglaQmWord()" style="background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;">
+                        <i class="fa-solid fa-file-word"></i> Word
+                    </button>
+                    <button onclick="document.getElementById('bmq-preview-modal').remove()" style="background:#dc2626;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;">
+                        <i class="fa-solid fa-xmark"></i> বন্ধ
+                    </button>
+                </div>
+            </div>
+            <div style="background:#f1f5f9;padding:20px;border-radius:0 0 10px 10px;">
+                ${html}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const escHandler = e => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ প্রিন্ট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.printBanglaQm = function() {
+    if (!bmqState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildBanglaQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ প্রিন্ট করার মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('🖨️ প্রিন্ট উইন্ডো খোলছে...', 'info');
+    
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে', 'warn');
+        return;
+    }
+    
+    printWin.document.write(buildBmqPrintWindowHTML(html));
+    printWin.document.close();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ PDF ★★★
+// ═══════════════════════════════════════════════════════════════
+window.shareBanglaQmPDF = function() {
+    if (!bmqState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildBanglaQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ PDF তৈরির মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('📄 PDF উইন্ডো খুলছে — "Save as PDF" বেছে নিন', 'info');
+    
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে', 'warn');
+        return;
+    }
+    
+    printWin.document.write(buildBmqPrintWindowHTML(html));
+    printWin.document.close();
+};
+
+// ★★ প্রিন্ট/PDF উইন্ডোর HTML (একই) ★★★
+function buildBmqPrintWindowHTML(contentHTML) {
+    const examTypeNames = { term1: 'Term1', term2: 'Term2', model: 'Model', qurbani: 'Qurbani', annual: 'Annual' };
+    const fileName = `BanglaQ_${examTypeNames[bmqState.examType] || 'Exam'}_${bmqState.className || ''}_${(bmqState.year || '').replace(/\s+/g, '_')}`;
+    
+    return `
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>${fileName}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <style>
+                * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                html, body {
+                    margin: 0; padding: 0; background: white;
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+                    color: #1e293b;
+                }
+                .bmq-page {
+                    width: 210mm;
+                    min-height: 297mm;
+                    padding: 12mm 10mm 15mm 10mm;
+                    background: white;
+                    margin: 0 auto;
+                    box-sizing: border-box;
+                }
+                .bmq-heading {
+                    text-align: center;
+                    border-bottom: 2px solid #1e293b;
+                    padding-bottom: 12px;
+                    margin-bottom: 16px;
+                }
+                .bmq-madrasa-ar {
+                    margin: 0 0 4px 0;
+                    font-family: 'Amiri', serif;
+                    font-size: 22px;
+                    color: #064e3b;
+                    font-weight: bold;
+                }
+                .bmq-madrasa-bn {
+                    margin: 0 0 6px 0;
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #065f46;
+                }
+                .bmq-exam-title {
+                    margin: 0 0 10px 0;
+                    font-size: 15px;
+                    font-weight: bold;
+                }
+                .bmq-meta-row {
+                    display: flex;
+                    justify-content: space-around;
+                    gap: 12px;
+                    margin: 4px 0;
+                    font-size: 13px;
+                }
+                .bmq-meta-row > span { flex: 1; text-align: center; }
+                .bmq-division { margin-bottom: 14px; }
+                .bmq-division-title {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-top: 1.5px solid #1e293b;
+                    border-bottom: 1.5px solid #1e293b;
+                    padding: 5px 8px;
+                    margin-bottom: 8px;
+                    background: #f1f5f9;
+                }
+                .bmq-div-name { font-size: 14px; font-weight: bold; color: #064e3b; }
+                .bmq-div-marks { font-size: 13px; font-weight: bold; }
+                .bmq-question { page-break-inside: avoid; margin-bottom: 8px; }
+                .bmq-q-row {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
+                .bmq-q-content {
+                    flex: 1;
+                    font-size: 14px;
+                    line-height: 1.7;
+                }
+                .bmq-q-marks {
+                    flex-shrink: 0;
+                    width: 60px;
+                    text-align: right;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                .bmq-subq-list { padding-left: 30px; margin-top: 4px; }
+                .bmq-subq { font-size: 13px; line-height: 1.6; margin-bottom: 3px; }
+                @page { size: A4 portrait; margin: 0; }
+                @media print {
+                    body { margin: 0; padding: 0; }
+                    .bmq-page { width: 100%; min-height: auto; padding: 12mm 10mm !important; margin: 0 !important; }
+                }
+            </style>
+        </head>
+        <body>
+            ${contentHTML}
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() { window.print(); }, 700);
+                });
+            <\/script>
+        </body>
+        </html>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ Word ডাউনলোড ★★★
+// ═══════════════════════════════════════════════════════════════
+window.downloadBanglaQmWord = function() {
+    if (!bmqState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildBanglaWordFriendlyHTML();
+    if (!html) {
+        showToast('⚠️ Word বানানোর মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('📄 Word ফাইল তৈরি হচ্ছে...', 'info');
+    
+    const wordHTML = `
+        <!DOCTYPE html>
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+              xmlns:w="urn:schemas-microsoft-com:office:word" 
+              xmlns="http://www.w3.org/TR/REC-html40" 
+              lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>বাংলা প্রশ্নপত্র</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 12mm 10mm 15mm 10mm;
+                }
+                body {
+                    font-family: 'Hind Siliguri', 'Amiri', sans-serif;
+                    color: #1e293b;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 13pt;
+                }
+                .bmq-page {
+                    padding: 0;
+                    margin: 0;
+                    width: 100%;
+                }
+                .bmq-madrasa-ar {
+                    margin: 0 0 4pt 0;
+                    font-family: 'Amiri', 'Traditional Arabic', serif;
+                    font-size: 18pt;
+                    font-weight: bold;
+                    color: #064e3b;
+                }
+                .bmq-madrasa-bn {
+                    margin: 0 0 6pt 0;
+                    font-size: 14pt;
+                    font-weight: bold;
+                    color: #065f46;
+                }
+                .bmq-exam-title {
+                    margin: 0 0 10pt 0;
+                    font-size: 13pt;
+                    font-weight: bold;
+                }
+                .bmq-divisions-area {
+                    margin-top: 14pt;
+                }
+            </style>
+        </head>
+        <body>
+            ${html}
+        </body>
+        </html>
+    `;
+    
+    const blob = new Blob(['\ufeff', wordHTML], { 
+        type: 'application/msword;charset=utf-8' 
+    });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    const examTypeNames = {
+        term1: 'Term1',
+        term2: 'Term2',
+        model: 'Model',
+        qurbani: 'Qurbani',
+        annual: 'Annual'
+    };
+    const fileName = `BanglaQ_${examTypeNames[bmqState.examType] || 'Exam'}_${bmqState.className || ''}_${(bmqState.year || '').replace(/\s+/g, '_')}.doc`;
+    
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showToast('✅ Word ফাইল ডাউনলোড হয়েছে', 'success');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ Firestore সেভ ★★★
+// ═══════════════════════════════════════════════════════════════
+window.saveBanglaQm = async function() {
+    if (!bmqState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    if (bmqState.divisions.length === 0) {
+        showToast('⚠️ কোনো বিভাগ নেই', 'warn');
+        return;
+    }
+    
+    if (!currentUser) {
+        showToast('❌ লগইন করুন', 'error');
+        return;
+    }
+    
+    const isEditing = !!bmqState.savedId;
+    const totalQ = bmqState.divisions.reduce((a, d) => a + d.questions.length, 0);
+    
+    if (!confirm(
+        isEditing 
+            ? `প্রশ্নসেট আপডেট করবেন?\n\nপরীক্ষার ধরন: ${bmqState.examType}\nশ্রেণি: ${bmqState.className}\nমোট প্রশ্ন: ${totalQ}টি`
+            : `নতুন প্রশ্নসেট সেভ করবেন?\n\nপরীক্ষার ধরন: ${bmqState.examType}\nশ্রেণি: ${bmqState.className}\nমোট প্রশ্ন: ${totalQ}টি`
+    )) return;
+    
+    showToast('💾 সেভ হচ্ছে...', 'info');
+    
+    try {
+        const { doc, setDoc, serverTimestamp } = window.fbFuncs;
+        
+        const setId = bmqState.savedId || ('bnq_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6));
+        
+        const savedData = {
+            id: setId,
+            subject: 'bangla',
+            
+            academicYear: bmqState.year || '',
+            examType: bmqState.examType || '',
+            className: bmqState.className || '',
+            books: bmqState.books || [],
+            subjectText: bmqState.subjectText || '',
+            date: bmqState.date || '',
+            totalMarks: bmqState.totalMarks || 100,
+            time: bmqState.time || '',
+            divisions: bmqState.divisions || [],
+            
+            createdAt: bmqState.savedAt || serverTimestamp(),
+            createdBy: currentUser.uid,
+            createdByEmail: currentUser.email || '',
+            updatedAt: serverTimestamp()
+        };
+        
+        await setDoc(doc(window.fbDB, 'questionSets', setId), savedData, { merge: true });
+        
+        bmqState.savedId = setId;
+        bmqState.savedAt = savedData.createdAt;
+        
+        showToast(isEditing ? '✅ প্রশ্নসেট আপডেট হয়েছে' : '✅ প্রশ্নসেট সেভ হয়েছে', 'success');
+        
+    } catch (err) {
+        console.error('❌ saveBanglaQm error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ সেভ করা লিস্ট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.loadSavedBmqSets = async function() {
+    if (!currentUser) {
+        showToast('❌ লগইন করুন', 'error');
+        return;
+    }
+    
+    showToast('📂 লোড হচ্ছে...', 'info');
+    
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        
+        let q;
+        if (currentUserData?.role === 'admin') {
+            q = collection(window.fbDB, 'questionSets');
+        } else {
+            q = query(
+                collection(window.fbDB, 'questionSets'), 
+                where('createdBy', '==', currentUser.uid)
+            );
+        }
+        
+        const snap = await getDocs(q);
+        const sets = [];
+        snap.forEach(d => sets.push({ id: d.id, ...d.data() }));
+        
+        // ★ শুধু বাংলা ফিল্টার
+        const banglaSets = sets.filter(s => s.subject === 'bangla');
+        
+        banglaSets.sort((a, b) => {
+            const ta = a.createdAt?.seconds || 0;
+            const tb = b.createdAt?.seconds || 0;
+            return tb - ta;
+        });
+        
+        if (banglaSets.length === 0) {
+            showToast('📂 কোনো সেভ করা বাংলা প্রশ্নসেট নেই', 'info');
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.id = 'bmq-saved-sets-modal';
+        modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        
+        const examTypeLabels = {
+            term1: '১ম সাময়িক',
+            term2: '২য় সাময়িক',
+            model: 'মডেল টেস্ট',
+            qurbani: 'কুরবানী',
+            annual: 'বার্ষিক'
+        };
+        
+        let setsHTML = '';
+        banglaSets.forEach(s => {
+            const date = s.createdAt?.seconds 
+                ? new Date(s.createdAt.seconds * 1000).toLocaleDateString('bn-BD')
+                : '---';
+            const qCount = (s.divisions || []).reduce((a, d) => a + (d.questions || []).length, 0);
+            const examLabel = examTypeLabels[s.examType] || s.examType || '---';
+            const booksStr = (s.books || []).join(' / ') || '---';
+            
+            setsHTML += '<div class="bg-white rounded-xl border-2 border-slate-200 hover:border-emerald-500 transition overflow-hidden">' +
+                '<div class="bg-emerald-50 px-3 py-2 border-b border-emerald-200 flex items-center justify-between flex-wrap gap-2">' +
+                    '<div class="flex items-center gap-2 flex-wrap">' +
+                        '<span class="badge bg-emerald-600 text-white">🇧🇩 বাংলা</span>' +
+                        '<span class="badge bg-blue-100 text-blue-800">' + examLabel + '</span>' +
+                        '<span class="text-xs font-bold text-slate-700">' + (s.className || '---') + '</span>' +
+                    '</div>' +
+                    '<span class="text-[10px] text-slate-500">' + date + '</span>' +
+                '</div>' +
+                '<div class="px-3 py-2">' +
+                    '<div class="grid grid-cols-2 gap-2 text-xs mb-2">' +
+                        '<div><strong>শিক্ষাবর্ষ:</strong> ' + (s.academicYear || '---') + '</div>' +
+                        '<div><strong>প্রশ্ন:</strong> ' + qCount + 'টি</div>' +
+                        '<div class="col-span-2"><strong>কিতাব:</strong> ' + booksStr + '</div>' +
+                    '</div>' +
+                    '<div class="flex gap-2">' +
+                        '<button onclick="loadBmqSet(\'' + s.id + '\')" class="flex-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded transition">' +
+                            '<i class="fa-solid fa-folder-open"></i> লোড' +
+                        '</button>' +
+                        '<button onclick="deleteBmqSet(\'' + s.id + '\')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded transition">' +
+                            '<i class="fa-solid fa-trash"></i>' +
+                        '</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        });
+        
+        modal.innerHTML = 
+            '<div style="background:#f1f5f9;border-radius:12px;max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">' +
+                '<div style="background:#1e293b;color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
+                    '<div>' +
+                        '<h3 style="margin:0;font-size:16px;">' +
+                            '<i class="fa-solid fa-folder-open"></i> সেভ করা বাংলা প্রশ্নসেট' +
+                        '</h3>' +
+                        '<p style="margin:3px 0 0;font-size:11px;opacity:0.8;">' + banglaSets.length + 'টি পাওয়া গেছে</p>' +
+                    '</div>' +
+                    '<button onclick="document.getElementById(\'bmq-saved-sets-modal\').remove()" style="background:#dc2626;color:white;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;">' +
+                        '<i class="fa-solid fa-xmark"></i> বন্ধ' +
+                    '</button>' +
+                '</div>' +
+                '<div style="padding:14px;overflow-y:auto;flex:1;display:grid;grid-template-columns:1fr;gap:10px;">' +
+                    setsHTML +
+                '</div>' +
+            '</div>';
+        
+        document.body.appendChild(modal);
+        
+        modal.addEventListener('click', e => {
+            if (e.target === modal) modal.remove();
+        });
+        
+    } catch (err) {
+        console.error('❌ loadSavedBmqSets error:', err);
+        showToast('❌ লোড ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ একটা প্রশ্নসেট লোড ★★★
+// ═══════════════════════════════════════════════════════════════
+window.loadBmqSet = async function(setId) {
+    try {
+        const { doc, getDoc } = window.fbFuncs;
+        const ref = doc(window.fbDB, 'questionSets', setId);
+        const snap = await getDoc(ref);
+        
+        if (!snap.exists()) {
+            showToast('❌ প্রশ্নসেট পাওয়া যায়নি', 'error');
+            return;
+        }
+        
+        const data = snap.data();
+        
+        // ★ স্টেট লোড করি (নির্দিষ্ট ফিল্ড, পুরো replace নয়)
+        bmqState.year = data.academicYear || '';
+        bmqState.examType = data.examType || '';
+        bmqState.className = data.className || '';
+        bmqState.books = data.books || [];
+        bmqState.subjectText = data.subjectText || '';
+        bmqState.date = data.date || '';
+        bmqState.totalMarks = data.totalMarks || 100;
+        bmqState.time = data.time || '৩ ঘণ্টা';
+        bmqState.divisions = data.divisions || [];
+        bmqState.savedId = setId;
+        bmqState.savedAt = data.createdAt;
+        
+        // ★ UI-তে মান বসাই
+        const yearEl = document.getElementById('bmq-year');
+        if (yearEl) yearEl.value = bmqState.year || '';
+        
+        const examEl = document.getElementById('bmq-exam-type');
+        if (examEl) examEl.value = bmqState.examType || '';
+        
+        populateBmqClassDropdown();
+        const classEl = document.getElementById('bmq-class');
+        if (classEl) classEl.value = bmqState.className || '';
+        
+        renderBmqBooksList();
+        
+        setTimeout(() => {
+            document.querySelectorAll('.bmq-book-cb').forEach(cb => {
+                cb.checked = bmqState.books.includes(cb.value);
+            });
+        }, 150);
+        
+        const subjectEl = document.getElementById('bmq-subject-text');
+        if (subjectEl) subjectEl.value = bmqState.subjectText || '';
+        
+        const dateEl = document.getElementById('bmq-date');
+        if (dateEl) dateEl.value = bmqState.date || '';
+        
+        const marksEl = document.getElementById('bmq-total-marks');
+        if (marksEl) marksEl.value = bmqState.totalMarks || 100;
+        
+        const timeEl = document.getElementById('bmq-time');
+        if (timeEl) timeEl.value = bmqState.time || '৩ ঘণ্টা';
+        
+        // ★ বিভাগ দেখাই
+        const wrapper = document.getElementById('bmq-divisions-wrapper');
+        if (wrapper) wrapper.classList.remove('hidden');
+        
+        const actionBar = document.getElementById('bmq-action-bar');
+        if (actionBar) actionBar.classList.remove('hidden');
+        
+        renderBmqDivisions();
+        
+        // ★ মডাল বন্ধ
+        const modal = document.getElementById('bmq-saved-sets-modal');
+        if (modal) modal.remove();
+        
+        showToast('✅ প্রশ্নসেট লোড হয়েছে', 'success');
+        
+    } catch (err) {
+        console.error('❌ loadBmqSet error:', err);
+        showToast('❌ লোড ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ একটা প্রশ্নসেট ডিলিট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.deleteBmqSet = async function(setId) {
+    if (!confirm('এই প্রশ্নসেটটি মুছে ফেলবেন?')) return;
+    
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'questionSets', setId));
+        
+        showToast('🗑️ প্রশ্নসেট মুছে ফেলা হয়েছে', 'info');
+        
+        const modal = document.getElementById('bmq-saved-sets-modal');
+        if (modal) modal.remove();
+        
+        setTimeout(() => loadSavedBmqSets(), 300);
+        
+    } catch (err) {
+        console.error('❌ deleteBmqSet error:', err);
+        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ রিসেট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.resetBanglaQm = function() {
+    if (bmqState.divisions.length > 0) {
+        if (!confirm('সব বিভাগ ও প্রশ্ন মুছে ফেলবেন?')) return;
+    }
+    
+    bmqState = {
+        subject: 'bangla',
+        year: '',
+        examType: '',
+        className: '',
+        books: [],
+        subjectText: '',
+        date: '',
+        totalMarks: 100,
+        time: '৩ ঘণ্টা',
+        divisions: [],
+        savedId: null,
+        savedAt: null
+    };
+    
+    // ★ UI reset
+    const ids = ['bmq-year', 'bmq-exam-type', 'bmq-class', 'bmq-subject-text', 'bmq-date'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    
+    document.getElementById('bmq-total-marks').value = '100';
+    document.getElementById('bmq-time').value = '৩ ঘণ্টা';
+    document.getElementById('bmq-books-container').innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>';
+    
+    document.getElementById('bmq-divisions-wrapper').classList.add('hidden');
+    document.getElementById('bmq-action-bar').classList.add('hidden');
+    
+    // ★ বর্তমান বছর auto-select
+    populateBmqYearDropdown();
+    
+    showToast('🔄 প্রশ্ন মেকার রিসেট হয়েছে', 'info');
+};
+
+window.resetBanglaQm = function() {
+    showToast('🔄 রিসেট ফিচার পরের ধাপে যোগ হবে', 'info');
+};
+
+window.loadSavedBmqSets = function() {
+    showToast('📂 সেভ করা লিস্ট পরের ধাপে যোগ হবে', 'info');
+};
+
+window.previewBanglaQm = function() {
+    showToast('👁️ প্রিভিউ পরের ধাপে যোগ হবে', 'info');
+};
+
+window.printBanglaQm = function() {
+    showToast('🖨️ প্রিন্ট পরের ধাপে যোগ হবে', 'info');
+};
+
+window.shareBanglaQmPDF = function() {
+    showToast('📄 PDF পরের ধাপে যোগ হবে', 'info');
+};
+
+window.saveBanglaQm = function() {
+    showToast('💾 সেভ পরের ধাপে যোগ হবে', 'info');
+};
+
+// ═══════════════════════════════════════════════════════════════
 // ★★★ আরবি প্রশ্ন মেকার — স্টেট ও লজিক ★★★
 // ═══════════════════════════════════════════════════════════════
 
@@ -13426,37 +15226,74 @@ function createAqmQuestion(idx) {
     };
 }
 
+// ★ Initialization — যখনই exam tab খোলা হবে, dropdown populate হবে
+window.initArabicQm = function() {
+    console.log('🔄 initArabicQm শুরু');
+    
+    populateAqmYearDropdown();
+    populateAqmClassDropdown();
+    
+    // ★ বিষয় dropdown default আরবি
+    const subjSel = document.getElementById('qm-subject-selector');
+    if (subjSel) subjSel.value = 'arabic';
+    
+    switchQmSubject('arabic');
+    
+    console.log('✅ initArabicQm শেষ');
+};
+
 // ═══════════════════ বিষয় পরিবর্তন ═══════════════════
 window.switchQmSubject = function(subject) {
-    aqmState.subject = subject;
+    console.log('📌 Subject পরিবর্তন:', subject);
     
     const arabicView = document.getElementById('exam-view-question-maker');
+    const banglaView = document.getElementById('exam-view-bangla-qm');
     const placeholder = document.getElementById('qm-other-subject-placeholder');
     
+    // ★ প্রথমে সব লুকাই
+    if (arabicView) arabicView.classList.add('hidden');
+    if (banglaView) banglaView.classList.add('hidden');
+    if (placeholder) placeholder.classList.add('hidden');
+    
     if (subject === 'arabic') {
-        // আরবি UI দেখাই
-        if (arabicView) {
-            // ভিতরের সব দেখাই (placeholder hide)
-            Array.from(arabicView.children).forEach(child => {
-                if (child.id !== 'qm-other-subject-placeholder') {
-                    child.classList.remove('hidden');
-                }
-            });
+        // ★ আরবি UI দেখাই
+        if (arabicView) arabicView.classList.remove('hidden');
+        aqmState.subject = 'arabic';
+    } 
+    else if (subject === 'bangla') {
+        // ★ বাংলা UI দেখাই
+        if (banglaView) banglaView.classList.remove('hidden');
+        bmqState.subject = 'bangla';
+        initBanglaQm();
+    } 
+    else if (subject === 'english') {
+        // ★ ইংরেজি → placeholder
+        if (placeholder) {
+            placeholder.classList.remove('hidden');
+            placeholder.innerHTML = `
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p class="text-sm">ইংরেজি প্রশ্ন মেকার পরবর্তী ধাপে যোগ হবে</p>
+            `;
         }
-        if (placeholder) placeholder.classList.add('hidden');
-    } else {
-        // অন্যান্য বিষয় → placeholder দেখাই
-        if (arabicView) {
-            Array.from(arabicView.children).forEach(child => {
-                if (child.id !== 'qm-other-subject-placeholder') {
-                    child.classList.add('hidden');
-                }
-            });
+    } 
+    else if (subject === 'math') {
+        // ★ গণিত → placeholder
+        if (placeholder) {
+            placeholder.classList.remove('hidden');
+            placeholder.innerHTML = `
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p class="text-sm">গণিত প্রশ্ন মেকার পরবর্তী ধাপে যোগ হবে</p>
+            `;
         }
-        if (placeholder) placeholder.classList.remove('hidden');
     }
     
-    showToast(`📌 ${subject === 'arabic' ? 'আরবি' : subject === 'bangla' ? 'বাংলা' : subject === 'english' ? 'ইংরেজি' : 'গণিত'} প্রশ্ন মেকার`, 'info');
+    const labelMap = {
+        arabic: '🕌 আরবি',
+        bangla: '🇧🇩 বাংলা',
+        english: '🇬🇧 ইংরেজি',
+        math: '🔢 গণিত'
+    };
+    showToast(`📌 ${labelMap[subject] || subject} প্রশ্ন মেকার`, 'info');
 };
 
 // ═══════════════════ হেডিং — শিক্ষাবর্ষ dropdown populate ═══════════════════
@@ -13958,6 +15795,10 @@ window.resetArabicQm = function() {
     document.getElementById('aqm-questions-wrapper').classList.add('hidden');
     document.getElementById('aqm-action-bar').classList.add('hidden');
     
+    // ★ সেভ করা ID ও সময় রিসেট
+    aqmState.savedId = null;
+    aqmState.savedAt = null;
+
     showToast('🔄 প্রশ্ন মেকার রিসেট হয়েছে', 'info');
 };
 
@@ -13982,10 +15823,224 @@ function populateAqmClassDropdown() {
     });
 }
 
-// ═══════════════════ সেভ করা প্রশ্নসেট লোড ═══════════════════
+// ═══════════════════ সেভ করা প্রশ্নসেট লোড করা ═══════════════════
 window.loadSavedQmSets = async function() {
-    // ★ ভবিষ্যতে Firestore থেকে load করব
-    showToast('📂 সেভ করা প্রশ্নসেট পরবর্তী ধাপে যোগ হবে', 'info');
+    if (!currentUser) {
+        showToast('❌ লগইন করুন', 'error');
+        return;
+    }
+    
+    showToast('📂 লোড হচ্ছে...', 'info');
+    
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+        
+        // ★ শুধু আরবি প্রশ্নসেট (এবং নিজের তৈরি, যদি শিক্ষক হয়)
+        let q;
+        if (currentUserData?.role === 'admin') {
+            q = collection(window.fbDB, 'questionSets');
+        } else {
+            q = query(
+                collection(window.fbDB, 'questionSets'), 
+                where('createdBy', '==', currentUser.uid)
+            );
+        }
+        
+        const snap = await getDocs(q);
+        const sets = [];
+        snap.forEach(d => sets.push({ id: d.id, ...d.data() }));
+        
+        // ★ শুধু আরবি ফিল্টার
+        const arabicSets = sets.filter(s => s.subject === 'arabic');
+        
+        // ★ Sort by createdAt desc
+        arabicSets.sort((a, b) => {
+            const ta = a.createdAt?.seconds || 0;
+            const tb = b.createdAt?.seconds || 0;
+            return tb - ta;
+        });
+        
+        if (arabicSets.length === 0) {
+            showToast('📂 কোনো সেভ করা প্রশ্নসেট নেই', 'info');
+            return;
+        }
+        
+        // ★ Modal তৈরি
+        const modal = document.createElement('div');
+        modal.id = 'qm-saved-sets-modal';
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px;
+        `;
+        
+        const examTypeLabels = {
+            term1: '১ম সাময়িক',
+            term2: '২য় সাময়িক',
+            model: 'মডেল টেস্ট',
+            qurbani: 'কুরবানী',
+            annual: 'বার্ষিক'
+        };
+        
+        const setsHTML = arabicSets.map(s => {
+            const date = s.createdAt?.seconds 
+                ? new Date(s.createdAt.seconds * 1000).toLocaleDateString('bn-BD')
+                : '---';
+            const qCount = (s.questions || []).length;
+            
+            return `
+                <div class="bg-white rounded-xl border-2 border-slate-200 hover:border-blue-500 transition overflow-hidden">
+                    <div class="bg-blue-50 px-3 py-2 border-b border-blue-200 flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="badge bg-blue-600 text-white">🕌 আরবি</span>
+                            <span class="badge bg-emerald-100 text-emerald-800">${examTypeLabels[s.examType] || s.examType}</span>
+                            <span class="text-xs font-bold text-slate-700 font-arabic">${s.className || '---'}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500">${date}</span>
+                    </div>
+                    <div class="px-3 py-2">
+                        <div class="grid grid-cols-2 gap-2 text-xs mb-2">
+                            <div><strong>শিক্ষাবর্ষ:</strong> ${s.academicYear || '---'}</div>
+                            <div><strong>প্রশ্ন:</strong> ${qCount}টি</div>
+                            <div class="col-span-2"><strong>কিতাব:</strong> <span class="font-arabic">${(s.books || []).join(' / ') || '---'}</span></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="loadQmSet('${s.id}')" class="flex-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded transition">
+                                <i class="fa-solid fa-folder-open"></i> লোড
+                            </button>
+                            <button onclick="deleteQmSet('${s.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-bold rounded transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        modal.innerHTML = `
+            <div style="background: #f1f5f9; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden;">
+                <div style="background: #1e293b; color: white; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 16px;">
+                            <i class="fa-solid fa-folder-open"></i> সেভ করা প্রশ্নসেট
+                        </h3>
+                        <p style="margin: 3px 0 0; font-size: 11px; opacity: 0.8;">${arabicSets.length}টি আরবি প্রশ্নসেট পাওয়া গেছে</p>
+                    </div>
+                    <button onclick="document.getElementById('qm-saved-sets-modal').remove()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-xmark"></i> বন্ধ
+                    </button>
+                </div>
+                <div style="padding: 14px; overflow-y: auto; flex: 1; display: grid; grid-template-columns: 1fr; gap: 10px;">
+                    ${setsHTML}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // ★ ব্যাকড্রপে ক্লিক করলে বন্ধ
+        modal.addEventListener('click', e => {
+            if (e.target === modal) modal.remove();
+        });
+        
+    } catch (err) {
+        console.error('❌ loadSavedQmSets error:', err);
+        showToast('❌ লোড ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ একটি সেভ করা প্রশ্নসেট লোড করা ═══════════════════
+window.loadQmSet = async function(setId) {
+    try {
+        const { doc, getDoc } = window.fbFuncs;
+        const ref = doc(window.fbDB, 'questionSets', setId);
+        const snap = await getDoc(ref);
+        
+        if (!snap.exists()) {
+            showToast('❌ প্রশ্নসেট পাওয়া যায়নি', 'error');
+            return;
+        }
+        
+        const data = snap.data();
+        
+        // ★ স্টেট লোড করি
+        aqmState = {
+            subject: 'arabic',
+            year: data.academicYear || '',
+            examType: data.examType || '',
+            className: data.className || '',
+            books: data.books || [],
+            subjectText: data.subjectText || '',
+            time: data.time || '٣ ساعات',
+            dateHijri: data.dateHijri || '',
+            totalMarksText: data.totalMarksText || '١٠٠',
+            marksPart1: data.marksPart1 || 'والسبعة منها لحسن الكتابة والإجابة بالعربية',
+            marksPart2: data.marksPart2 || '',
+            questions: data.questions || [],
+            savedId: setId,
+            savedAt: data.createdAt
+        };
+        
+        // ★ UI-তে দেখাই
+        populateAqmYearDropdown();
+        document.getElementById('aqm-year').value = aqmState.year || '';
+        document.getElementById('aqm-exam-type').value = aqmState.examType || '';
+        document.getElementById('aqm-class').value = aqmState.className || '';
+        document.getElementById('aqm-subject-text').value = aqmState.subjectText || '';
+        document.getElementById('aqm-time').value = aqmState.time || '٣ ساعات';
+        document.getElementById('aqm-date-hijri').value = aqmState.dateHijri || '';
+        document.getElementById('aqm-total-marks-text').value = aqmState.totalMarksText || '١٠٠';
+        document.getElementById('aqm-marks-part1').value = aqmState.marksPart1 || '';
+        document.getElementById('aqm-marks-part2').value = aqmState.marksPart2 || '';
+        
+        // ★ কিতাব চেকবক্স লোড করি
+        renderAqmBooksList();
+        // ★ চেকবক্স চেক করি
+        setTimeout(() => {
+            document.querySelectorAll('.aqm-book-cb').forEach(cb => {
+                cb.checked = aqmState.books.includes(cb.value);
+            });
+        }, 100);
+        
+        // ★ প্রশ্ন box দেখাই
+        document.getElementById('aqm-questions-wrapper').classList.remove('hidden');
+        document.getElementById('aqm-action-bar').classList.remove('hidden');
+        
+        // ★ প্রশ্ন render
+        renderAqmQuestions();
+        
+        // ★ মডাল বন্ধ
+        document.getElementById('qm-saved-sets-modal')?.remove();
+        
+        showToast('✅ প্রশ্নসেট লোড হয়েছে', 'success');
+        
+    } catch (err) {
+        console.error('❌ loadQmSet error:', err);
+        showToast('❌ লোড ব্যর্থ: ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════ একটি সেভ করা প্রশ্নসেট ডিলিট ═══════════════════
+window.deleteQmSet = async function(setId) {
+    if (!confirm('এই প্রশ্নসেটটি মুছে ফেলবেন?')) return;
+    
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'questionSets', setId));
+        
+        showToast('🗑️ প্রশ্নসেট মুছে ফেলা হয়েছে', 'info');
+        
+        // ★ মডাল বন্ধ করে আবার লোড করি
+        document.getElementById('qm-saved-sets-modal')?.remove();
+        setTimeout(() => loadSavedQmSets(), 300);
+        
+    } catch (err) {
+        console.error('❌ deleteQmSet error:', err);
+        showToast('❌ ডিলিট ব্যর্থ: ' + err.message, 'error');
+    }
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -14207,26 +16262,22 @@ function injectAqmPrintStyles() {
         }
         
         .aqm-heading-mid {
-            display: flex !important;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: nowrap;
-            margin: 4px 0;
-            font-size: 13px;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            margin: 4pt 0;
+            font-size: 13pt;
         }
-        
+
         .aqm-hm-item {
-            flex: 1;
-            min-width: 0;
+            display: table-cell;
             text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: baseline;
-            gap: 5px;
+            vertical-align: middle;
+            padding: 0 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            width: 33.33%;
         }
         
         .aqm-hm-label {
@@ -14467,6 +16518,9 @@ window.previewArabicQm = function() {
                     <button onclick="shareArabicQmPDF()" style="background: #d97706; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
                         <i class="fa-solid fa-file-pdf"></i> PDF
                     </button>
+                    <button onclick="downloadArabicQmWord()" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-file-word"></i> Word
+                    </button>
                     <button onclick="document.getElementById('aqm-preview-modal').remove()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
                         <i class="fa-solid fa-xmark"></i> বন্ধ
                     </button>
@@ -14557,17 +16611,36 @@ window.printArabicQm = function() {
                     text-align: center;
                 }
                 .aqm-heading-line-1 { font-size: 14px !important; font-weight: bold; }
-                .aqm-heading-line-2, .aqm-heading-line-3 {
-                    font-size: 13.5px !important;
-                    display: flex;
-                    justify-content: space-between;
-                    gap: 12px;
-                    flex-wrap: wrap;
+                .aqm-heading-mid {
+                    display: table !important;
+                    width: 100%;
+                    table-layout: fixed;
+                    margin: 4px 0;
+                    font-size: 13.5px;
                 }
-                .aqm-heading-line-2 span, .aqm-heading-line-3 span {
-                    flex: 1;
-                    min-width: 120px;
+
+                .aqm-hm-item {
+                    display: table-cell;
                     text-align: center;
+                    vertical-align: middle;
+                    padding: 0 4px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 33.33%;
+                }
+
+                .aqm-hm-label {
+                    font-weight: bold;
+                }
+
+                .aqm-hm-value {
+                    font-weight: bold;
+                    color: #0f172a;
+                    padding: 0 3px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
                 .aqm-heading-line-4 {
                     font-size: 12.5px !important;
@@ -14811,6 +16884,302 @@ window.shareArabicQmPDF = function() {
     printWin.document.close();
 };
 
+// ═══════════════════ Word-এর জন্য আলাদা HTML (আসল টেবিল) ═══════════════════
+function buildArabicWordFriendlyHTML() {
+    const s = aqmState;
+    if (!s.questions || s.questions.length === 0) return null;
+    
+    function toArabicNum(str) {
+        if (!str) return '';
+        const map = { '0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩' };
+        return String(str).replace(/\d/g, d => map[d] || d);
+    }
+    
+    const examTypeNames = {
+        term1: 'الأول',
+        term2: 'الثاني',
+        model: 'النموذجي',
+        qurbani: 'الأضحية',
+        annual: 'السنوي'
+    };
+    const examTypeArabic = examTypeNames[s.examType] || '......';
+    
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الشيخ محمد عبد الله';
+    const yearArabic = toArabicNum(s.year || '') || s.year || '';
+    
+    // ★ হেডিং বক্স — আসল টেবিল দিয়ে
+    const headingHTML = `
+        <div class="aqm-heading-box" style="border:none; border-bottom:1.5pt solid #1e293b; padding-bottom:8pt; margin-bottom:14pt;">
+            <p class="aqm-heading-line-1">
+                ورقة الأسئلة للاختبار 
+                <span class="aqm-fill">${examTypeArabic}</span>
+                المنعقد بـ<span class="aqm-fill">${madrasaAr}</span> للعام التعليمي:
+                <span class="aqm-fill">${yearArabic || '......'}</span>
+            </p>
+            
+            <!-- ★ row 1: الكتاب | المادة -->
+            <table class="aqm-heading-table" cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border:none; margin:4pt 0;">
+                <tr>
+                    <td style="width:50%; border:none; padding:2pt 4pt; text-align:center; vertical-align:middle; font-size:13.5pt; white-space:nowrap;">
+                        <b>الكتاب:</b> <b>${s.books.length > 0 ? s.books.join(' / ') : '................'}</b>
+                    </td>
+                    <td style="width:50%; border:none; padding:2pt 4pt; text-align:center; vertical-align:middle; font-size:13.5pt; white-space:nowrap;">
+                        <b>المادة:</b> <b>${s.subjectText || '................'}</b>
+                    </td>
+                </tr>
+            </table>
+            
+            <!-- ★ row 2: الصف | الوقت | التاريخ -->
+            <table class="aqm-heading-table" cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border:none; margin:4pt 0;">
+                <tr>
+                    <td style="width:33.33%; border:none; padding:2pt 4pt; text-align:center; vertical-align:middle; font-size:13.5pt; white-space:nowrap;">
+                        <b>الصف:</b> <b>${s.className || '................'}</b>
+                    </td>
+                    <td style="width:33.33%; border:none; padding:2pt 4pt; text-align:center; vertical-align:middle; font-size:13.5pt; white-space:nowrap;">
+                        <b>الوقت:</b> <b>${s.time || '٣ ساعات'}</b>
+                    </td>
+                    <td style="width:33.33%; border:none; padding:2pt 4pt; text-align:center; vertical-align:middle; font-size:13.5pt; white-space:nowrap;">
+                        <b>التاريخ:</b> <b>${s.dateHijri || '................'} هـ</b>
+                    </td>
+                </tr>
+            </table>
+            
+            <p class="aqm-heading-line-4">
+                كل الأرقام: ${s.totalMarksText || '١٠٠'}${s.marksPart1 ? '، ' + s.marksPart1 : ''}${s.marksPart2 ? ' / ' + s.marksPart2 : ''}
+            </p>
+        </div>
+    `;
+    
+    // ★ প্রশ্নগুলো
+    const isMultiBook = s.books.length > 1;
+    let questionsHTML = '';
+    let lastBookName = '';
+    
+    s.questions.forEach((q, qIdx) => {
+        let bookLineHTML = '';
+        if (isMultiBook && q.bookName) {
+            bookLineHTML = `
+                <p class="aqm-book-line">
+                    <b>اسم الكتاب:</b> <b>${q.bookName}</b>
+                </p>
+            `;
+            lastBookName = q.bookName;
+        }
+        
+        const visibleParts = q.parts.filter(p => (p.text || '').trim() !== '');
+        if (visibleParts.length === 0 && !q.qawlahu) return;
+        
+        // ★ অংশ — আসল টেবিল দিয়ে (প্রশ্ন ডানে, নম্বর বামে)
+        let partsHTML = '';
+        visibleParts.forEach(p => {
+            partsHTML += `
+                <table class="aqm-part-table" cellspacing="0" cellpadding="0" style="width:100%; border-collapse:collapse; border:none; margin-bottom:6pt;">
+                    <tr>
+                        <td style="width:75%; border:none; padding:2pt 6pt; text-align:right; vertical-align:top; font-size:14pt; direction:rtl;">
+                            <b>(${p.label})</b> <span>${escapeAqmHtml(p.text)}</span>
+                        </td>
+                        <td style="width:25%; border:none; padding:2pt 6pt; text-align:left; vertical-align:top; font-size:14pt; direction:ltr;">
+                            ${p.marks ? '<b>' + toArabicNum(p.marks) + '</b>' : ''}
+                        </td>
+                    </tr>
+                </table>
+            `;
+        });
+        
+        const ordinal = AQM_QUESTION_ORDINALS[qIdx] || (qIdx + 1);
+        
+        questionsHTML += `
+            <div class="aqm-question-block">
+                ${bookLineHTML}
+                <p class="aqm-question-heading">
+                    <b>السؤال ${ordinal}:</b> <span class="aqm-qawlahu">${escapeAqmHtml(q.qawlahu || '')}</span>
+                </p>
+                <div class="aqm-parts-wrapper">
+                    ${partsHTML}
+                </div>
+            </div>
+        `;
+    });
+    
+    const isAnnual = s.examType === 'annual';
+    const pageClass = isAnnual ? 'aqm-page aqm-page-annual' : 'aqm-page aqm-page-single';
+    
+    return `
+        <div class="${pageClass}" id="aqm-print-paper">
+            ${headingHTML}
+            <div class="aqm-questions-area">
+                ${questionsHTML}
+            </div>
+        </div>
+    `;
+}
+
+// ═══════════════════ Word ডাউনলোড (ডকুমেন্ট ওয়ার্ড হিসেবে) ═══════════════════
+window.downloadArabicQmWord = function() {
+    if (!aqmState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+
+    const html = buildArabicWordFriendlyHTML();
+    if (!html) {
+        showToast('⚠️ Word বানানোর মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+
+    showToast('📄 Word ফাইল তৈরি হচ্ছে...', 'info');
+
+    // ★ Word ডকুমেন্টের HTML wrapper
+    const wordHTML = `
+        <!DOCTYPE html>
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+              xmlns:w="urn:schemas-microsoft-com:office:word" 
+              xmlns="http://www.w3.org/TR/REC-html40" 
+              dir="rtl" lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <title>ورقة الأسئلة</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 12mm 10mm 15mm 10mm;
+                }
+                body {
+                    font-family: 'Amiri', 'Traditional Arabic', 'Times New Roman', serif;
+                    direction: rtl;
+                    color: #1e293b;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 13.5pt;
+                }
+                .aqm-page {
+                    padding: 0;
+                    margin: 0;
+                    width: 100%;
+                }
+                .aqm-heading-box {
+                    border: none;
+                    border-bottom: 1.5pt solid #1e293b;
+                    padding: 0 0 8pt 0;
+                    margin-bottom: 14pt;
+                    line-height: 1.7;
+                }
+                .aqm-heading-box p {
+                    margin: 3pt 0;
+                    font-size: 13.5pt;
+                    text-align: center;
+                }
+                .aqm-heading-line-1 {
+                    font-size: 13.5pt;
+                    font-weight: bold;
+                }
+                .aqm-hm-label {
+                    font-weight: bold;
+                }
+                .aqm-hm-value {
+                    font-weight: bold;
+                }
+                .aqm-heading-line-4 {
+                    font-size: 12.5pt;
+                    border-top: 1px dashed #64748b;
+                    padding-top: 4pt;
+                    margin-top: 6pt;
+                }
+                .aqm-questions-area {
+                    margin-top: 14pt;
+                }
+                .aqm-question-block {
+                    margin-bottom: 14pt;
+                    page-break-inside: avoid;
+                }
+                .aqm-book-line {
+                    font-size: 13pt;
+                    font-weight: bold;
+                    margin: 6pt 0;
+                    padding: 3pt 8pt;
+                    background: #f1f5f9;
+                    border-right: 3pt solid #065f46;
+                    text-align: right;
+                }
+                .aqm-book-name {
+                    font-weight: bold;
+                }
+                .aqm-question-heading {
+                    font-size: 15pt;
+                    font-weight: bold;
+                    margin: 0 0 8pt 0;
+                    text-align: right;
+                    line-height: 1.8;
+                }
+                .aqm-qawlahu {
+                    font-weight: normal;
+                }
+                .aqm-parts-wrapper {
+                    margin: 0;
+                }
+                .aqm-part-row {
+                    display: table;
+                    width: 100%;
+                    table-layout: fixed;
+                    margin-bottom: 6pt;
+                }
+                .aqm-part-content {
+                    display: table-cell;
+                    width: 75%;
+                    font-size: 14pt;
+                    line-height: 1.9;
+                    text-align: right;
+                    vertical-align: top;
+                }
+                .aqm-part-marks {
+                    display: table-cell;
+                    width: 25%;
+                    text-align: left;
+                    font-weight: bold;
+                    font-size: 14pt;
+                    vertical-align: top;
+                }
+                .aqm-part-label {
+                    font-weight: bold;
+                    margin-left: 6pt;
+                }
+                .aqm-part-text {
+                    font-family: 'Amiri', 'Traditional Arabic', serif;
+                }
+            </style>
+        </head>
+        <body>
+            ${html}
+        </body>
+        </html>
+    `;
+
+    // ★ Blob তৈরি → download
+    const blob = new Blob(['\ufeff', wordHTML], { 
+        type: 'application/msword;charset=utf-8' 
+    });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    
+    // ★ ফাইলের নাম
+    const examTypeNames = {
+        term1: 'Term1',
+        term2: 'Term2',
+        model: 'Model',
+        qurbani: 'Qurbani',
+        annual: 'Annual'
+    };
+    const fileName = `Arabic_Q_${examTypeNames[aqmState.examType] || 'Exam'}_${aqmState.className || ''}_${(aqmState.year || '').replace(/\s+/g, '_')}.doc`;
+    
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showToast('✅ Word ফাইল ডাউনলোড হয়েছে', 'success');
+};
+
 // ═══════════════════════════════════════════════════════════════
 // ★★★ Firestore-এ সেভ (placeholder) ★★★
 // ═══════════════════════════════════════════════════════════════
@@ -14825,20 +17194,65 @@ window.saveArabicQm = async function() {
         return;
     }
     
-    showToast('💾 সেভ ফিচার পরের ধাপে যোগ হবে', 'info');
-    // TODO: পরের ধাপে Firestore-এ সেভ করব
-};
-
-// ★ Initialization — যখনই exam tab খোলা হবে, dropdown populate হবে
-window.initArabicQm = function() {
-    populateAqmYearDropdown();
-    populateAqmClassDropdown();
+    if (!currentUser) {
+        showToast('❌ লগইন করুন', 'error');
+        return;
+    }
     
-    // ★ বিষয় dropdown default আরবি
-    const subjSel = document.getElementById('qm-subject-selector');
-    if (subjSel) subjSel.value = 'arabic';
+    // ★ কনফার্মেশন
+    const isEditing = !!aqmState.savedId;
+    if (!confirm(
+        isEditing 
+            ? `প্রশ্নসেট আপডেট করবেন?\n\nবিষয়: আরবি\nপরীক্ষার ধরন: ${aqmState.examType}\nশ্রেণি: ${aqmState.className}\nপ্রশ্ন সংখ্যা: ${aqmState.questions.length}টি`
+            : `নতুন প্রশ্নসেট সেভ করবেন?\n\nবিষয়: আরবি\nপরীক্ষার ধরন: ${aqmState.examType}\nশ্রেণি: ${aqmState.className}\nপ্রশ্ন সংখ্যা: ${aqmState.questions.length}টি`
+    )) return;
     
-    switchQmSubject('arabic');
+    showToast('💾 সেভ হচ্ছে...', 'info');
+    
+    try {
+        const { doc, setDoc, serverTimestamp, collection } = window.fbFuncs;
+        
+        // ★ Unique ID তৈরি (এডিট মোডে আগের ID ব্যবহার করি)
+        const setId = aqmState.savedId || ('arq_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6));
+        
+        // ★ সেভ করার ডাটা
+        const savedData = {
+            id: setId,
+            subject: 'arabic',
+            
+            // স্টেট
+            academicYear: aqmState.year || '',
+            examType: aqmState.examType || '',
+            className: aqmState.className || '',
+            books: aqmState.books || [],
+            subjectText: aqmState.subjectText || '',
+            time: aqmState.time || '',
+            dateHijri: aqmState.dateHijri || '',
+            totalMarksText: aqmState.totalMarksText || '',
+            marksPart1: aqmState.marksPart1 || '',
+            marksPart2: aqmState.marksPart2 || '',
+            questions: aqmState.questions || [],
+            
+            // মেটাডাটা
+            createdAt: aqmState.savedAt || serverTimestamp(),
+            createdBy: currentUser.uid,
+            createdByEmail: currentUser.email || '',
+            updatedAt: serverTimestamp()
+        };
+        
+        // ★ Firestore-এ সেভ
+        await setDoc(doc(window.fbDB, 'questionSets', setId), savedData, { merge: true });
+        
+        // ★ স্টেটে সেভ করা ID রাখি
+        aqmState.savedId = setId;
+        aqmState.savedAt = savedData.createdAt;
+        
+        showToast(isEditing ? '✅ প্রশ্নসেট আপডেট হয়েছে' : '✅ প্রশ্নসেট সেভ হয়েছে', 'success');
+        
+    } catch (err) {
+        console.error('❌ saveArabicQm error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    }
 };
 
 // ═══════════════════ পরীক্ষা — সাব-মেনু ═══════════════════
