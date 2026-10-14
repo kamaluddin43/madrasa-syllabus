@@ -1080,7 +1080,7 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <p class="text-sm text-slate-500" id="home-madrasa-name">মাকাদীরে আসবাক সিস্টেমে আপনাকে স্বাগত</p>
         </div>
 
-        <!-- ★ ৫টা বাটনের গ্রিড — ডেক্সটপে ৪+১, মোবাইলে ২×৩ -->
+        <!-- ★ ৬টা বাটনের গ্রিড — ডেক্সটপে ৪+২, মোবাইলে ২×৩ -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 max-w-5xl mx-auto">
 
             <!-- ১. মাকাদীরে আসবাক -->
@@ -1097,21 +1097,28 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
                 <span class="text-sm md:text-base font-bold leading-tight text-center">ক্লাস রুটিন</span>
             </button>
 
-            <!-- ৩. একাডেমিক ক্যালেন্ডার -->
+            <!-- ৩. পরীক্ষা (নতুন) -->
+            <button onclick="switchTab('exam')" id="tab-btn-exam"
+                    class="tab-btn group bg-gradient-to-br from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-clipboard-question text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">পরীক্ষা</span>
+            </button>
+
+            <!-- ৪. একাডেমিক ক্যালেন্ডার -->
             <button onclick="switchTab('calendar')" id="tab-btn-calendar"
                     class="tab-btn group bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
                 <i class="fa-solid fa-calendar-days text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">একাডেমিক ক্যালেন্ডার</span>
             </button>
 
-            <!-- ৪. সেটিংস (এডমিন only) -->
+            <!-- ৫. সেটিংস (এডমিন only) -->
             <button onclick="switchTab('settings')" id="tab-btn-settings"
                     class="tab-btn group bg-gradient-to-br from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px] hidden">
                 <i class="fa-solid fa-gear text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">সেটিংস</span>
             </button>
 
-            <!-- ৫. এডমিন (এডমিন only) -->
+            <!-- ৬. এডমিন (এডমিন only) -->
             <button onclick="switchTab('admin')" id="tab-btn-admin"
                     class="tab-btn group bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px] hidden">
                 <i class="fa-solid fa-shield-halved text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
@@ -2219,6 +2226,286 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     </div>
 </section>
 
+<!-- ═══════════════════ TAB: EXAM (পরীক্ষা) ═══════════════════ -->
+<section id="tab-exam" class="tab-content hidden space-y-4">
+
+    <!-- ★ হোম বাটন (sticky) -->
+    <div class="sticky top-16 md:top-20 z-30 flex justify-start">
+        <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-house"></i>
+            <span>হোম</span>
+        </button>
+    </div>
+
+    <!-- ★ হেডার কার্ড -->
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4 shadow-lg">
+                <i class="fa-solid fa-clipboard-question"></i>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-900 mb-2">পরীক্ষা ব্যবস্থাপনা</h2>
+            <p class="text-sm text-slate-500">প্রশ্ন মেকার, পরীক্ষার রুটিন, ফলাফল ও আরও</p>
+        </div>
+
+        <!-- ★ সাব-মেনু কার্ড গ্রিড -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 max-w-4xl mx-auto">
+
+            <!-- ১. প্রশ্ন মেকার -->
+            <button onclick="switchExamSub('question-maker')" id="exam-sub-btn-question-maker"
+                    class="exam-sub-btn group bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-file-pen text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">প্রশ্ন মেকার</span>
+            </button>
+
+            <!-- ২. পরীক্ষার রুটিন -->
+            <button onclick="switchExamSub('exam-routine')" id="exam-sub-btn-exam-routine"
+                    class="exam-sub-btn group bg-gradient-to-br from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-calendar-check text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">পরীক্ষার রুটিন</span>
+            </button>
+
+            <!-- ৩. ফলাফল -->
+            <button onclick="switchExamSub('results')" id="exam-sub-btn-results"
+                    class="exam-sub-btn group bg-gradient-to-br from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-chart-simple text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">ফলাফল</span>
+            </button>
+
+            <!-- ৪. সেটআপ (এডমিন only) -->
+            <button onclick="switchExamSub('exam-settings')" id="exam-sub-btn-exam-settings"
+                    class="exam-sub-btn group bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px] hidden">
+                <i class="fa-solid fa-gear text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">সেটআপ</span>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════ আরবি প্রশ্ন মেকার ═══════════════════ -->
+    <div id="exam-view-question-maker" class="exam-view hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
+            
+            <!-- ★ হেডার -->
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
+                <h3 class="text-lg font-bold text-blue-900 flex items-center gap-3">
+                    <i class="fa-solid fa-file-pen text-blue-600 text-xl"></i>
+                    <span>প্রশ্ন মেকার</span>
+                </h3>
+                <div class="flex gap-2 flex-wrap">
+                    <select id="qm-subject-selector" onchange="switchQmSubject(this.value)" class="rounded-lg border-slate-300 border p-2 text-sm font-medium bg-white">
+                        <option value="arabic" selected>🕌 আরবি</option>
+                        <option value="bangla">🇧🇩 বাংলা</option>
+                        <option value="english">🇬🇧 ইংরেজি</option>
+                        <option value="math">🔢 গণিত</option>
+                    </select>
+                    <button onclick="loadSavedQmSets()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-folder-open"></i> সেভ করা
+                    </button>
+                    <button onclick="resetArabicQm()" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> রিসেট
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- ★ STEP 1: হেডিং ফর্ম                          -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div class="bg-gradient-to-br from-emerald-50 to-blue-50 p-4 rounded-xl border-2 border-emerald-200 mb-5">
+                <h4 class="text-sm font-bold text-emerald-900 border-b border-emerald-200 pb-2 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-heading"></i>
+                    <span>ধাপ ১: প্রশ্নপত্রের হেডিং</span>
+                    <span class="text-[10px] font-normal text-emerald-700">(ড্রপডাউনগুলো এডিটযোগ্য)</span>
+                </h4>
+                
+                <!-- Row 1: শিক্ষাবর্ষ + পরীক্ষার ধরন -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            শিক্ষাবর্ষ <span class="text-red-500">*</span>
+                        </label>
+                        <select id="aqm-year" onchange="onAqmHeaderChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                            <option value="">-- শিক্ষাবর্ষ --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            পরীক্ষার ধরন <span class="text-red-500">*</span>
+                        </label>
+                        <select id="aqm-exam-type" onchange="onAqmExamTypeChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-medium">
+                            <option value="">-- পরীক্ষার ধরন --</option>
+                            <option value="term1">১ম সাময়িক</option>
+                            <option value="term2">২য় সাময়িক</option>
+                            <option value="model">মডেল টেস্ট</option>
+                            <option value="qurbani">কুরবানী পরীক্ষা</option>
+                            <option value="annual">বার্ষিক পরীক্ষা</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: শ্রেণি + কিতাব (checkbox list) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            الصف (শ্রেণি) <span class="text-red-500">*</span>
+                        </label>
+                        <select id="aqm-class" onchange="onAqmClassChange()" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-arabic">
+                            <option value="">-- শ্রেণি --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            الكتاب (কিতাব) <span class="text-red-500">*</span>
+                            <span class="text-[10px] text-slate-500 font-normal">(একাধিক সিলেক্ট করা যাবে)</span>
+                        </label>
+                        <div id="aqm-books-container" class="bg-white border border-slate-300 rounded-lg p-2 max-h-32 overflow-y-auto">
+                            <p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: বিষয় + সময় + তারিখ -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            المادة (বিষয়)
+                        </label>
+                        <input type="text" id="aqm-subject-text" onchange="onAqmHeaderChange()" placeholder="যেমন: الحديث" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-arabic" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            الوقت (সময়)
+                        </label>
+                        <input type="text" id="aqm-time" onchange="onAqmHeaderChange()" value="٣ ساعات" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-arabic" dir="rtl">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">
+                            التاريخ (তারিখ - হিজরি)
+                        </label>
+                        <input type="text" id="aqm-date-hijri" onchange="onAqmHeaderChange()" placeholder="٢٠ شوال ١٤٤٧" class="w-full rounded-lg border-slate-300 border p-2.5 bg-white text-sm font-arabic" dir="rtl">
+                    </div>
+                </div>
+
+                <!-- Row 4: মোট নম্বর + নম্বর বণ্টন লাইন -->
+                <div class="bg-white rounded-lg p-3 border border-emerald-200">
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">
+                        <i class="fa-solid fa-list-ol text-emerald-600"></i> নম্বর বণ্টন লাইন
+                    </label>
+                    <div class="flex flex-wrap items-center gap-2 text-sm font-arabic" dir="rtl">
+                        <span class="text-slate-700 font-bold">كل الأرقام:</span>
+                        <input type="text" id="aqm-total-marks-text" onchange="onAqmHeaderChange()" value="١٠٠" class="w-20 rounded border-slate-300 border p-1.5 text-center font-bold bg-amber-50" dir="rtl">
+                        <span class="text-slate-700">،</span>
+                        <select id="aqm-marks-part1" onchange="onAqmHeaderChange()" class="rounded border-slate-300 border p-1.5 text-xs bg-white flex-1 min-w-[200px]" dir="rtl">
+                            <option value="والسبعة منها لحسن الكتابة والإجابة بالعربية">والسبعة منها لحسن الكتابة والإجابة بالعربية</option>
+                            <option value="والأربعة منها لحسن الكتابة وجودة الأسلوب">والأربعة منها لحسن الكتابة وجودة الأسلوب</option>
+                        </select>
+                        <span class="text-slate-700">/</span>
+                        <select id="aqm-marks-part2" onchange="onAqmHeaderChange()" class="rounded border-slate-300 border p-1.5 text-xs bg-white flex-1 min-w-[200px]" dir="rtl">
+                            <option value="">-- ঐচ্ছিক --</option>
+                            <option value="والسبعة منها لحسن الكتابة والإجابة بالعربية">والسبعة منها لحسن الكتابة والإجابة بالعربية</option>
+                            <option value="والأربعة منها لحسن الكتابة وجودة الأسلوب">والأربعة منها لحسن الكتابة وجودة الأسلوب</option>
+                        </select>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-2">
+                        <i class="fa-solid fa-info-circle"></i>
+                        দ্বিতীয় ড্রপডাউন খালি রাখলে শুধু প্রথমটা দেখাবে
+                    </p>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- ★ STEP 2: প্রশ্ন এলাকা                        -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div id="aqm-questions-wrapper" class="hidden space-y-4">
+                
+                <!-- তথ্য বার -->
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between flex-wrap gap-2">
+                    <p class="text-xs text-amber-900 flex-1">
+                        <i class="fa-solid fa-info-circle"></i>
+                        <span id="aqm-info-text">
+                            প্রশ্ন যোগ করুন। খালি অংশ স্বয়ংক্রিয়ভাবে লুকিয়ে যাবে।
+                        </span>
+                    </p>
+                    <div class="flex gap-2">
+                        <button onclick="addAqmQuestion()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> নতুন প্রশ্ন
+                        </button>
+                    </div>
+                </div>
+
+                <!-- প্রশ্নগুলো এখানে JS দিয়ে বসবে -->
+                <div id="aqm-questions-container" class="space-y-3"></div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- ★ STEP 3: অ্যাকশন বার                         -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div id="aqm-action-bar" class="hidden mt-5 pt-4 border-t border-slate-200 flex justify-end gap-2 flex-wrap no-print">
+                <button onclick="previewArabicQm()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-eye"></i> প্রিভিউ
+                </button>
+                <button onclick="printArabicQm()" class="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> প্রিন্ট
+                </button>
+                <button onclick="shareArabicQmPDF()" class="px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> PDF
+                </button>
+                <button onclick="saveArabicQm()" class="px-5 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold rounded-lg shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> ফাইনাল সেভ
+                </button>
+            </div>
+            
+            <!-- অন্যান্য বিষয়ের placeholder -->
+            <div id="qm-other-subject-placeholder" class="hidden text-center py-12 text-slate-400">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p class="text-sm">এই বিষয়ের প্রশ্ন মেকার পরবর্তী ধাপে যোগ হবে</p>
+            </div>
+        </div>
+    </div>
+
+        <!-- Exam Routine View -->
+        <div id="exam-view-exam-routine" class="exam-view hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+                <div class="text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-calendar-check text-5xl mb-4 text-purple-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700 mb-2">পরীক্ষার রুটিন</h3>
+                    <p class="text-sm text-slate-500 mb-4">বিভাগভিত্তিক আলাদা রুটিন — শরীয়াহ, নূরানী-নাযেরা, অনাবাসিক</p>
+                    <div class="inline-block bg-purple-50 border border-purple-200 rounded-lg p-3 text-left">
+                        <p class="text-xs text-purple-900"><i class="fa-solid fa-info-circle"></i> পরবর্তী ধাপে যোগ হবে: পরীক্ষার তারিখ, বিষয়, সময়, হল সাজানো, প্রিন্ট/PDF।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="exam-view-results" class="exam-view hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+                <div class="text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-chart-simple text-5xl mb-4 text-green-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700 mb-2">ফলাফল</h3>
+                    <p class="text-sm text-slate-500 mb-4">পরীক্ষার ফলাফল এন্ট্রি, মার্কশিট, রিপোর্ট কার্ড</p>
+                    <div class="inline-block bg-green-50 border border-green-200 rounded-lg p-3 text-left">
+                        <p class="text-xs text-green-900"><i class="fa-solid fa-info-circle"></i> পরবর্তী ধাপে যোগ হবে: সাবজেক্টভিত্তিক নম্বর এন্ট্রি, GPA, রিপোর্ট কার্ড প্রিন্ট।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Settings View -->
+        <div id="exam-view-exam-settings" class="exam-view hidden">
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+                <div class="text-center py-12 text-slate-400">
+                    <i class="fa-solid fa-gear text-5xl mb-4 text-slate-300"></i>
+                    <h3 class="text-lg font-bold text-slate-700 mb-2">পরীক্ষা সেটআপ</h3>
+                    <p class="text-sm text-slate-500 mb-4">বিষয় তালিকা, নম্বর বণ্টন, গ্রেডিং সিস্টেম</p>
+                    <div class="inline-block bg-slate-50 border border-slate-200 rounded-lg p-3 text-left">
+                        <p class="text-xs text-slate-900"><i class="fa-solid fa-info-circle"></i> পরবর্তী ধাপে যোগ হবে: বিষয় ম্যানেজমেন্ট, নম্বর বণ্টন কনফিগ, গ্রেডিং পলিসি।</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
 
 </main>
 
@@ -13097,6 +13384,1494 @@ document.addEventListener('change', function(e) {
     }
 });
 
+// ═══════════════════════════════════════════════════════════════
+// ★★★ আরবি প্রশ্ন মেকার — স্টেট ও লজিক ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let aqmState = {
+    subject: 'arabic',
+    year: '',
+    examType: '',
+    className: '',
+    books: [],              // সিলেক্ট করা কিতাবগুলো
+    subjectText: '',        // المادة
+    time: '٣ ساعات',
+    dateHijri: '',
+    totalMarksText: '١٠٠',
+    marksPart1: 'والسبعة منها لحسن الكتابة والإجابة بالعربية',
+    marksPart2: '',
+    questions: []           // প্রশ্নসমূহ
+};
+
+// ★ আরবি অক্ষরের সিরিয়াল (প্রশ্নের অংশের জন্য)
+const AQM_PART_LABELS = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
+const AQM_QUESTION_ORDINALS = ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'];
+
+// ★ পরীক্ষার ধরন অনুযায়ী প্রশ্ন সংখ্যা
+function getAqmQuestionCount(examType) {
+    return examType === 'annual' ? 5 : 3;
+}
+
+// ★ একটি নতুন প্রশ্ন তৈরি
+function createAqmQuestion(idx) {
+    return {
+        id: 'q_' + Date.now() + '_' + idx + '_' + Math.random().toString(36).substr(2, 5),
+        qawlahu: 'قوله:',
+        bookName: '',      // multi-book হলে اسم الكتاب
+        parts: [
+            { id: 'p_' + Date.now() + '_a1', label: 'أ', text: '', marks: '', hidden: false },
+            { id: 'p_' + Date.now() + '_a2', label: 'ب', text: '', marks: '', hidden: false },
+            { id: 'p_' + Date.now() + '_a3', label: 'ج', text: '', marks: '', hidden: false }
+        ]
+    };
+}
+
+// ═══════════════════ বিষয় পরিবর্তন ═══════════════════
+window.switchQmSubject = function(subject) {
+    aqmState.subject = subject;
+    
+    const arabicView = document.getElementById('exam-view-question-maker');
+    const placeholder = document.getElementById('qm-other-subject-placeholder');
+    
+    if (subject === 'arabic') {
+        // আরবি UI দেখাই
+        if (arabicView) {
+            // ভিতরের সব দেখাই (placeholder hide)
+            Array.from(arabicView.children).forEach(child => {
+                if (child.id !== 'qm-other-subject-placeholder') {
+                    child.classList.remove('hidden');
+                }
+            });
+        }
+        if (placeholder) placeholder.classList.add('hidden');
+    } else {
+        // অন্যান্য বিষয় → placeholder দেখাই
+        if (arabicView) {
+            Array.from(arabicView.children).forEach(child => {
+                if (child.id !== 'qm-other-subject-placeholder') {
+                    child.classList.add('hidden');
+                }
+            });
+        }
+        if (placeholder) placeholder.classList.remove('hidden');
+    }
+    
+    showToast(`📌 ${subject === 'arabic' ? 'আরবি' : subject === 'bangla' ? 'বাংলা' : subject === 'english' ? 'ইংরেজি' : 'গণিত'} প্রশ্ন মেকার`, 'info');
+};
+
+// ═══════════════════ হেডিং — শিক্ষাবর্ষ dropdown populate ═══════════════════
+function populateAqmYearDropdown() {
+    const sel = document.getElementById('aqm-year');
+    if (!sel) return;
+    
+    sel.innerHTML = '<option value="">-- শিক্ষাবর্ষ --</option>';
+    
+    (academicYears || []).forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y.name;
+        opt.textContent = y.name + (y.isCurrent ? ' (বর্তমান)' : '');
+        sel.appendChild(opt);
+    });
+    
+    // ★ বর্তমান বছর auto-select
+    const current = getCurrentYear();
+    if (current) sel.value = current;
+    aqmState.year = sel.value;
+}
+
+// ═══════════════════ পরীক্ষার ধরন পরিবর্তন → প্রশ্ন সংখ্যা adjust ═══════════════════
+window.onAqmExamTypeChange = function() {
+    const sel = document.getElementById('aqm-exam-type');
+    aqmState.examType = sel.value;
+    
+    const questionsWrapper = document.getElementById('aqm-questions-wrapper');
+    const actionBar = document.getElementById('aqm-action-bar');
+    const infoText = document.getElementById('aqm-info-text');
+    
+    if (!aqmState.examType) {
+        if (questionsWrapper) questionsWrapper.classList.add('hidden');
+        if (actionBar) actionBar.classList.add('hidden');
+        return;
+    }
+    
+    // ★ প্রশ্ন সংখ্যা adjust
+    const targetCount = getAqmQuestionCount(aqmState.examType);
+    const currentCount = aqmState.questions.length;
+    
+    if (currentCount < targetCount) {
+        // প্রশ্ন যোগ করি
+        for (let i = currentCount; i < targetCount; i++) {
+            aqmState.questions.push(createAqmQuestion(i));
+        }
+    } else if (currentCount > targetCount) {
+        // ★ বার্ষিক থেকে অন্য পরীক্ষায় গেলে অতিরিক্ত প্রশ্ন মুছি
+        if (aqmState.examType !== 'annual' && currentCount > targetCount) {
+            aqmState.questions = aqmState.questions.slice(0, targetCount);
+        }
+    }
+    
+    // UI দেখাই
+    if (questionsWrapper) questionsWrapper.classList.remove('hidden');
+    if (actionBar) actionBar.classList.remove('hidden');
+    
+    // ★ ইনফো টেক্সট আপডেট
+    if (infoText) {
+        const examTypeNames = {
+            term1: '১ম সাময়িক',
+            term2: '২য় সাময়িক',
+            model: 'মডেল টেস্ট',
+            qurbani: 'কুরবানী পরীক্ষা',
+            annual: 'বার্ষিক পরীক্ষা'
+        };
+        const pageInfo = aqmState.examType === 'annual' ? '২ পেইজে যাবে' : '১ পেইজে থাকবে';
+        infoText.innerHTML = `
+            <strong>${examTypeNames[aqmState.examType]}</strong> — ${targetCount}টি প্রশ্ন (${pageInfo})। 
+            প্রতি প্রশ্নে (أ / ب / ج) অংশ। খালি অংশ auto-hide হবে।
+        `;
+    }
+    
+    renderAqmQuestions();
+};
+
+// ═══════════════════ শ্রেণি পরিবর্তন → কিতাব লোড ═══════════════════
+window.onAqmClassChange = function() {
+    const sel = document.getElementById('aqm-class');
+    aqmState.className = sel.value;
+    aqmState.books = [];
+    
+    renderAqmBooksList();
+    onAqmHeaderChange();
+};
+
+// ★ কিতাবের চেকবক্স লিস্ট রেন্ডার
+function renderAqmBooksList() {
+    const container = document.getElementById('aqm-books-container');
+    if (!container) return;
+    
+    if (!aqmState.className) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>';
+        return;
+    }
+    
+    // ★ শ্রেণির কিতাবসমূহ (configData.books থেকে)
+    const booksList = (configData?.books || {})[aqmState.className] || [];
+    
+    if (booksList.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">এই শ্রেণিতে কোন কিতাব নেই</p>';
+        return;
+    }
+    
+    container.innerHTML = booksList.map((book, idx) => `
+        <label class="flex items-center gap-2 p-1.5 hover:bg-blue-50 rounded cursor-pointer border-b border-slate-100 last:border-b-0">
+            <input type="checkbox" 
+                   class="aqm-book-cb w-4 h-4 rounded text-blue-600" 
+                   value="${book.replace(/"/g, '&quot;')}"
+                   onchange="onAqmBookToggle(this)">
+            <span class="text-xs font-arabic" dir="rtl">${book}</span>
+        </label>
+    `).join('');
+}
+
+// ★ কিতাব টগল
+window.onAqmBookToggle = function(cb) {
+    const book = cb.value;
+    if (cb.checked) {
+        if (!aqmState.books.includes(book)) aqmState.books.push(book);
+    } else {
+        aqmState.books = aqmState.books.filter(b => b !== book);
+    }
+    
+    onAqmHeaderChange();
+    renderAqmQuestions();  // ★ multi-book হলে প্রতি প্রশ্নে اسم الكتاب দেখাতে হবে
+};
+
+// ═══════════════════ হেডিং-এর যেকোনো ফিল্ড পরিবর্তন ═══════════════════
+window.onAqmHeaderChange = function() {
+    aqmState.year = document.getElementById('aqm-year')?.value || '';
+    aqmState.subjectText = document.getElementById('aqm-subject-text')?.value || '';
+    aqmState.time = document.getElementById('aqm-time')?.value || '';
+    aqmState.dateHijri = document.getElementById('aqm-date-hijri')?.value || '';
+    aqmState.totalMarksText = document.getElementById('aqm-total-marks-text')?.value || '';
+    aqmState.marksPart1 = document.getElementById('aqm-marks-part1')?.value || '';
+    aqmState.marksPart2 = document.getElementById('aqm-marks-part2')?.value || '';
+};
+
+// ═══════════════════ প্রশ্ন রেন্ডার ═══════════════════
+function renderAqmQuestions() {
+    const container = document.getElementById('aqm-questions-container');
+    if (!container) return;
+    
+    if (aqmState.questions.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8 text-slate-400 border-2 border-dashed border-slate-200 rounded-lg">
+                <i class="fa-solid fa-inbox text-4xl mb-2"></i>
+                <p class="text-sm">কোন প্রশ্ন নেই</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const isMultiBook = aqmState.books.length > 1;
+    
+    container.innerHTML = aqmState.questions.map((q, qIdx) => 
+        renderAqmQuestion(q, qIdx, isMultiBook)
+    ).join('');
+}
+
+// ═══════════════════ ১২টি কমন আরবি প্রশ্নের টেমপ্লেট ═══════════════════
+const AQM_COMMON_QUESTIONS = [
+    'شكل وترجم مع بيان معنى/محل إعراب قوله: ""',
+    'شكل وترجم ثم اكتب',
+    'اكتب اختلاف الأئمة الكرام في مسألة "............" مدللا مرجحا.',
+    'زين النص بالحركات والسكنات وترجمه ثم اكتب',
+    'اكتب معنى قوله عليه السلام: "........"',
+    'حلِّل الألفاظ الآتية:',
+    'اكتب معاني الكلمات الآتية ثم كون بها جملة مفيدة:',
+    'اكتب مقالة حول موضوع "................." ولا تقل عن عشرة أسطر.',
+    'حول الكلمات الآتية إلى العربية ثم كون بكل كلمة جملة مفيدة:',
+    'اكتب مفردات الجموع وجموع المفردات ثم ضع كل واحد منها في جملة مفيدة.',
+    'أوضح الاستعارات في قوله: "............."',
+    'شكل الشعر وترجمه ثم بين لمن هذا الشعر؟ وعلام استشهد به المصنف رح؟'
+];
+
+// ═══════════════════ একটি প্রশ্নের UI (RTL সহ) ═══════════════════
+function renderAqmQuestion(q, qIdx, isMultiBook) {
+    const ordinal = AQM_QUESTION_ORDINALS[qIdx] || (qIdx + 1);
+
+    // ★ ইসমুল কিতাব dropdown — শুধু multi-book হলে
+    let bookSelectorHTML = '';
+    if (isMultiBook) {
+        const options = ['<option value="">-- (আগের কিতাবই চলবে) --</option>']
+            .concat(aqmState.books.map(b =>
+                `<option value="${b.replace(/"/g, '&quot;')}" ${q.bookName === b ? 'selected' : ''}>${b}</option>`
+            )).join('');
+
+        bookSelectorHTML = `
+            <div class="mb-2 pb-2 border-b border-blue-100">
+                <label class="block text-[10px] font-semibold text-blue-700 mb-1">
+                    <i class="fa-solid fa-book"></i> اسم الكتاب:
+                </label>
+                <select onchange="onAqmQuestionBookChange(${qIdx}, this.value)"
+                        class="w-full rounded border-blue-200 border p-1.5 text-xs font-arabic bg-white"
+                        dir="rtl">
+                    ${options}
+                </select>
+            </div>
+        `;
+    }
+
+    // ★ অংশসমূহ
+    const partsHTML = q.parts.map((p, pIdx) =>
+        renderAqmPart(q, qIdx, p, pIdx)
+    ).join('');
+
+    return `
+        <div class="bg-white border-2 border-blue-200 rounded-xl overflow-hidden" data-q-index="${qIdx}">
+            
+            <!-- প্রশ্ন হেডার (RTL) -->
+            <div class="bg-blue-100 px-3 py-2 flex items-center justify-between flex-wrap gap-2" dir="rtl">
+                
+                <!-- ★ ডান দিক: নম্বর + السؤال + قوله (বড় textarea) -->
+                <div class="flex items-start gap-2 flex-1 min-w-0">
+                    <span class="text-xs font-bold bg-blue-600 text-white rounded-full w-7 h-7 flex items-center justify-center flex-shrink-0 mt-1">
+                        ${qIdx + 1}
+                    </span>
+                    <span class="text-sm font-bold text-blue-900 font-arabic flex-shrink-0 mt-1.5">
+                        السؤال ${ordinal}:
+                    </span>
+                    <textarea rows="4"
+                              onchange="onAqmQuestionQawlahuChange(${qIdx}, this.value)"
+                              oninput="autoGrowQawlahu(this)"
+                              placeholder="قوله: ..."
+                              class="flex-1 min-w-0 text-sm font-arabic bg-white border border-blue-300 rounded px-2 py-1.5 focus:border-blue-600 focus:outline-none resize-none leading-relaxed"
+                              dir="rtl"
+                              style="min-height: 90px; max-height: 320px; overflow-y: auto;">${q.qawlahu || ''}</textarea>
+                </div>
+                
+                <!-- বাম দিক: ডিলিট বাটন -->
+                <div class="flex gap-1 flex-shrink-0">
+                    ${aqmState.questions.length > 1 ? `
+                        <button onclick="deleteAqmQuestion(${qIdx})" 
+                                class="text-red-500 hover:text-red-700 p-1" 
+                                title="প্রশ্ন মুছুন">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <!-- প্রশ্ন বডি -->
+            <div class="p-3 space-y-2">
+                ${bookSelectorHTML}
+                ${partsHTML}
+                
+                <!-- অংশ যোগ/কমান বাটন -->
+                <div class="flex gap-2 pt-2 border-t border-blue-100">
+                    <button onclick="addAqmPart(${qIdx})" 
+                            class="flex-1 py-1.5 border-2 border-dashed border-blue-300 text-blue-600 hover:bg-blue-50 text-xs font-semibold rounded-lg transition">
+                        <i class="fa-solid fa-plus"></i> অংশ যোগ
+                    </button>
+                    ${q.parts.length > 1 ? `
+                        <button onclick="removeLastAqmPart(${qIdx})" 
+                                class="flex-1 py-1.5 border-2 border-dashed border-red-300 text-red-600 hover:bg-red-50 text-xs font-semibold rounded-lg transition">
+                            <i class="fa-solid fa-minus"></i> শেষ অংশ মুছুন
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ★ قوله: textarea auto-grow (max 10 লাইন)
+window.autoGrowQawlahu = function(el) {
+    el.style.height = 'auto';
+    const newHeight = Math.min(el.scrollHeight, 320); // max ~10 লাইন
+    el.style.height = newHeight + 'px';
+};
+
+// ═══════════════════ একটি অংশের UI (ড্রপডাউন + RTL) ═══════════════════
+function renderAqmPart(q, qIdx, p, pIdx) {
+    // ★ কমন প্রশ্নের ড্রপডাউন অপশন
+    const commonOptions = AQM_COMMON_QUESTIONS.map((qText, i) => {
+        const shortLabel = qText.length > 60 ? qText.substring(0, 60) + '...' : qText;
+        return `<option value="${qText.replace(/"/g, '&quot;')}">${shortLabel}</option>`;
+    }).join('');
+
+    return `
+        <div class="flex items-start gap-2 bg-slate-50 rounded-lg p-2 border border-slate-200" dir="rtl">
+            
+            <!-- ★ ডান দিকে: লেবেল (أ/ب/ج) -->
+            <div class="flex-shrink-0 flex items-center justify-center w-8 h-8 bg-emerald-100 border border-emerald-300 rounded-full font-arabic font-bold text-emerald-800 text-sm">
+                ${p.label}
+            </div>
+            
+            <!-- ★ মাঝখানে: ড্রপডাউন + textarea (একসাথে) -->
+            <div class="flex-1 min-w-0 space-y-1.5">
+                
+                <!-- ★ কমন প্রশ্নের ড্রপডাউন -->
+                <select onchange="onAqmCommonQuestionSelect(${qIdx}, ${pIdx}, this.value)"
+                        class="w-full text-[11px] bg-blue-50 border border-blue-200 rounded px-2 py-1 focus:border-blue-500 focus:outline-none font-arabic"
+                        dir="rtl"
+                        title="কমন প্রশ্ন বাছুন">
+                    <option value="">📋 কমন প্রশ্ন বাছুন (অথবা টাইপ করুন)...</option>
+                    ${commonOptions}
+                </select>
+                
+                <!-- ★ মূল প্রশ্ন টেক্সট (টাইপ করা / ড্রপডাউন থেকে আসা) -->
+                <textarea rows="1"
+                          onchange="onAqmPartTextChange(${qIdx}, ${pIdx}, this.value)"
+                          oninput="autoGrowAqmTextarea(this)"
+                          placeholder="প্রশ্ন লিখুন..."
+                          class="w-full text-sm font-arabic bg-white border border-slate-300 rounded px-2 py-1.5 focus:border-blue-500 focus:outline-none resize-none"
+                          dir="rtl">${p.text || ''}</textarea>
+            </div>
+            
+            <!-- ★ বাম দিকে: মার্কস -->
+            <div class="flex-shrink-0 flex items-center gap-1 mt-6">
+                <span class="text-xs text-slate-500 font-bold">=</span>
+                <input type="number"
+                       value="${p.marks || ''}"
+                       onchange="onAqmPartMarksChange(${qIdx}, ${pIdx}, this.value)"
+                       min="0"
+                       placeholder="0"
+                       class="w-16 text-xs border border-slate-300 rounded px-1.5 py-1.5 text-center font-bold bg-amber-50"
+                       title="মার্কস">
+            </div>
+            
+            <!-- ★ অংশ মুছুন -->
+            ${q.parts.length > 1 ? `
+                <button onclick="deleteAqmPart(${qIdx}, ${pIdx})" 
+                        class="flex-shrink-0 text-red-400 hover:text-red-600 p-1 mt-6"
+                        title="অংশ মুছুন">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            ` : ''}
+        </div>
+    `;
+}
+
+// ═══════════════════ ড্রপডাউন থেকে প্রশ্ন সিলেক্ট করলে textarea-তে বসবে ═══════════════════
+window.onAqmCommonQuestionSelect = function(qIdx, pIdx, value) {
+    if (!value) return;
+    
+    const q = aqmState.questions[qIdx];
+    if (!q?.parts[pIdx]) return;
+    
+    // ★ textarea-তে প্রশ্ন পেস্ট করি
+    q.parts[pIdx].text = value;
+    
+    // ★ আবার render করি (textarea auto-grow হবে)
+    renderAqmQuestions();
+    
+    showToast('✅ কমন প্রশ্ন যোগ হয়েছে — চাইলে এডিট করতে পারবেন', 'success');
+};
+
+// ★ অংশের textarea auto-grow
+window.autoGrowAqmTextarea = function(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+};
+
+// ★ টেক্সটএরিয়া auto-grow
+window.autoGrowAqmTextarea = function(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 150) + 'px';
+};
+
+// ═══════════════════ প্রশ্ন / অংশ পরিবর্তন হ্যান্ডলার ═══════════════════
+window.onAqmQuestionQawlahuChange = function(qIdx, value) {
+    if (aqmState.questions[qIdx]) {
+        aqmState.questions[qIdx].qawlahu = value;
+    }
+};
+
+window.onAqmQuestionBookChange = function(qIdx, value) {
+    if (aqmState.questions[qIdx]) {
+        aqmState.questions[qIdx].bookName = value;
+    }
+};
+
+window.onAqmPartTextChange = function(qIdx, pIdx, value) {
+    if (aqmState.questions[qIdx]?.parts[pIdx]) {
+        aqmState.questions[qIdx].parts[pIdx].text = value;
+    }
+};
+
+window.onAqmPartMarksChange = function(qIdx, pIdx, value) {
+    if (aqmState.questions[qIdx]?.parts[pIdx]) {
+        aqmState.questions[qIdx].parts[pIdx].marks = value;
+    }
+};
+
+// ═══════════════════ প্রশ্ন / অংশ যোগ-মুছা ═══════════════════
+window.addAqmQuestion = function() {
+    // ★ বার্ষিক ছাড়া অন্য পরীক্ষায় max limit চেক
+    const maxQ = aqmState.examType === 'annual' ? 20 : 3;
+    
+    if (aqmState.questions.length >= maxQ) {
+        if (aqmState.examType !== 'annual') {
+            showToast(`⚠️ এই পরীক্ষায় সর্বোচ্চ ${maxQ}টি প্রশ্ন যোগ করা যাবে`, 'warn');
+        }
+        return;
+    }
+    
+    aqmState.questions.push(createAqmQuestion(aqmState.questions.length));
+    renderAqmQuestions();
+    showToast('✅ নতুন প্রশ্ন যোগ হয়েছে', 'success');
+};
+
+window.deleteAqmQuestion = function(qIdx) {
+    if (aqmState.questions.length <= 1) {
+        showToast('⚠️ কমপক্ষে একটি প্রশ্ন থাকতে হবে', 'warn');
+        return;
+    }
+    if (!confirm(`প্রশ্ন ${qIdx + 1} মুছে ফেলবেন?`)) return;
+    
+    aqmState.questions.splice(qIdx, 1);
+    renderAqmQuestions();
+};
+
+window.addAqmPart = function(qIdx) {
+    const q = aqmState.questions[qIdx];
+    if (!q) return;
+    
+    if (q.parts.length >= AQM_PART_LABELS.length) {
+        showToast(`⚠️ সর্বোচ্চ ${AQM_PART_LABELS.length}টি অংশ যোগ করা যাবে`, 'warn');
+        return;
+    }
+    
+    const newLabel = AQM_PART_LABELS[q.parts.length];
+    q.parts.push({
+        id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+        label: newLabel,
+        text: '',
+        marks: '',
+        hidden: false
+    });
+    
+    renderAqmQuestions();
+};
+
+window.deleteAqmPart = function(qIdx, pIdx) {
+    const q = aqmState.questions[qIdx];
+    if (!q) return;
+    if (q.parts.length <= 1) {
+        showToast('⚠️ কমপক্ষে একটি অংশ থাকতে হবে', 'warn');
+        return;
+    }
+    
+    q.parts.splice(pIdx, 1);
+    
+    // ★ লেবেল renumber
+    q.parts.forEach((p, i) => {
+        p.label = AQM_PART_LABELS[i];
+    });
+    
+    renderAqmQuestions();
+};
+
+window.removeLastAqmPart = function(qIdx) {
+    const q = aqmState.questions[qIdx];
+    if (!q || q.parts.length <= 1) return;
+    q.parts.pop();
+    renderAqmQuestions();
+};
+
+// ═══════════════════ রিসেট ═══════════════════
+window.resetArabicQm = function() {
+    if (aqmState.questions.length > 0) {
+        if (!confirm('সব প্রশ্ন ও তথ্য মুছে ফেলবেন?')) return;
+    }
+    
+    aqmState = {
+        subject: 'arabic',
+        year: '',
+        examType: '',
+        className: '',
+        books: [],
+        subjectText: '',
+        time: '٣ ساعات',
+        dateHijri: '',
+        totalMarksText: '١٠٠',
+        marksPart1: 'والسبعة منها لحسن الكتابة والإجابة بالعربية',
+        marksPart2: '',
+        questions: []
+    };
+    
+    // ফর্ম রিসেট
+    const ids = ['aqm-year', 'aqm-exam-type', 'aqm-class', 'aqm-subject-text', 'aqm-date-hijri', 'aqm-marks-part2'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    
+    document.getElementById('aqm-time').value = '٣ ساعات';
+    document.getElementById('aqm-total-marks-text').value = '١٠٠';
+    document.getElementById('aqm-marks-part1').value = 'والسبعة منها لحسن الكتابة والإجابة بالعربية';
+    
+    // ★ বর্তমান শিক্ষাবর্ষ auto-select
+    populateAqmYearDropdown();
+    
+    document.getElementById('aqm-books-container').innerHTML = '<p class="text-xs text-slate-400 italic text-center py-2">আগে শ্রেণি সিলেক্ট করুন</p>';
+    
+    document.getElementById('aqm-questions-wrapper').classList.add('hidden');
+    document.getElementById('aqm-action-bar').classList.add('hidden');
+    
+    showToast('🔄 প্রশ্ন মেকার রিসেট হয়েছে', 'info');
+};
+
+// ★ শ্রেণি dropdown populate
+function populateAqmClassDropdown() {
+    const sel = document.getElementById('aqm-class');
+    if (!sel) return;
+    
+    sel.innerHTML = '<option value="">-- শ্রেণি --</option>';
+    
+    // ★ সব শ্রেণি (configData.classes থেকে, সব বিভাগ মিলিয়ে unique)
+    const allClasses = new Set();
+    Object.keys(configData?.classes || {}).forEach(dept => {
+        (configData.classes[dept] || []).forEach(c => allClasses.add(c));
+    });
+    
+    Array.from(allClasses).sort().forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+    });
+}
+
+// ═══════════════════ সেভ করা প্রশ্নসেট লোড ═══════════════════
+window.loadSavedQmSets = async function() {
+    // ★ ভবিষ্যতে Firestore থেকে load করব
+    showToast('📂 সেভ করা প্রশ্নসেট পরবর্তী ধাপে যোগ হবে', 'info');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ আরবি প্রশ্নপত্র — HTML Builder (প্রিভিউ ও প্রিন্টের জন্য) ★★★
+// ═══════════════════════════════════════════════════════════════
+function buildArabicQuestionPaperHTML() {
+    const s = aqmState;
+    
+    // ★ ভ্যালিডেশন
+    if (!s.questions || s.questions.length === 0) {
+        return null;
+    }
+    
+    // ★ ছোট বাংলা→আরবি সংখ্যা convert
+    function toArabicNum(str) {
+        if (!str) return '';
+        const map = { '0':'٠','1':'١','2':'٢','3':'٣','4':'٤','5':'٥','6':'٦','7':'٧','8':'٨','9':'٩' };
+        return String(str).replace(/\d/g, d => map[d] || d);
+    }
+    
+    // ★ পরীক্ষার ধরন অনুযায়ী শিরোনাম
+    const examTypeNames = {
+        term1: 'الأول',
+        term2: 'الثاني',
+        model: 'النموذجي',
+        qurbani: 'الأضحية',
+        annual: 'السنوي'
+    };
+    const examTypeArabic = examTypeNames[s.examType] || '......';
+    
+    // ★ মাদরাসার তথ্য
+    const madrasaAr = settings.madrasaNameAr || 'جامعة الشيخ محمد عبد الله';
+    const madrasaBn = settings.madrasaName || 'জামিয়া শাইখ মুহাম্মাদ আব্দুল্লাহ';
+    const addr = settings.address || '';
+    
+    // ★ শিক্ষাবর্ষ
+    const yearArabic = toArabicNum(s.year || '') || s.year || '';
+    
+    // ★ হেডিং বক্স
+    const headingHTML = `
+        <div class="aqm-heading-box">
+            <p class="aqm-heading-line-1">
+                ورقة الأسئلة للاختبار 
+                <span class="aqm-fill">${examTypeArabic}</span>
+                المنعقد بـ<span class="aqm-fill">${madrasaAr}</span> للعام التعليمي:
+                <span class="aqm-fill">${yearArabic || '......'}</span>
+            </p>
+            <div class="aqm-heading-mid">
+                <div class="aqm-hm-item">
+                    <span class="aqm-hm-label">الكتاب:</span>
+                    <span class="aqm-hm-value">${s.books.length > 0 ? s.books.join(' / ') : '................'}</span>
+                </div>
+                <div class="aqm-hm-item">
+                    <span class="aqm-hm-label">المادة:</span>
+                    <span class="aqm-hm-value">${s.subjectText || '................'}</span>
+                </div>
+            </div>
+            <div class="aqm-heading-mid">
+                <div class="aqm-hm-item">
+                    <span class="aqm-hm-label">الصف:</span>
+                    <span class="aqm-hm-value">${s.className || '................'}</span>
+                </div>
+                <div class="aqm-hm-item">
+                    <span class="aqm-hm-label">الوقت:</span>
+                    <span class="aqm-hm-value">${s.time || '٣ ساعات'}</span>
+                </div>
+                <div class="aqm-hm-item">
+                    <span class="aqm-hm-label">التاريخ:</span>
+                    <span class="aqm-hm-value">${s.dateHijri || '................'} هـ</span>
+                </div>
+            </div>
+            <p class="aqm-heading-line-4">
+                كل الأرقام: ${s.totalMarksText || '١٠٠'}${s.marksPart1 ? '، ' + s.marksPart1 : ''}${s.marksPart2 ? ' / ' + s.marksPart2 : ''}
+            </p>
+        </div>
+    `;
+    
+    // ★ প্রশ্নগুলো
+    const isMultiBook = s.books.length > 1;
+    let questionsHTML = '';
+    let lastBookName = '';  // auto-carry-এর জন্য
+    
+    s.questions.forEach((q, qIdx) => {
+        // ★ ইসমুল কিতাব (multi-book হলে)
+        let bookLineHTML = '';
+        if (isMultiBook) {
+            let effectiveBook = q.bookName;
+            if (!effectiveBook) {
+                // auto-carry: আগের কিতাবই চলবে
+                effectiveBook = lastBookName;
+            } else {
+                lastBookName = effectiveBook;
+            }
+            
+            // ★ শুধু দেখাব যদি নতুন কিতাব শুরু হয়
+            if (q.bookName) {
+                bookLineHTML = `
+                    <p class="aqm-book-line">
+                        اسم الكتاب: <span class="aqm-book-name">${effectiveBook}</span>
+                    </p>
+                `;
+            }
+        }
+        
+        // ★ অংশগুলো — শুধু যেগুলোতে টেক্সট আছে
+        const visibleParts = q.parts.filter(p => (p.text || '').trim() !== '');
+        
+        // ★ যদি কোনো অংশ না থাকে, তাহলে খালি দেখাব না
+        if (visibleParts.length === 0 && !q.qawlahu) {
+            return; // এই প্রশ্ন skip
+        }
+        
+        // ★ ডানে: অংশ + প্রশ্ন, বামে: নম্বর — কিন্তু CSS Grid দিয়ে সাজানো
+        const partsHTML = visibleParts.map(p => `
+            <div class="aqm-part-row">
+                <!-- ★ ডান: অংশ + প্রশ্ন -->
+                <div class="aqm-part-content">
+                    <span class="aqm-part-label">(${p.label})</span>
+                    <span class="aqm-part-text">${escapeAqmHtml(p.text)}</span>
+                </div>
+                <!-- ★ বাম: নম্বর -->
+                <div class="aqm-part-marks">
+                    ${p.marks ? toArabicNum(p.marks) : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        // ★ প্রশ্নের অর্ডিন্যাল
+        const ordinal = AQM_QUESTION_ORDINALS[qIdx] || (qIdx + 1);
+        
+        questionsHTML += `
+            <div class="aqm-question-block">
+                ${bookLineHTML}
+                <p class="aqm-question-heading">
+                    <strong>السؤال ${ordinal}:</strong>
+                    <span class="aqm-qawlahu">${escapeAqmHtml(q.qawlahu || '')}</span>
+                </p>
+                <div class="aqm-parts-wrapper">
+                    ${partsHTML}
+                </div>
+            </div>
+        `;
+    });
+    
+    // ★ মোট পেইজ নির্ধারণ (বার্ষিক = 2 পেইজ, বাকি = 1 পেইজ)
+    const isAnnual = s.examType === 'annual';
+    const pageClass = isAnnual ? 'aqm-page aqm-page-annual' : 'aqm-page aqm-page-single';
+    
+    return `
+        <div class="${pageClass}" id="aqm-print-paper">
+            ${headingHTML}
+            <div class="aqm-questions-area">
+                ${questionsHTML}
+            </div>
+        </div>
+    `;
+}
+
+// ★ HTML escape
+function escapeAqmHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/\n/g, '<br>');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ CSS inject — একবারই ★★★
+// ═══════════════════════════════════════════════════════════════
+function injectAqmPrintStyles() {
+    if (document.getElementById('aqm-print-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'aqm-print-styles';
+    style.textContent = `
+        /* ★★★ A4 পেইজ ★★★ */
+        .aqm-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 12mm 10mm 15mm 10mm;
+            margin: 0 auto 20px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            font-family: 'Amiri', 'Noto Naskh Arabic', 'Hind Siliguri', serif;
+            direction: rtl;
+            color: #1e293b;
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        .aqm-page-annual {
+            min-height: 297mm;
+        }
+        
+        /* ★★★ হেডিং বক্স ★★★ */
+        .aqm-heading-box {
+            border: 2.5px solid #1e293b;
+            border-radius: 4px;
+            padding: 8px 12px;
+            margin-bottom: 14px;
+            background: white;
+            line-height: 1.7;
+        }
+        
+        .aqm-heading-box p {
+            margin: 3px 0;
+            font-size: 13.5px;
+            text-align: center;
+        }
+        
+        .aqm-heading-line-1 {
+            font-size: 14px !important;
+            font-weight: bold;
+        }
+        
+        .aqm-heading-mid {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+            margin: 4px 0;
+            font-size: 13px;
+        }
+        
+        .aqm-hm-item {
+            flex: 1;
+            min-width: 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .aqm-hm-label {
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .aqm-hm-value {
+            font-weight: bold;
+            color: #0f172a;
+            padding: 0 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .aqm-heading-line-4 {
+            font-size: 12.5px !important;
+            border-top: 1px dashed #64748b;
+            padding-top: 4px;
+            margin-top: 6px !important;
+        }
+        
+        .aqm-fill,
+        .aqm-fill-inline,
+        .aqm-fill-book {
+            font-weight: bold;
+            color: #0f172a;
+            border-bottom: 1px dotted #64748b;
+            padding: 0 4px;
+            display: inline-block;
+            min-width: 60px;
+        }
+        
+        .aqm-dots {
+            font-family: monospace;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+        
+        /* ★★★ প্রশ্ন এলাকা ★★★ */
+        .aqm-questions-area {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        
+        .aqm-question-block {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        
+        .aqm-book-line {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 4px 0 6px 0;
+            padding: 3px 8px;
+            background: #f1f5f9;
+            border-right: 3px solid #065f46;
+            text-align: right;
+        }
+        
+        .aqm-book-name {
+            font-family: 'Amiri', serif;
+            color: #065f46;
+        }
+        
+        .aqm-question-heading {
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+            padding: 0;
+            text-align: right;
+            line-height: 1.8;
+        }
+        
+        .aqm-qawlahu {
+            font-weight: normal;
+            font-family: 'Amiri', serif;
+            margin-right: 6px;
+        }
+        
+        /* ★★★ অংশগুলো ★★★ */
+        .aqm-parts-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .aqm-part-row {
+            display: grid;
+            grid-template-columns: 1fr 70px;      /* ★ প্রথম কলাম = প্রশ্ন (ডানে), দ্বিতীয় কলাম = নম্বর (বামে) */
+            gap: 12px;
+            align-items: flex-start;
+            page-break-inside: avoid;
+            direction: rtl;                        /* ★ RTL — প্রথম কলাম ডানে, দ্বিতীয় কলাম বামে */
+        }
+        
+        .aqm-part-marks {
+            text-align: left;
+            font-weight: bold;
+            font-size: 14px;
+            color: #1e293b;
+            padding-top: 1px;
+            padding-left: 0;
+            direction: ltr;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;           /* ★ নম্বর বাম দিকে লেগে থাকবে */
+        }
+        
+        .aqm-part-content {
+            font-size: 14px;
+            line-height: 1.9;
+            text-align: right;
+        }
+        
+        .aqm-part-label {
+            font-weight: bold;
+            margin-left: 6px;
+            display: inline-block;
+            min-width: 25px;
+        }
+        
+        .aqm-part-text {
+            font-family: 'Amiri', serif;
+        }
+        
+        /* ★★★ বার্ষিক — দুই পেইজ ★★★ */
+        .aqm-page-annual .aqm-questions-area {
+            /* পাঁচটি প্রশ্ন হলে প্রথম ২-৩টি পেইজ ১-এ, বাকিগুলো পেইজ ২-এ */
+            /* browser auto-handle করবে page-break দিয়ে */
+        }
+        
+        .aqm-page-annual .aqm-question-block:nth-child(n+4) {
+            /* চতুর্থ প্রশ্ন থেকে নতুন পেইজে যাওয়ার চেষ্টা */
+            page-break-before: auto;
+        }
+        
+        /* ★★★ প্রিভিউ মোড (screen-এ) ★★★ */
+        @media screen {
+            .aqm-page {
+                max-width: 100%;
+                width: 100%;
+                min-height: auto;
+                padding: 20px;
+            }
+        }
+        
+        /* ★★★ প্রিন্ট ★★★ */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #aqm-print-paper,
+            #aqm-print-paper * {
+                visibility: visible;
+            }
+            #aqm-print-paper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 12mm 10mm !important;
+            }
+            .aqm-question-block {
+                page-break-inside: avoid;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ প্রিভিউ ★★★
+// ═══════════════════════════════════════════════════════════════
+window.previewArabicQm = function() {
+    // ★ ভ্যালিডেশন
+    if (!aqmState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildArabicQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ প্রিভিউ দেখানোর মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    injectAqmPrintStyles();
+    
+    // ★ Modal তৈরি
+    const oldModal = document.getElementById('aqm-preview-modal');
+    if (oldModal) oldModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'aqm-preview-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        overflow-y: auto;
+    `;
+    
+    modal.innerHTML = `
+        <div style="max-width: 900px; margin: 0 auto; width: 100%;">
+            <!-- হেডার বার -->
+            <div style="background: #1e293b; color: white; padding: 12px 18px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 10;">
+                <div>
+                    <h3 style="margin: 0; font-size: 16px;">
+                        <i class="fa-solid fa-eye"></i> প্রিভিউ — আরবি প্রশ্নপত্র
+                    </h3>
+                    <p style="margin: 3px 0 0; font-size: 11px; opacity: 0.8;">
+                        এভাবেই প্রিন্ট হবে (A4 পোর্ট্রেট, RTL)
+                    </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="printArabicQm()" style="background: #059669; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="shareArabicQmPDF()" style="background: #d97706; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-file-pdf"></i> PDF
+                    </button>
+                    <button onclick="document.getElementById('aqm-preview-modal').remove()" style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-xmark"></i> বন্ধ
+                    </button>
+                </div>
+            </div>
+            
+            <!-- প্রশ্নপত্র -->
+            <div style="background: #f1f5f9; padding: 20px; border-radius: 0 0 10px 10px;">
+                ${html}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // ESC দিয়ে বন্ধ
+    const escHandler = e => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', escHandler);
+        }
+    };
+    document.addEventListener('keydown', escHandler);
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ প্রিন্ট ★★★
+// ═══════════════════════════════════════════════════════════════
+window.printArabicQm = function() {
+    if (!aqmState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildArabicQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ প্রিন্ট করার মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('🖨️ প্রিন্ট উইন্ডো খোলছে...', 'info');
+    
+    // ★ নতুন উইন্ডোতে খুলি
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn');
+        return;
+    }
+    
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>ورقة الأسئلة — ${aqmState.className || ''}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+            <style>
+                * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    font-family: 'Amiri', 'Noto Naskh Arabic', 'Hind Siliguri', serif;
+                    direction: rtl;
+                    color: #1e293b;
+                }
+                .aqm-page {
+                    width: 210mm;
+                    min-height: 297mm;
+                    padding: 12mm 10mm 15mm 10mm;
+                    background: white;
+                    margin: 0 auto;
+                    box-sizing: border-box;
+                }
+                .aqm-heading-box {
+                    border: 2.5px solid #1e293b;
+                    border-radius: 4px;
+                    padding: 8px 12px;
+                    margin-bottom: 14px;
+                    line-height: 1.7;
+                }
+                .aqm-heading-box p {
+                    margin: 3px 0;
+                    font-size: 13.5px;
+                    text-align: center;
+                }
+                .aqm-heading-line-1 { font-size: 14px !important; font-weight: bold; }
+                .aqm-heading-line-2, .aqm-heading-line-3 {
+                    font-size: 13.5px !important;
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                }
+                .aqm-heading-line-2 span, .aqm-heading-line-3 span {
+                    flex: 1;
+                    min-width: 120px;
+                    text-align: center;
+                }
+                .aqm-heading-line-4 {
+                    font-size: 12.5px !important;
+                    border-top: 1px dashed #64748b;
+                    padding-top: 4px;
+                    margin-top: 6px !important;
+                }
+                .aqm-fill, .aqm-fill-inline, .aqm-fill-book {
+                    font-weight: bold;
+                    border-bottom: 1px dotted #64748b;
+                    padding: 0 4px;
+                    display: inline-block;
+                    min-width: 60px;
+                }
+                .aqm-questions-area {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 14px;
+                }
+                .aqm-question-block { page-break-inside: avoid; break-inside: avoid; }
+                .aqm-book-line {
+                    font-size: 13px;
+                    font-weight: bold;
+                    margin: 4px 0 6px 0;
+                    padding: 3px 8px;
+                    background: #f1f5f9;
+                    border-right: 3px solid #065f46;
+                    text-align: right;
+                }
+                .aqm-book-name { font-family: 'Amiri', serif; color: #065f46; }
+                .aqm-question-heading {
+                    font-size: 15px;
+                    font-weight: bold;
+                    margin: 0 0 8px 0;
+                    text-align: right;
+                    line-height: 1.8;
+                }
+                .aqm-qawlahu { font-weight: normal; font-family: 'Amiri', serif; margin-right: 6px; }
+                .aqm-parts-wrapper { display: flex; flex-direction: column; gap: 6px; }
+                .aqm-part-row {
+                    display: grid;
+                    grid-template-columns: 1fr 70px;
+                    gap: 12px;
+                    align-items: flex-start;
+                    page-break-inside: avoid;
+                    direction: rtl;
+                }
+                .aqm-part-marks {
+                    text-align: left;
+                    font-weight: bold;
+                    font-size: 14px;
+                    padding-top: 1px;
+                    padding-left: 0;
+                    direction: ltr;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                }
+                .aqm-part-content { font-size: 14px; line-height: 1.9; text-align: right; }
+                .aqm-part-label { font-weight: bold; margin-left: 6px; display: inline-block; min-width: 25px; }
+                .aqm-part-text { font-family: 'Amiri', serif; }
+                @page {
+                    size: A4 portrait;
+                    margin: 0;
+                }
+                @media print {
+                    body { margin: 0; padding: 0; }
+                    .aqm-page {
+                        width: 100%;
+                        min-height: auto;
+                        padding: 12mm 10mm !important;
+                        margin: 0 !important;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${html}
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() { window.print(); }, 700);
+                });
+            <\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ PDF শেয়ার ★★★
+// ═══════════════════════════════════════════════════════════════
+window.shareArabicQmPDF = function() {
+    if (!aqmState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    const html = buildArabicQuestionPaperHTML();
+    if (!html) {
+        showToast('⚠️ PDF তৈরির মতো কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('📄 PDF উইন্ডো খুলছে — "Save as PDF" বেছে নিন', 'info');
+    
+    // ★ প্রিন্টের মতোই — কিন্তু title PDF ফাইলের নাম হবে
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+        showToast('⚠️ Popup ব্লক হয়েছে', 'warn');
+        return;
+    }
+    
+    const examTypeNames = {
+        term1: 'Term1',
+        term2: 'Term2',
+        model: 'Model',
+        qurbani: 'Qurbani',
+        annual: 'Annual'
+    };
+    const fileName = `ArabicQ_${examTypeNames[aqmState.examType] || 'Exam'}_${aqmState.className || ''}_${(aqmState.year || '').replace(/\s+/g, '_')}`;
+    
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>${fileName}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <style>
+                * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    background: white;
+                    font-family: 'Amiri', 'Noto Naskh Arabic', 'Hind Siliguri', serif;
+                    direction: rtl;
+                }
+                .aqm-page {
+                    width: 210mm;
+                    min-height: 297mm;
+                    padding: 12mm 10mm 15mm 10mm;
+                    background: white;
+                    margin: 0 auto;
+                    box-sizing: border-box;
+                }
+                .aqm-heading-box {
+                    border: 2.5px solid #1e293b;
+                    border-radius: 4px;
+                    padding: 8px 12px;
+                    margin-bottom: 14px;
+                    line-height: 1.7;
+                }
+                .aqm-heading-box p { margin: 3px 0; font-size: 13.5px; text-align: center; }
+                .aqm-heading-line-1 { font-size: 14px !important; font-weight: bold; }
+                .aqm-heading-line-2, .aqm-heading-line-3 {
+                    font-size: 13.5px !important;
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                }
+                .aqm-heading-line-2 span, .aqm-heading-line-3 span { flex: 1; min-width: 120px; text-align: center; }
+                .aqm-heading-line-4 {
+                    font-size: 12.5px !important;
+                    border-top: 1px dashed #64748b;
+                    padding-top: 4px;
+                    margin-top: 6px !important;
+                }
+                .aqm-fill, .aqm-fill-inline, .aqm-fill-book {
+                    font-weight: bold;
+                    border-bottom: 1px dotted #64748b;
+                    padding: 0 4px;
+                    display: inline-block;
+                    min-width: 60px;
+                }
+                .aqm-questions-area { display: flex; flex-direction: column; gap: 14px; }
+                .aqm-question-block { page-break-inside: avoid; break-inside: avoid; }
+                .aqm-book-line {
+                    font-size: 13px;
+                    font-weight: bold;
+                    margin: 4px 0 6px 0;
+                    padding: 3px 8px;
+                    background: #f1f5f9;
+                    border-right: 3px solid #065f46;
+                    text-align: right;
+                }
+                .aqm-book-name { font-family: 'Amiri', serif; color: #065f46; }
+                .aqm-question-heading {
+                    font-size: 15px;
+                    font-weight: bold;
+                    margin: 0 0 8px 0;
+                    padding-bottom: 4px;
+                    text-align: right;
+                    line-height: 1.8;
+                    border-bottom: 1.5px solid #1e293b;
+                }
+                .aqm-qawlahu { font-weight: normal; font-family: 'Amiri', serif; margin-right: 6px; }
+                .aqm-parts-wrapper { display: flex; flex-direction: column; gap: 6px; padding-right: 8px; }
+                .aqm-part-row {
+                    display: grid;
+                    grid-template-columns: 1fr 70px;
+                    gap: 12px;
+                    align-items: flex-start;
+                    page-break-inside: avoid;
+                    direction: rtl;
+                }
+                .aqm-part-marks {
+                    text-align: left;
+                    font-weight: bold;
+                    font-size: 14px;
+                    padding-top: 1px;
+                    padding-left: 0;
+                    direction: ltr;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                }
+                .aqm-part-content { font-size: 14px; line-height: 1.9; text-align: right; direction: rtl; }
+                .aqm-part-label { font-weight: bold; margin-left: 6px; display: inline-block; min-width: 25px; }
+                .aqm-part-text { font-family: 'Amiri', serif; }
+                @page { size: A4 portrait; margin: 0; }
+                @media print {
+                    body { margin: 0; padding: 0; }
+                    .aqm-page { width: 100%; min-height: auto; padding: 12mm 10mm !important; margin: 0 !important; }
+                }
+            </style>
+        </head>
+        <body>
+            ${html}
+            <script>
+                window.addEventListener('load', function() {
+                    setTimeout(function() { window.print(); }, 700);
+                });
+            <\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ Firestore-এ সেভ (placeholder) ★★★
+// ═══════════════════════════════════════════════════════════════
+window.saveArabicQm = async function() {
+    if (!aqmState.examType) {
+        showToast('⚠️ আগে পরীক্ষার ধরন সিলেক্ট করুন', 'warn');
+        return;
+    }
+    
+    if (aqmState.questions.length === 0) {
+        showToast('⚠️ কোনো প্রশ্ন নেই', 'warn');
+        return;
+    }
+    
+    showToast('💾 সেভ ফিচার পরের ধাপে যোগ হবে', 'info');
+    // TODO: পরের ধাপে Firestore-এ সেভ করব
+};
+
+// ★ Initialization — যখনই exam tab খোলা হবে, dropdown populate হবে
+window.initArabicQm = function() {
+    populateAqmYearDropdown();
+    populateAqmClassDropdown();
+    
+    // ★ বিষয় dropdown default আরবি
+    const subjSel = document.getElementById('qm-subject-selector');
+    if (subjSel) subjSel.value = 'arabic';
+    
+    switchQmSubject('arabic');
+};
+
+// ═══════════════════ পরীক্ষা — সাব-মেনু ═══════════════════
+window.switchExamSub = function(sub) {
+    // সব view লুকাই
+    document.querySelectorAll('.exam-view').forEach(v => v.classList.add('hidden'));
+    
+    // সাব-বাটন থেকে active স্টাইল সরাই
+    document.querySelectorAll('.exam-sub-btn').forEach(b => {
+        b.classList.remove('ring-4', 'ring-offset-2', 'ring-orange-400', 'scale-95');
+    });
+    
+    // active বাটনে স্টাইল দিই
+    const activeBtn = document.getElementById('exam-sub-btn-' + sub);
+    if (activeBtn) {
+        activeBtn.classList.add('ring-4', 'ring-offset-2', 'ring-orange-400');
+    }
+    
+    // কনটেন্ট দেখাই
+    const contentArea = document.getElementById('exam-content');
+    if (contentArea) contentArea.classList.remove('hidden');
+    
+    const targetView = document.getElementById('exam-view-' + sub);
+    if (targetView) targetView.classList.remove('hidden');
+    
+    // ★ এখানে ভবিষ্যতে প্রতিটি sub-এর render function কল হবে
+    // যেমন:
+    // if (sub === 'question-maker') renderQuestionMaker();
+    // if (sub === 'exam-routine') renderExamRoutine();
+    // if (sub === 'results') renderExamResults();
+    // if (sub === 'exam-settings') renderExamSettings();
+};
+
 // ═══════════════════ TAB SWITCH ═══════════════════
 function switchTab(tabId) {
     // সব tab-content লুকাই
@@ -13159,6 +14934,13 @@ function switchTab(tabId) {
         if (calState.session && calState.dept) {
             checkCalReadiness();
         }
+    }
+    if (tabId === 'exam') {
+        // পরীক্ষা ট্যাব খুললে কেস
+        setTimeout(() => {
+            if (typeof initArabicQm === 'function') initArabicQm();
+        }, 100);
+        console.log('📋 পরীক্ষা ট্যাব খোলা হয়েছে');
     }
 }
 
@@ -16547,6 +18329,10 @@ function showApp() {
     // Dashboard বাটন
     const dashBtn = document.getElementById('tab-btn-dashboard');
     if (dashBtn) dashBtn.classList.toggle('hidden', !isAdmin);
+
+    // পরীক্ষা সেটআপ বাটন — এডমিন only
+    const examSettingsBtn = document.getElementById('exam-sub-btn-exam-settings');
+    if (examSettingsBtn) examSettingsBtn.classList.toggle('hidden', !isAdmin);
 
     // ★ ক্যালেন্ডার dropdown প্রস্তুত করি (background)
     setTimeout(() => populateCalendarDropdowns(), 200);
