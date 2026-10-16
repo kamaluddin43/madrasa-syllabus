@@ -1005,12 +1005,29 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 
             <!-- Paste area -->
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">
-                    <i class="fa-solid fa-paste"></i> এখানে ডাটা পেস্ট করুন
-                </label>
+                <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+                    <label class="block text-xs font-bold text-slate-700">
+                        <i class="fa-solid fa-paste"></i> এখানে ডাটা পেস্ট করুন
+                    </label>
+                    <div class="flex gap-2 flex-wrap">
+                        <button type="button" onclick="convertImportBijoyToUnicode()"
+                                class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold rounded-lg transition flex items-center gap-1.5 shadow"
+                                title="বিজয় (SutonnyMJ) ডাটা থাকলে এটা ক্লিক করুন">
+                            <i class="fa-solid fa-language"></i> বিজয় → ইউনিকোড
+                        </button>
+                        <button type="button" onclick="clearImportData()"
+                                class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] font-bold rounded-lg transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-eraser"></i> খালি করুন
+                        </button>
+                    </div>
+                </div>
                 <textarea id="sim-data" rows="8" 
                           placeholder="ইসলাম হোসেন	ইউসুফ মিয়া	৭৩	২৮-১০-১১	১৮১৪৬৭০০৯৯	১৮৫৮৪০৪৫৬৮	মোহনপুর, শেখরনগর, সিরাজদিখান, মুন্সিগঞ্জ	২০০০"
                           class="w-full rounded-lg border-slate-300 border p-3 text-xs font-mono resize-none"></textarea>
+                <p class="text-[10px] text-slate-500 mt-1">
+                    <i class="fa-solid fa-info-circle"></i>
+                    যদি Excel-এ বিজয় ফন্টে লেখা থাকে → <strong>বিজয় → ইউনিকোড</strong> বাটনে ক্লিক করুন
+                </p>
             </div>
 
             <!-- ফাইল আপলোড -->
@@ -31043,6 +31060,345 @@ function parseImportData(text) {
 
     return students;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ বিজয় (SutonnyMJ) → ইউনিকোড কনভার্টার ★★★
+// ═══════════════════════════════════════════════════════════════
+// ★ মোট ২০০+ ম্যাপিং — সবচেয়ে বেশি ব্যবহৃত প্যাটার্ন
+// ═══════════════════════════════════════════════════════════════
+
+// ★★★ দীর্ঘ প্যাটার্ন আগে, ছোট প্যাটার্ন পরে (order ম্যাটার করে) ★★★
+const BIJOY_TO_UNICODE_MAP = [
+    // ═══ যুক্তাক্ষর (longest first) ═══
+    ['¯’', 'ষ্ট'],           // ṣṭa
+    ['²', 'ষ্ট'],
+    ['ó', 'ট্র'],
+    ['Î', 'ক্র'],
+    ['è', 'গ্র'],
+    ['æ', 'গ্র'],
+    ['©', 'ক্\u200dর'],
+    ['ø', 'ক্র'],
+    ['þ', 'স্থ'],
+    ['š', 'শ্র'],
+    ['šÍ', 'ষ্ণ'],
+    ['É', 'শ্র'],
+    ['Õ', 'দ্ধ'],
+    ['Ø', 'দ্ধ'],
+    ['Ô', 'ক্র'],
+    ['õ', 'ঙ্গ'],
+    ['°', 'ঙ্গ'],
+    ['ê', 'ঞ্চ'],
+    ['Â', 'ঞ্চ'],
+    ['ç', 'ঞ্চ'],
+    ['Í', 'ঞ্চ'],
+    ['¬', 'ঞ্চ'],
+    ['Ç', 'ছ্ব'],
+    ['Ø', 'দ্ধ'],
+    ['Ê', 'ক্ষ'],
+    ['ÿ', 'ক্ষ'],
+    ['Á', 'জ্ঞ'],
+    ['ç', 'ঞ্চ'],
+    ['‚', 'ঞ্চ'],
+    ['É', 'ন্দ্র'],
+    ['Á', 'জ্ঞ'],
+    ['è', 'গ্রু'],
+    ['ç', 'ছ্র'],
+    ['É', 'ন্দ্র'],
+    ['°', 'ঙ্গ'],
+    ['š', 'শ্র'],
+    ['¨', 'ঞ্চ'],
+    ['‚', 'ঞ্চ'],
+    ['ë', 'ঞ্চ'],
+    ['Ö', 'ঞ্চ'],
+    ['æ', 'গ্রু'],
+    ['Í', 'ট্র'],
+    ['~', '্দ্র'],
+    ['ƒ', 'ক্র'],
+    ['ÿ', 'ক্ষ'],
+    ['¯', 'ষ্ট'],
+    ['ó', 'ট্র'],
+    ['ÿ', 'ক্ষ'],
+    ['ÿ', 'ক্ষ'],
+    ['ç', 'ঞ্চ'],
+
+    // ═══ স্বরবর্ণ ═══
+    ['A', 'অ'],
+    ['Av', 'আ'],
+    ['Av', 'আ'],
+    ['Avi', 'আর'],
+    ['Avw', 'আই'],
+    ['Av', 'আ'],
+    ['B', 'ই'],
+    ['C', 'ঈ'],
+    ['D', 'উ'],
+    ['E', 'ঊ'],
+    ['F', 'ঋ'],
+    ['G', 'এ'],
+    ['H', 'ঐ'],
+    ['I', 'ও'],
+    ['J', 'ঔ'],
+
+    // ═══ ব্যঞ্জনবর্ণ ═══
+    ['K', 'ক'],
+    ['L', 'খ'],
+    ['M', 'গ'],
+    ['N', 'ঘ'],
+    ['O', 'ঙ'],
+    ['P', 'চ'],
+    ['Q', 'ছ'],
+    ['R', 'জ'],
+    ['S', 'ঝ'],
+    ['T', 'ঞ'],
+    ['U', 'ট'],
+    ['V', 'ঠ'],
+    ['W', 'ড'],
+    ['X', 'ঢ'],
+    ['Y', 'ণ'],
+    ['Z', 'ত'],
+    ['_', 'থ'],
+    ['`', 'দ'],
+    ['a', 'ধ'],
+    ['b', 'ন'],
+    ['c', 'প'],
+    ['d', 'ফ'],
+    ['e', 'ব'],
+    ['f', 'ভ'],
+    ['g', 'ম'],
+    ['h', 'য'],
+    ['i', 'র'],
+    ['j', 'ল'],
+    ['k', 'শ'],
+    ['l', 'ষ'],
+    ['m', 'স'],
+    ['n', 'হ'],
+    ['o', 'ড়'],
+    ['p', 'ঢ়'],
+    ['q', 'য়'],
+    ['r', 'ৎ'],
+    ['s', 'ং'],
+    ['t', 'ঃ'],
+    ['u', 'ঁ'],
+    ['v', '্'],           // হসন্ত
+
+    // ═══ কার-চিহ্ন ═══
+    ['w', 'ি'],
+    ['x', 'ী'],
+    ['y', 'ু'],
+    ['z', 'ূ'],
+    ['…', 'ৃ'],
+    ['†', 'ে'],
+    ['‡', 'ৈ'],
+    ['Š', 'ো'],
+    ['Œ', 'ৌ'],
+
+    // ═══ যুক্তবর্ণ ও বিশেষ ═══
+    ['•', 'ও'],
+    ['–', 'ও'],
+    ['—', 'ঔ'],
+    ['šÍ', 'ষ্ণ'],
+    ['ç', 'ঞ্চ'],
+    ['Q', 'ছ'],
+    ['R', 'জ'],
+    ['r', 'ৎ'],
+    ['†', 'ে'],
+    ['‡', 'ৈ'],
+
+    // ═══ সংখ্যা ═══
+    ['0', '০'],
+    ['1', '১'],
+    ['2', '২'],
+    ['3', '৩'],
+    ['4', '৪'],
+    ['5', '৫'],
+    ['6', '৬'],
+    ['7', '৭'],
+    ['8', '৮'],
+    ['9', '৯'],
+
+    // ═══ যুক্তি-চিহ্ন ═══
+    [',', ','],
+    ['.', '.'],
+    ['/', '/'],
+    ['-', '-'],
+    [';', ';'],
+    [':', ':'],
+    ['(', '('],
+    [')', ')'],
+];
+
+// ★★★ মূল কনভার্টার ফাংশন ★★★
+function bijoyToUnicode(input) {
+    if (!input) return '';
+
+    let text = String(input);
+
+    // ★ শুধু ডাটা রো (Tab-সেপারেটেড) — header skip করি না
+    // প্রতিটি লাইনে কনভার্ট করি
+    const lines = text.split('\n');
+
+    const converted = lines.map(line => {
+        if (!line.trim()) return line;
+
+        let result = '';
+
+        // ★ Tab-separated হলে সেল-ভিত্তিক কনভার্ট করি
+        if (line.includes('\t')) {
+            return line.split('\t').map(cell => convertBijoyText(cell)).join('\t');
+        }
+
+        return convertBijoyText(line);
+    });
+
+    return converted.join('\n');
+}
+
+function convertBijoyText(text) {
+    if (!text) return '';
+
+    let result = text;
+
+    // ★★★ যুক্তাক্ষরের প্যাটার্ন (multi-char) প্রথমে replace ★★★
+    // ★ একটি সম্পূর্ণ pattern-ভিত্তিক replacement
+    const multiCharPatterns = [
+        // ─── খণ্ড-ত ───
+        ['³', 'ত্ত'],
+        ['Í', 'ট্র'],
+        ['Î', 'ক্র'],
+        ['Ï', 'প্ল'],
+        ['Ñ', 'ঙ্ক'],
+        ['Ò', 'স্থ'],
+        ['Ó', 'হু'],
+        ['Ô', 'ক্র'],
+        ['Õ', 'দ্ধ'],
+        ['Ö', 'হ্ম'],
+        ['×', 'হৃ'],
+        ['Ø', 'দ্ধ'],
+        ['Ù', 'হ্ন'],
+        ['Ú', 'হ্ণ'],
+        ['Û', 'হ্ম'],
+        ['Ü', 'হ্ব'],
+        ['Ý', 'ত্থ'],
+        ['Þ', 'ত্ন'],
+        ['ß', 'ত্ম'],
+        ['à', 'ত্ব'],
+        ['á', 'ক্ত'],
+        ['â', 'ক্ব'],
+        ['ã', 'ক্ম'],
+        ['ä', 'ক্য'],
+        ['å', 'ক্র'],
+        ['æ', 'গ্র'],
+        ['ç', 'ঞ্চ'],
+        ['è', 'গ্র'],
+        ['é', 'গ্ল'],
+        ['ê', 'গ্ন'],
+        ['ë', 'গ্ম'],
+        ['ì', 'গ্ধ'],
+        ['í', 'গ্ব'],
+        ['î', 'ঙ্ক'],
+        ['ï', 'ঙ্খ'],
+        ['ð', 'ঙ্গ'],
+        ['ñ', 'ঙ্ঘ'],
+        ['ò', 'ঙ্ক'],
+        ['ó', 'ট্র'],
+        ['ô', 'ট্ট'],
+        ['õ', 'ঙ্গ'],
+        ['ö', 'ড্ড'],
+        ['÷', 'ণ্ড'],
+        ['ø', 'ক্র'],
+        ['ù', 'দ্র'],
+        ['ú', 'দ্ব'],
+        ['û', 'দ্ভ'],
+        ['ü', 'ন্স'],
+        ['ý', 'ন্জ'],
+        ['þ', 'স্থ'],
+        ['ÿ', 'ক্ষ'],
+        ['Ā', 'আ'],
+        ['ā', 'আ'],
+
+        // ─── যুক্ত-বর্ণ (2-char) ───
+        ['šÍ', 'ষ্ণ'],
+        ['¯’', 'ষ্ট'],
+        ['j¨', 'ঞ্চ'],
+
+        // ─── স্বরবর্ণ ───
+        ['Av', 'আ'],
+        ['Avi', 'আর'],
+        ['Avw', 'আই'],
+        ['Aw', 'আই'],
+        ['A', 'অ'],
+
+        // ─── কার-চিহ্ন ───
+        ['v', '্'],
+        ['w', 'ি'],
+        ['x', 'ী'],
+        ['y', 'ু'],
+        ['z', 'ূ'],
+        ['…', 'ৃ'],
+        ['†', 'ে'],
+        ['‡', 'ৈ'],
+        ['Š', 'ো'],
+        ['Œ', 'ৌ'],
+    ];
+
+    // ★ যুক্তাক্ষরের জন্য pattern replace
+    multiCharPatterns.forEach(([from, to]) => {
+        result = result.split(from).join(to);
+    });
+
+    // ★ এরপর single-char replace (স্বর/ব্যঞ্জন)
+    const singleCharMap = {
+        'B': 'ই', 'C': 'ঈ', 'D': 'উ', 'E': 'ঊ', 'F': 'ঋ',
+        'G': 'এ', 'H': 'ঐ', 'I': 'ও', 'J': 'ঔ',
+        'K': 'ক', 'L': 'খ', 'M': 'গ', 'N': 'ঘ', 'O': 'ঙ',
+        'P': 'চ', 'Q': 'ছ', 'R': 'জ', 'S': 'ঝ', 'T': 'ঞ',
+        'U': 'ট', 'V': 'ঠ', 'W': 'ড', 'X': 'ঢ', 'Y': 'ণ',
+        'Z': 'ত', '_': 'থ', '`': 'দ', 'a': 'ধ', 'b': 'ন',
+        'c': 'প', 'd': 'ফ', 'e': 'ব', 'f': 'ভ', 'g': 'ম',
+        'h': 'য', 'i': 'র', 'j': 'ল', 'k': 'শ', 'l': 'ষ',
+        'm': 'স', 'n': 'হ', 'o': 'ড়', 'p': 'ঢ়', 'q': 'য়',
+        'r': 'ৎ', 's': 'ং', 't': 'ঃ', 'u': 'ঁ',
+        '0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪',
+        '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯',
+    };
+
+    let finalResult = '';
+    for (const ch of result) {
+        finalResult += singleCharMap[ch] || ch;
+    }
+
+    return finalResult;
+}
+
+// ★★★ Import মডালের বিজয় কনভার্টার বাটন ★★★
+window.convertImportBijoyToUnicode = function () {
+    const textarea = document.getElementById('sim-data');
+    if (!textarea) return;
+
+    const input = textarea.value;
+    if (!input.trim()) {
+        showToast('⚠️ আগে ডাটা পেস্ট করুন', 'warn');
+        return;
+    }
+
+    const converted = bijoyToUnicode(input);
+    textarea.value = converted;
+
+    // ★ প্রিভিউ refresh
+    parseImportPreview();
+
+    showToast('✅ বিজয় → ইউনিকোড রূপান্তর সম্পন্ন', 'success');
+};
+
+// ★★★ Import ডাটা খালি করার বাটন ★★★
+window.clearImportData = function () {
+    const textarea = document.getElementById('sim-data');
+    if (!textarea) return;
+    if (!textarea.value.trim()) return;
+    if (!confirm('সব ডাটা খালি করবেন?')) return;
+    textarea.value = '';
+    document.getElementById('sim-preview-wrap').classList.add('hidden');
+    showToast('🗑️ ডাটা খালি করা হয়েছে', 'info');
+};
 
 window.parseImportPreview = function () {
     const text = document.getElementById('sim-data').value;
