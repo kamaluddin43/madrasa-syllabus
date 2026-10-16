@@ -959,6 +959,295 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     </div>
 </div>
 
+<!-- ═══════════════════ STUDENT IMPORT MODAL ═══════════════════ -->
+<div id="student-import-modal" class="fixed inset-0 modal-backdrop z-[400] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col modal-enter">
+        <div class="bg-gradient-to-r from-blue-700 to-blue-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-file-import"></i>
+                <span>CSV / Google Sheet Import</span>
+            </h3>
+            <button onclick="closeStudentImportModal()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+        </div>
+
+        <div class="p-5 overflow-y-auto flex-1 space-y-4">
+            <!-- ইনস্ট্রাকশন -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-xs text-blue-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    <strong>নির্দেশনা:</strong>
+                    Excel বা Google Sheet থেকে কপি করে নিচের বক্সে পেস্ট করুন। কলামগুলো Tab বা কমা দিয়ে আলাদা।
+                </p>
+                <p class="text-[11px] text-blue-800 mt-2">
+                    <strong>কলাম ক্রম:</strong> নাম, অভিভাবক, আইডি, জন্ম তারিখ, মোবাইল১, মোবাইল২, ঠিকানা, ভর্তি ফি, ১ম মাসের খোরাকি, সেশন ফি, মাসিক খোরাকি, আবাসন ফি, মাসিক বেতন
+                </p>
+            </div>
+
+            <!-- ড্রপডাউন: বিভাগ + জামাত -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">কোন বিভাগে যোগ হবে?</label>
+                    <select id="sim-dept" onchange="onImportDeptChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                        <option value="">-- বিভাগ --</option>
+                        <option value="shariah">শরীয়াহ</option>
+                        <option value="noorani">নূরানী-নাযেরা</option>
+                        <option value="non_res">অনাবাসিক</option>
+                        <option value="hifz">হিফযুল কুরআন</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">কোন জামাত/গ্রুপে যোগ হবে?</label>
+                    <select id="sim-class" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-arabic">
+                        <option value="">-- আগে বিভাগ নির্বাচন করুন --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Paste area -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">
+                    <i class="fa-solid fa-paste"></i> এখানে ডাটা পেস্ট করুন
+                </label>
+                <textarea id="sim-data" rows="8" 
+                          placeholder="ইসলাম হোসেন	ইউসুফ মিয়া	৭৩	২৮-১০-১১	১৮১৪৬৭০০৯৯	১৮৫৮৪০৪৫৬৮	মোহনপুর, শেখরনগর, সিরাজদিখান, মুন্সিগঞ্জ	২০০০"
+                          class="w-full rounded-lg border-slate-300 border p-3 text-xs font-mono resize-none"></textarea>
+            </div>
+
+            <!-- ফাইল আপলোড -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                <label class="block text-xs font-bold text-slate-700 mb-2">
+                    <i class="fa-solid fa-upload"></i> অথবা CSV ফাইল আপলোড করুন
+                </label>
+                <input type="file" id="sim-file" accept=".csv,.txt" onchange="onStudentImportFileChange(event)" class="text-xs">
+            </div>
+
+            <!-- প্রিভিউ -->
+            <div id="sim-preview-wrap" class="hidden">
+                <label class="block text-xs font-bold text-slate-700 mb-2">
+                    <i class="fa-solid fa-eye"></i> প্রিভিউ (<span id="sim-preview-count">0</span> জন পাওয়া গেছে)
+                </label>
+                <div class="bg-slate-100 rounded-lg p-3 max-h-40 overflow-y-auto">
+                    <div id="sim-preview" class="text-xs space-y-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t bg-slate-50 flex justify-between gap-2 rounded-b-2xl">
+            <button onclick="parseImportPreview()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-eye"></i> প্রিভিউ দেখুন
+            </button>
+            <div class="flex gap-2">
+                <button onclick="closeStudentImportModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition">
+                    বাতিল
+                </button>
+                <button onclick="executeStudentImport()" id="sim-import-btn" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-import"></i>
+                    <span id="sim-import-btn-text">Import করুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ STUDENT FORM MODAL ═══════════════════ -->
+<div id="student-form-modal" class="fixed inset-0 modal-backdrop z-[400] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col modal-enter">
+        <div class="bg-gradient-to-r from-emerald-700 to-emerald-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-user-pen"></i>
+                <span id="sfm-title">নতুন ছাত্র যোগ করুন</span>
+            </h3>
+            <button onclick="closeStudentFormModal()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+        </div>
+
+        <div class="p-5 overflow-y-auto flex-1 space-y-4">
+            <input type="hidden" id="sfm-id">
+
+            <!-- ছাত্র তথ্য -->
+            <div class="bg-emerald-50/50 rounded-xl p-4 border border-emerald-100">
+                <h4 class="text-sm font-bold text-emerald-900 border-b border-emerald-200 pb-2 mb-3">
+                    <i class="fa-solid fa-user"></i> ছাত্রের তথ্য
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">নাম *</label>
+                        <input type="text" id="sfm-name" required class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">অভিভাবকের নাম</label>
+                        <input type="text" id="sfm-guardian" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">আইডি</label>
+                        <input type="text" id="sfm-student-id" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">জন্ম তারিখ</label>
+                        <input type="text" id="sfm-dob" placeholder="DD-MM-YY" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মোবাইল-০১</label>
+                        <input type="text" id="sfm-mobile1" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মোবাইল-০২</label>
+                        <input type="text" id="sfm-mobile2" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-mono">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">পূর্ণ ঠিকানা</label>
+                        <textarea id="sfm-address" rows="2" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- বিভাগ ও জামাত -->
+            <div class="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+                <h4 class="text-sm font-bold text-blue-900 border-b border-blue-200 pb-2 mb-3">
+                    <i class="fa-solid fa-school"></i> বিভাগ ও জামাত
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">বিভাগ *</label>
+                        <select id="sfm-dept" onchange="onStudentFormDeptChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                            <option value="">-- নির্বাচন করুন --</option>
+                            <option value="shariah">শরীয়াহ</option>
+                            <option value="noorani">নূরানী-নাযেরা</option>
+                            <option value="non_res">অনাবাসিক</option>
+                            <option value="hifz">হিফযুল কুরআন</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">জামাত / গ্রুপ *</label>
+                        <select id="sfm-class" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm font-arabic">
+                            <option value="">-- আগে বিভাগ নির্বাচন করুন --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- আর্থিক তথ্য -->
+            <div class="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
+                <h4 class="text-sm font-bold text-amber-900 border-b border-amber-200 pb-2 mb-3">
+                    <i class="fa-solid fa-money-bill"></i> আর্থিক তথ্য
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">ভর্তি ফি</label>
+                        <input type="text" id="sfm-admissionFee" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">১ম মাসের খোরাকি</label>
+                        <input type="text" id="sfm-firstMonthFood" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">সেশন ফি</label>
+                        <input type="text" id="sfm-sessionFee" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মাসিক খোরাকি</label>
+                        <input type="text" id="sfm-monthlyFood" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">আবাসন ফি</label>
+                        <input type="text" id="sfm-hostelFee" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">মাসিক বেতন</label>
+                        <input type="text" id="sfm-monthlySalary" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm text-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 border-t bg-slate-50 flex justify-end gap-2 rounded-b-2xl">
+            <button onclick="closeStudentFormModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition">
+                বাতিল
+            </button>
+            <button onclick="saveStudentForm()" id="sfm-save-btn" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="sfm-save-btn-text">সংরক্ষণ করুন</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════ STUDENT REMARK MODAL ═══════════════════ -->
+<div id="student-remark-modal" class="fixed inset-0 modal-backdrop z-[400] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col modal-enter">
+        <!-- হেডার -->
+        <div class="bg-gradient-to-r from-amber-600 to-amber-700 text-white p-4 rounded-t-2xl flex items-center justify-between">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+                <i class="fa-solid fa-comment-dots"></i>
+                <span>মন্তব্য যোগ করুন</span>
+            </h3>
+            <button onclick="closeStudentRemarkModal()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+        </div>
+
+        <!-- ছাত্রের তথ্য -->
+        <div class="p-4 bg-amber-50 border-b border-amber-200">
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                    <p class="text-slate-500 font-semibold">ছাত্রের নাম</p>
+                    <p id="srm-student-name" class="font-bold text-slate-800">---</p>
+                </div>
+                <div>
+                    <p class="text-slate-500 font-semibold">আইডি</p>
+                    <p id="srm-student-id" class="font-mono font-bold text-slate-800">---</p>
+                </div>
+                <div class="col-span-2">
+                    <p class="text-slate-500 font-semibold">জামাত / বিভাগ</p>
+                    <p id="srm-student-class" class="font-bold text-slate-800">---</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ফর্ম -->
+        <div class="p-5 space-y-4 overflow-y-auto flex-1">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                    <i class="fa-solid fa-list text-amber-600"></i> মন্তব্যের ধরন
+                </label>
+                <select id="srm-type" onchange="onStudentRemarkTypeChange()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm">
+                    <option value="">— কোন মন্তব্য নেই —</option>
+                    <option value="বিদায়">বিদায়</option>
+                    <option value="বহিষ্কৃত">বহিষ্কৃত</option>
+                    <option value="ভর্তির অনুপযুক্ত">ভর্তির অনুপযুক্ত</option>
+                    <option value="সতর্ক">সতর্ক</option>
+                </select>
+                <p class="text-[10px] text-slate-500 mt-1">
+                    <i class="fa-solid fa-info-circle"></i>
+                    খালি রাখলে ছাত্রের মন্তব্য মুছে যাবে।
+                </p>
+            </div>
+
+            <div id="srm-reason-wrap">
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                    <i class="fa-solid fa-pen text-amber-600"></i> কারণ / বিবরণ
+                </label>
+                <textarea id="srm-reason" rows="3"
+                          placeholder="যেমন: ২০২৫ সালের ডিসেম্বরে বিদায় নিয়েছে"
+                          class="w-full rounded-lg border-slate-300 border p-2.5 text-sm resize-none"></textarea>
+            </div>
+
+            <div id="srm-preview" class="hidden bg-slate-50 border border-slate-200 rounded-lg p-3">
+                <p class="text-[10px] font-bold text-slate-600 mb-1">প্রিভিউ:</p>
+                <div id="srm-preview-content"></div>
+            </div>
+        </div>
+
+        <!-- ফুটার -->
+        <div class="p-4 border-t bg-slate-50 flex justify-end gap-2 rounded-b-2xl">
+            <button onclick="closeStudentRemarkModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-lg transition">
+                বাতিল
+            </button>
+            <button onclick="saveStudentRemark()" id="srm-save-btn" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span id="srm-save-btn-text">সংরক্ষণ করুন</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- ═══════════════════ CARD VERIFICATION MODAL ═══════════════════ -->
 <div id="card-verify-modal" class="fixed inset-0 modal-backdrop z-[250] items-center justify-center p-4 hidden" style="width:100vw; height:100vh; top:0; left:0;">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden modal-enter">
@@ -1080,51 +1369,212 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             <p class="text-sm text-slate-500" id="home-madrasa-name">মাকাদীরে আসবাক সিস্টেমে আপনাকে স্বাগত</p>
         </div>
 
-        <!-- ★ ৬টা বাটনের গ্রিড — ডেক্সটপে ৪+২, মোবাইলে ২×৩ -->
+                <!-- ★ ৮টা বাটনের গ্রিড — ডেক্সটপে ৪+৪, মোবাইলে ২×৪ -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 max-w-5xl mx-auto">
 
-            <!-- ১. মাকাদীরে আসবাক -->
+            <!-- ★★ ১. শিক্ষক (নতুন) ★★ -->
+            <button onclick="switchTab('teachers')" id="tab-btn-teachers"
+                    class="tab-btn group bg-gradient-to-br from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-chalkboard-user text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">১. শিক্ষক</span>
+            </button>
+
+            <!-- ★★ ২. শিক্ষার্থী (নতুন) ★★ -->
+            <button onclick="switchTab('students')" id="tab-btn-students"
+                    class="tab-btn group bg-gradient-to-br from-fuchsia-500 to-fuchsia-700 hover:from-fuchsia-600 hover:to-fuchsia-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
+                <i class="fa-solid fa-user-graduate text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm md:text-base font-bold leading-tight text-center">২. শিক্ষার্থী</span>
+            </button>
+
+            <!-- ৩. মাকাদীরে আসবাক -->
             <button onclick="switchTab('asbaq')" id="tab-btn-asbaq"
                     class="tab-btn group bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
                 <i class="fa-solid fa-book-open text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">মাকাদীরে আসবাক</span>
             </button>
 
-            <!-- ২. ক্লাস রুটিন -->
+            <!-- ৪. ক্লাস রুটিন -->
             <button onclick="switchTab('routine')" id="tab-btn-routine"
                     class="tab-btn group bg-gradient-to-br from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
                 <i class="fa-solid fa-calendar-week text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">ক্লাস রুটিন</span>
             </button>
 
-            <!-- ৩. পরীক্ষা (নতুন) -->
+            <!-- ৫. পরীক্ষা -->
             <button onclick="switchTab('exam')" id="tab-btn-exam"
                     class="tab-btn group bg-gradient-to-br from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
                 <i class="fa-solid fa-clipboard-question text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">পরীক্ষা</span>
             </button>
 
-            <!-- ৪. একাডেমিক ক্যালেন্ডার -->
+            <!-- ৬. একাডেমিক ক্যালেন্ডার -->
             <button onclick="switchTab('calendar')" id="tab-btn-calendar"
                     class="tab-btn group bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px]">
                 <i class="fa-solid fa-calendar-days text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">একাডেমিক ক্যালেন্ডার</span>
             </button>
 
-            <!-- ৫. সেটিংস (এডমিন only) -->
+            <!-- ৭. সেটিংস (এডমিন only) -->
             <button onclick="switchTab('settings')" id="tab-btn-settings"
                     class="tab-btn group bg-gradient-to-br from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px] hidden">
                 <i class="fa-solid fa-gear text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">সেটিংস</span>
             </button>
 
-            <!-- ৬. এডমিন (এডমিন only) -->
+            <!-- ৮. এডমিন (এডমিন only) -->
             <button onclick="switchTab('admin')" id="tab-btn-admin"
                     class="tab-btn group bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white rounded-2xl p-5 md:p-7 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-3 min-h-[130px] md:min-h-[160px] hidden">
                 <i class="fa-solid fa-shield-halved text-3xl md:text-4xl opacity-95 group-hover:scale-110 transition-transform"></i>
                 <span class="text-sm md:text-base font-bold leading-tight text-center">এডমিন</span>
             </button>
 
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB: TEACHERS (শিক্ষক — মূল মেনু) ═══════════════════ -->
+<section id="tab-teachers" class="tab-content hidden space-y-4">
+
+    <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap no-print">
+        <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-house"></i>
+            <span>হোম</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-sky-500 to-sky-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4 shadow-lg">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-sky-900 mb-2">শিক্ষক তালিকা</h2>
+            <p class="text-sm text-slate-500">বিভাগ অনুযায়ী শিক্ষকদের তথ্য</p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            <button onclick="switchTeacherSub('shariah')" id="teacher-sub-btn-shariah"
+                    class="teacher-sub-btn group bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-mosque text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">শরীয়াহ</span>
+            </button>
+            <button onclick="switchTeacherSub('hifz')" id="teacher-sub-btn-hifz"
+                    class="teacher-sub-btn group bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-quran text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">হিফযুল কুরআন</span>
+            </button>
+            <button onclick="switchTeacherSub('noorani')" id="teacher-sub-btn-noorani"
+                    class="teacher-sub-btn group bg-gradient-to-br from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-book-quran text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">নূরানী-নাযেরা</span>
+            </button>
+            <button onclick="switchTeacherSub('non_res')" id="teacher-sub-btn-non_res"
+                    class="teacher-sub-btn group bg-gradient-to-br from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-school text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">অনাবাসিক</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB: TEACHER DETAIL (শিক্ষক — আলাদা পেইজ) ═══════════════════ -->
+<section id="tab-teacher-detail" class="tab-content hidden space-y-4">
+
+    <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap no-print">
+        <button onclick="backToTeacherMenu()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 border-2 border-slate-500 text-slate-800 hover:text-slate-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>মেনু</span>
+        </button>
+        <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-house"></i>
+            <span>হোম</span>
+        </button>
+    </div>
+
+    <div id="teacher-detail-content" class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
+        <div class="text-center py-16 text-slate-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+            <p class="text-sm">লোড হচ্ছে...</p>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB: STUDENTS (শিক্ষার্থী — মূল মেনু) ═══════════════════ -->
+<section id="tab-students" class="tab-content hidden space-y-4">
+
+    <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap no-print">
+        <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-house"></i>
+            <span>হোম</span>
+        </button>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-fuchsia-500 to-fuchsia-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4 shadow-lg">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-fuchsia-900 mb-2">শিক্ষার্থী তালিকা</h2>
+            <p class="text-sm text-slate-500">বিভাগ ও জামাত অনুযায়ী শিক্ষার্থীদের তথ্য</p>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-5xl mx-auto">
+            <button onclick="switchStudentSub('shariah')" id="student-sub-btn-shariah"
+                    class="student-sub-btn group bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-mosque text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">শরীয়াহ</span>
+            </button>
+            <button onclick="switchStudentSub('hifz')" id="student-sub-btn-hifz"
+                    class="student-sub-btn group bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-quran text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">হিফযুল কুরআন</span>
+            </button>
+            <button onclick="switchStudentSub('noorani')" id="student-sub-btn-noorani"
+                    class="student-sub-btn group bg-gradient-to-br from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-book-quran text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">নূরানী-নাযেরা</span>
+            </button>
+            <button onclick="switchStudentSub('non_res')" id="student-sub-btn-non_res"
+                    class="student-sub-btn group bg-gradient-to-br from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-school text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">অনাবাসিক</span>
+            </button>
+            <button onclick="switchStudentSub('all')" id="student-sub-btn-all"
+                    class="student-sub-btn group bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-users text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">সকল শিক্ষার্থী</span>
+            </button>
+            <button onclick="switchStudentSub('farewell')" id="student-sub-btn-farewell"
+                    class="student-sub-btn group bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-door-open text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">বিদায়</span>
+            </button>
+            <button onclick="switchStudentSub('accused')" id="student-sub-btn-accused"
+                    class="student-sub-btn group bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col items-center justify-center gap-2 min-h-[100px]">
+                <i class="fa-solid fa-gavel text-2xl md:text-3xl opacity-95"></i>
+                <span class="text-xs md:text-sm font-bold text-center leading-tight">অভিযুক্ত</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ TAB: STUDENT DETAIL (শিক্ষার্থী — আলাদা পেইজ) ═══════════════════ -->
+<section id="tab-student-detail" class="tab-content hidden space-y-4">
+
+    <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap no-print">
+        <button onclick="backToStudentMenu()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 border-2 border-slate-500 text-slate-800 hover:text-slate-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>মেনু</span>
+        </button>
+        <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+            <i class="fa-solid fa-house"></i>
+            <span>হোম</span>
+        </button>
+    </div>
+
+    <div id="student-detail-content" class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
+        <div class="text-center py-16 text-slate-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+            <p class="text-sm">লোড হচ্ছে...</p>
         </div>
     </div>
 </section>
@@ -2086,6 +2536,12 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
             </button>
             <button onclick="switchAdminSub('users')" id="adm-sub-users" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
                 <i class="fa-solid fa-user-gear"></i> ইউজার অ্যাকাউন্ট
+            </button>
+            <button onclick="switchAdminSub('students')" id="adm-sub-students" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-user-graduate"></i> ছাত্র ব্যবস্থাপনা
+            </button>
+            <button onclick="switchAdminSub('hifz-groups')" id="adm-sub-hifz-groups" class="adm-sub-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-users-rectangle"></i> হিফয গ্রুপ
             </button>
         </div>
 
@@ -23991,6 +24447,1069 @@ window.closeExamSub = function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষক পেইজ — সাব-বাটন ক্লিক → আলাদা ট্যাব ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _currentTeacherSub = '';
+
+window.switchTeacherSub = function(sub) {
+    _currentTeacherSub = sub;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    const target = document.getElementById('tab-teacher-detail');
+    if (target) target.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderTeacherDetailContent();
+};
+
+window.backToTeacherMenu = function() {
+    _currentTeacherSub = '';
+    switchTab('teachers');
+};
+
+function renderTeacherDetailContent() {
+    const container = document.getElementById('teacher-detail-content');
+    if (!container) return;
+
+    if (!_currentTeacherSub) {
+        container.innerHTML = `<div class="text-center py-16 text-slate-400"><p class="text-sm">কোন বিভাগ নির্বাচন করা হয়নি</p></div>`;
+        return;
+    }
+
+    const deptKeyMap = {
+        shariah:  'শরীয়াহ',
+        hifz:     'হিফযুল কুরআন',
+        noorani:  'নূরানী-নাযেরা',
+        non_res:  'অনাবাসিক'
+    };
+    const deptName = deptKeyMap[_currentTeacherSub];
+
+    const subLabels = {
+        shariah:  { bn: 'শরীয়াহ বিভাগ',      icon: 'fa-mosque',     color: 'emerald' },
+        hifz:     { bn: 'হিফযুল কুরআন বিভাগ',  icon: 'fa-quran',      color: 'indigo'  },
+        noorani:  { bn: 'নূরানী-নাযেরা বিভাগ', icon: 'fa-book-quran', color: 'amber'   },
+        non_res:  { bn: 'অনাবাসিক বিভাগ',     icon: 'fa-school',     color: 'teal'    }
+    };
+    const info = subLabels[_currentTeacherSub];
+
+    const allTeachers = configData?.teachers || [];
+    const list = allTeachers.filter(t => t.dept === deptName);
+
+    let tableRows = '';
+
+    if (list.length === 0) {
+        tableRows = `
+            <tr>
+                <td colspan="7" class="p-10 text-center text-slate-400">
+                    <i class="fa-solid fa-user-slash text-4xl mb-2"></i>
+                    <p class="font-bold text-slate-600">এই বিভাগে কোনো শিক্ষক নেই</p>
+                    <p class="text-xs mt-1">এডমিন প্যানেলের "শিক্ষক" সাব-ট্যাব থেকে যোগ করুন।</p>
+                </td>
+            </tr>`;
+    } else {
+        list.forEach((t, i) => {
+            const mobile = (t.mobile || '-').split(',').map(m => m.trim()).filter(Boolean);
+            const mobileHTML = mobile.length > 1
+                ? mobile.map(m => `<div>${m}</div>`).join('')
+                : (mobile[0] || '-');
+
+            tableRows += `
+                <tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-3 text-xs text-center font-bold text-slate-500">${i + 1}</td>
+                    <td class="p-3 text-sm font-bold text-slate-800">${t.name || '-'}</td>
+                    <td class="p-3 text-xs text-slate-700">${t.post || '-'}</td>
+                    <td class="p-3 text-xs font-mono text-slate-700">${t.card || '-'}</td>
+                    <td class="p-3 text-xs text-slate-700">${t.joinDate || '-'}</td>
+                    <td class="p-3 text-xs font-mono text-slate-700 leading-snug">${mobileHTML}</td>
+                    <td class="p-3 text-xs"><span class="badge bg-${info.color}-100 text-${info.color}-800">${t.dept}</span></td>
+                </tr>`;
+        });
+    }
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-200">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid ${info.icon} text-${info.color}-600"></i>
+                    ${info.bn}
+                    <span class="badge bg-${info.color}-100 text-${info.color}-800 ml-2">${list.length} জন</span>
+                </h3>
+                <div class="flex gap-2">
+                    <button onclick="printTeacherList()" class="px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="exportTeacherListCSV()" class="px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv"></i> Excel/CSV
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-lg" id="teacher-list-print-area">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead class="bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-3 text-xs font-bold text-slate-700 text-center w-12 border-b-2 border-slate-300">ক্রম</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">শিক্ষকের নাম</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">পদবী</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">কার্ড নম্বর</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">যোগদানের তারিখ</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">মোবাইল</th>
+                            <th class="p-3 text-xs font-bold text-slate-700 border-b-2 border-slate-300">বিভাগ</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+window.printTeacherList = function() {
+    const area = document.getElementById('teacher-list-print-area');
+    if (!area) { showToast('⚠️ প্রিন্ট করার মতো কিছু নেই', 'warn'); return; }
+
+    const deptLabels = { shariah: 'শরীয়াহ', hifz: 'হিফযুল কুরআন', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const deptName = deptLabels[_currentTeacherSub] || '';
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const madrasaAr = settings.madrasaNameAr || '';
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে', 'warn'); return; }
+
+    printWin.document.write(`
+        <!DOCTYPE html><html lang="bn"><head><meta charset="UTF-8"><title>শিক্ষক তালিকা — ${deptName}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+            body { font-family: 'Hind Siliguri', sans-serif; padding: 12mm 10mm; margin: 0; color: #1e293b; }
+            .head { text-align: center; border-bottom: 2px solid #065f46; padding-bottom: 10px; margin-bottom: 12px; }
+            .head h1 { margin: 0 0 4px 0; font-family: 'Amiri', serif; font-size: 22px; color: #064e3b; }
+            .head h2 { margin: 0 0 4px 0; font-size: 16px; color: #065f46; }
+            .head p { margin: 4px 0 0 0; font-size: 13px; font-weight: bold; }
+            table { width: 100%; border-collapse: collapse; font-size: 12px; }
+            th, td { border: 1px solid #475569; padding: 5px 6px; text-align: left; }
+            th { background: #ecfdf5; font-weight: bold; text-align: center; }
+            .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; background: #d1fae5; color: #065f46; }
+            @page { size: A4 portrait; margin: 10mm 8mm; }
+        </style></head><body>
+        <div class="head">
+            ${madrasaAr ? `<h1 dir="rtl">${madrasaAr}</h1>` : ''}
+            <h2>${madrasaBn}</h2>
+            <p>শিক্ষক তালিকা — ${deptName} বিভাগ</p>
+        </div>
+        ${area.innerHTML}
+        <p style="margin-top:14px;font-size:10px;text-align:center;color:#475569;">প্রিন্ট: ${new Date().toLocaleString('bn-BD')} | মাকাদীরে আসবাক সিস্টেম</p>
+        </body></html>
+    `);
+    printWin.document.close();
+    setTimeout(() => printWin.print(), 700);
+};
+
+window.exportTeacherListCSV = function() {
+    const deptKeyMap = { shariah: 'শরীয়াহ', hifz: 'হিফযুল কুরআন', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক' };
+    const deptName = deptKeyMap[_currentTeacherSub];
+    if (!deptName) return;
+
+    const allTeachers = configData?.teachers || [];
+    const list = allTeachers.filter(t => t.dept === deptName);
+    if (list.length === 0) { showToast('⚠️ কোন ডাটা নেই', 'warn'); return; }
+
+    const headers = ['ক্রম', 'নাম', 'পদবী', 'কার্ড নম্বর', 'যোগদান', 'মোবাইল', 'বিভাগ'];
+    const esc = v => { const s = String(v == null ? '' : v); return (s.includes(',') || s.includes('"') || s.includes('\n')) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+
+    const rows = [headers.map(esc).join(',')];
+    list.forEach((t, i) => { rows.push([i + 1, t.name, t.post, t.card, t.joinDate, t.mobile, t.dept].map(esc).join(',')); });
+
+    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `teachers_${_currentTeacherSub}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`✅ ${list.length}টি রেকর্ড Export হয়েছে`, 'success');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — ডাটা লোড ও স্টেট ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let studentsCache = [];              // সব ছাত্রের লিস্ট (Firestore থেকে)
+let studentsLoaded = false;          // একবার load হলে আর load করব না
+let _currentStudentClass = '';       // বর্তমান জামাত/গ্রুপ (sub-sub tab)
+
+// ★ শিক্ষার্থী লোড (Firestore)
+async function loadStudentsFromFirestore() {
+    if (!currentUser) return;
+
+    try {
+        const { collection, getDocs, query, where } = window.fbFuncs;
+
+        // এডমিন সব দেখবে, শিক্ষক সব দেখবে (permission client-side ফিল্টার হবে)
+        const q = collection(window.fbDB, 'students');
+        const snap = await getDocs(q);
+
+        studentsCache = [];
+        snap.forEach(d => studentsCache.push({ id: d.id, ...d.data() }));
+
+        // ★ Sort: dept → className → name
+        studentsCache.sort((a, b) => {
+            const d = (a.dept || '').localeCompare(b.dept || '');
+            if (d !== 0) return d;
+            const c = (a.className || '').localeCompare(b.className || '');
+            if (c !== 0) return c;
+            return (a.name || '').localeCompare(b.name || '');
+        });
+
+        studentsLoaded = true;
+        console.log(`👨‍🎓 ${studentsCache.length} জন শিক্ষার্থী লোড হয়েছে`);
+    } catch (err) {
+        console.error('❌ loadStudentsFromFirestore error:', err);
+        studentsCache = [];
+        studentsLoaded = true;
+    }
+}
+
+// ★ শিক্ষক nào কোন জামাত দেখতে পারবে (assignment থেকে)
+function getTeacherAllowedClasses() {
+    if (currentUserData?.role === 'admin') return null; // এডমিন সব দেখবে
+    if (currentUserData?.role !== 'teacher') return [];
+
+    const myName = currentUserData.teacherName || currentUserData.name;
+    const assignments = configData?.assignments || {};
+    const allowed = new Set();
+
+    Object.keys(assignments).forEach(key => {
+        if ((assignments[key] || []).includes(myName)) {
+            // key = "dept::className"
+            const parts = key.split('::');
+            if (parts.length === 2) {
+                allowed.add(parts[0] + '::' + parts[1]);
+            }
+        }
+    });
+
+    return Array.from(allowed); // যেমন: ['shariah::مشكاة (মেশকাত)', ...]
+}
+
+// ★ শিক্ষক এই জামাত দেখতে পারবে কি?
+function canTeacherSeeClass(deptKey, className) {
+    if (currentUserData?.role === 'admin') return true;
+    if (currentUserData?.role !== 'teacher') return false;
+
+    const allowed = getTeacherAllowedClasses();
+    return allowed.includes(deptKey + '::' + className);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী পেইজ — সাব-বাটন ক্লিক → আলাদা ট্যাব (খাঁচা) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _currentStudentSub = '';
+
+window.switchStudentSub = function(sub) {
+    _currentStudentSub = sub;
+    _currentStudentClass = ''; // ★ নতুন: জামাত/গ্রুপ সিলেক্ট রিসেট
+    _allStudentsFilter = { dept: '', jela: '', thana: '', search: '' }; // ★ নতুন: ফিল্টার রিসেট
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    const target = document.getElementById('tab-student-detail');
+    if (target) target.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    renderStudentDetailContent();
+};
+
+window.backToStudentMenu = function() {
+    _currentStudentSub = '';
+    switchTab('students');
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — বিভাগ ভিউ (জামাত সাব-ট্যাব) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+function renderStudentDeptView(container, deptKey, info) {
+    // ★ এই বিভাগের জামাতের তালিকা
+    const classList = (configData?.classes || {})[deptKey] || [];
+
+    if (classList.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-16 text-slate-400">
+                <i class="fa-solid fa-school text-5xl mb-3 text-${info.color}-300"></i>
+                <p class="text-sm">এই বিভাগে কোনো জামাত নেই</p>
+            </div>`;
+        return;
+    }
+
+    // ★ শিক্ষক হলে শুধু তার assign করা জামাত দেখাবে
+    let visibleClasses = classList;
+    if (currentUserData?.role === 'teacher') {
+        visibleClasses = classList.filter(c => canTeacherSeeClass(deptKey, c));
+        if (visibleClasses.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-16 text-slate-400">
+                    <i class="fa-solid fa-lock text-5xl mb-3 text-amber-300"></i>
+                    <p class="text-sm font-bold text-slate-600">আপনার কোন জামাত assign করা নেই</p>
+                    <p class="text-xs mt-1">এডমিনের সাথে যোগাযোগ করুন।</p>
+                </div>`;
+            return;
+        }
+    }
+
+    // ★ যদি আগের সিলেক্ট করা জামাত বৈধ না থাকে → প্রথমটা
+    if (!_currentStudentClass || !visibleClasses.includes(_currentStudentClass)) {
+        _currentStudentClass = visibleClasses[0];
+    }
+
+    // ★ জামাত ট্যাব
+    const tabsHTML = visibleClasses.map(c => {
+        const isActive = c === _currentStudentClass;
+        const studentCount = studentsCache.filter(s => s.dept === deptKey && s.className === c).length;
+        return `
+            <button onclick="switchStudentClass('${c.replace(/'/g, "\\'")}')"
+                    class="student-class-tab px-3 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5"
+                    style="${isActive
+                        ? 'background:white;color:#0f172a;box-shadow:0 2px 6px rgba(0,0,0,0.1);'
+                        : 'background:rgba(255,255,255,0.6);color:#475569;'}">
+                <span class="font-arabic">${c}</span>
+                <span class="badge" style="background:${isActive ? '#065f46' : '#e2e8f0'};color:${isActive ? 'white' : '#475569'};font-size:9px;">${studentCount}</span>
+            </button>`;
+    }).join('');
+
+    // ★ টেবিল সেকশন (আগে যেই টেবিল ছিল সেটাই)
+    const tableHTML = buildStudentTableHTML(
+        studentsCache.filter(s => s.dept === deptKey && s.className === _currentStudentClass),
+        { deptKey, className: _currentStudentClass, titlePrefix: info.bn }
+    );
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <!-- ★ জামাত সাব-ট্যাব -->
+            <div class="bg-gradient-to-br from-${info.color}-500 to-${info.color}-700 rounded-xl p-3 shadow-md">
+                <div class="flex items-center gap-2 mb-2 text-white">
+                    <i class="fa-solid ${info.icon}"></i>
+                    <span class="text-xs font-bold">${info.bn} — জামাত নির্বাচন করুন</span>
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                    ${tabsHTML}
+                </div>
+            </div>
+
+            <!-- ★ ছাত্র তালিকা -->
+            <div id="student-table-wrap">${tableHTML}</div>
+        </div>
+    `;
+}
+
+window.switchStudentClass = function(className) {
+    _currentStudentClass = className;
+    renderStudentDetailContent();
+};
+
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — হিফয ভিউ (গ্রুপ সাব-ট্যাব) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+function renderStudentHifzView(container, info) {
+    const groups = (configData?.hifzGroups || []);
+
+    if (groups.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-16 text-slate-400">
+                <i class="fa-solid fa-quran text-5xl mb-3 text-indigo-300"></i>
+                <p class="text-sm font-bold text-slate-600">কোন গ্রুপ তৈরি করা হয়নি</p>
+                <p class="text-xs mt-1">এডমিন প্যানেলের ছাত্র ব্যবস্থাপনা থেকে গ্রুপ তৈরি করুন।</p>
+            </div>`;
+        return;
+    }
+
+    // ★ শিক্ষক হলে শুধু তার নামের গ্রুপ দেখাবে
+    let visibleGroups = groups;
+    if (currentUserData?.role === 'teacher') {
+        const myName = currentUserData.teacherName || currentUserData.name;
+        visibleGroups = groups.filter(g => g.name === myName);
+        if (visibleGroups.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-16 text-slate-400">
+                    <i class="fa-solid fa-lock text-5xl mb-3 text-amber-300"></i>
+                    <p class="text-sm font-bold text-slate-600">আপনার নামে কোন গ্রুপ নেই</p>
+                </div>`;
+            return;
+        }
+    }
+
+    if (!_currentStudentClass || !visibleGroups.find(g => g.name === _currentStudentClass)) {
+        _currentStudentClass = visibleGroups[0].name;
+    }
+
+    // ★ গ্রুপ ট্যাব
+    const tabsHTML = visibleGroups.map(g => {
+        const isActive = g.name === _currentStudentClass;
+        const studentCount = studentsCache.filter(s => s.dept === 'hifz' && s.className === g.name).length;
+        return `
+            <button onclick="switchStudentClass('${g.name.replace(/'/g, "\\'")}')"
+                    class="student-class-tab px-3 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5"
+                    style="${isActive
+                        ? 'background:white;color:#0f172a;box-shadow:0 2px 6px rgba(0,0,0,0.1);'
+                        : 'background:rgba(255,255,255,0.6);color:#475569;'}">
+                <i class="fa-solid fa-users" style="font-size:10px;"></i>
+                <span>${g.name}</span>
+                <span class="badge" style="background:${isActive ? '#4338ca' : '#e2e8f0'};color:${isActive ? 'white' : '#475569'};font-size:9px;">${studentCount}</span>
+            </button>`;
+    }).join('');
+
+    const tableHTML = buildStudentTableHTML(
+        studentsCache.filter(s => s.dept === 'hifz' && s.className === _currentStudentClass),
+        { deptKey: 'hifz', className: _currentStudentClass, titlePrefix: 'হিফযুল কুরআন' }
+    );
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl p-3 shadow-md">
+                <div class="flex items-center gap-2 mb-2 text-white">
+                    <i class="fa-solid fa-quran"></i>
+                    <span class="text-xs font-bold">হিফযুল কুরআন — গ্রুপ নির্বাচন করুন</span>
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-1">
+                    ${tabsHTML}
+                </div>
+            </div>
+            <div id="student-table-wrap">${tableHTML}</div>
+        </div>
+    `;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — সকল শিক্ষার্থী ভিউ (ফিল্টার সহ) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _allStudentsFilter = { dept: '', jela: '', thana: '', search: '' };
+
+function renderStudentAllView(container, info) {
+    // ★ শিক্ষক হলে শুধু তার assigned জামাতের ছাত্র দেখাবে
+    let baseList = studentsCache;
+    if (currentUserData?.role === 'teacher') {
+        const allowed = getTeacherAllowedClasses();
+        baseList = baseList.filter(s => allowed.includes(s.dept + '::' + s.className));
+    }
+
+    // ★ ফিল্টার apply
+    let filtered = baseList.slice();
+
+    if (_allStudentsFilter.dept) {
+        filtered = filtered.filter(s => s.dept === _allStudentsFilter.dept);
+    }
+    if (_allStudentsFilter.jela) {
+        filtered = filtered.filter(s => extractJela(s.address) === _allStudentsFilter.jela);
+    }
+    if (_allStudentsFilter.thana) {
+        filtered = filtered.filter(s => extractThana(s.address) === _allStudentsFilter.thana);
+    }
+    if (_allStudentsFilter.search) {
+        const q = _allStudentsFilter.search.toLowerCase();
+        filtered = filtered.filter(s =>
+            (s.name || '').toLowerCase().includes(q) ||
+            (s.guardian || '').toLowerCase().includes(q) ||
+            (s.studentId || '').toLowerCase().includes(q)
+        );
+    }
+
+    // ★ unique jela ও thana বের করি (filter dropdown-এর জন্য)
+    const allJelas = [...new Set(baseList.map(s => extractJela(s.address)).filter(Boolean))].sort();
+    const allThanas = [...new Set(baseList.map(s => extractThana(s.address)).filter(Boolean))].sort();
+
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক', hifz: 'হিফযুল কুরআন' };
+
+    const filterBarHTML = `
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+            <div class="flex items-center gap-2 mb-2 text-blue-900">
+                <i class="fa-solid fa-filter"></i>
+                <span class="text-xs font-bold">ফিল্টার — মোট ${filtered.length} জন</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <select onchange="_allStudentsFilter.search=''; _allStudentsFilter.dept=this.value; renderStudentDetailContent();"
+                        class="rounded-lg border-slate-300 border p-2 text-xs bg-white">
+                    <option value="">সব বিভাগ</option>
+                    ${Object.keys(deptNames).map(k => `<option value="${k}" ${_allStudentsFilter.dept === k ? 'selected' : ''}>${deptNames[k]}</option>`).join('')}
+                </select>
+                <select onchange="_allStudentsFilter.jela=this.value; renderStudentDetailContent();"
+                        class="rounded-lg border-slate-300 border p-2 text-xs bg-white">
+                    <option value="">সব জেলা</option>
+                    ${allJelas.map(j => `<option value="${j}" ${_allStudentsFilter.jela === j ? 'selected' : ''}>${j}</option>`).join('')}
+                </select>
+                <select onchange="_allStudentsFilter.thana=this.value; renderStudentDetailContent();"
+                        class="rounded-lg border-slate-300 border p-2 text-xs bg-white">
+                    <option value="">সব থানা</option>
+                    ${allThanas.map(t => `<option value="${t}" ${_allStudentsFilter.thana === t ? 'selected' : ''}>${t}</option>`).join('')}
+                </select>
+                <input type="text"
+                       value="${_allStudentsFilter.search}"
+                       oninput="_allStudentsFilter.search=this.value; renderStudentDetailContent();"
+                       placeholder="🔍 নাম/আইডি/অভিভাবক"
+                       class="rounded-lg border-slate-300 border p-2 text-xs">
+            </div>
+        </div>
+    `;
+
+    const tableHTML = buildStudentTableHTML(filtered, {
+        deptKey: 'all', className: 'সকল', titlePrefix: 'সকল শিক্ষার্থী'
+    });
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            ${filterBarHTML}
+            <div id="student-table-wrap">${tableHTML}</div>
+        </div>
+    `;
+}
+
+// ★ ঠিকানা থেকে জেলা বের করা (কমা দিয়ে split — শেষ থেকে ২য়)
+function extractJela(address) {
+    if (!address) return '';
+    const parts = String(address).replace(/\(.*?\)/g, '').split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 2) return parts[parts.length - 1];
+    if (parts.length === 1) return parts[0];
+    return '';
+}
+
+// ★ ঠিকানা থেকে থানা বের করা (শেষ থেকে ২য়)
+function extractThana(address) {
+    if (!address) return '';
+    const parts = String(address).replace(/\(.*?\)/g, '').split(',').map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 3) return parts[parts.length - 2];
+    if (parts.length === 2) return parts[0];
+    return '';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — বিদায় / অভিযুক্ত ভিউ (remark filter) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+function renderStudentRemarkView(container, info, remarkTypes) {
+    // ★ শিক্ষক হলে শুধু তার assigned জামাতের ছাত্র দেখাবে
+    let baseList = studentsCache;
+    if (currentUserData?.role === 'teacher') {
+        const allowed = getTeacherAllowedClasses();
+        baseList = baseList.filter(s => allowed.includes(s.dept + '::' + s.className));
+    }
+
+    // ★ ফিল্টার: remark.type মিলে যাবে
+    const filtered = baseList.filter(s => {
+        const t = (s.remark?.type || '').trim();
+        return remarkTypes.includes(t);
+    });
+
+    const tableHTML = buildStudentTableHTML(filtered, {
+        deptKey: 'all', className: 'remarks',
+        titlePrefix: info.bn,
+        showClass: true
+    });
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <div class="bg-${info.color}-50 border border-${info.color}-200 rounded-xl p-3">
+                <div class="flex items-center gap-2 text-${info.color}-900">
+                    <i class="fa-solid ${info.icon}"></i>
+                    <span class="text-xs font-bold">${info.bn} — মোট ${filtered.length} জন</span>
+                </div>
+            </div>
+            <div id="student-table-wrap">${tableHTML}</div>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ পারমিশন হেল্পার — কে কী করতে পারবে ★★★
+// ═══════════════════════════════════════════════════════════════
+
+// ★ এই ছাত্রের মন্তব্য করতে পারবে কি?
+function canEditStudentRemark(student) {
+    if (currentUserData?.role === 'admin') return true;
+    if (currentUserData?.role !== 'teacher') return false;
+
+    const allowed = getTeacherAllowedClasses();
+    return allowed.includes(student.dept + '::' + student.className);
+}
+
+// ★ এই ছাত্র এডিট/ডিলিট করতে পারবে কি?
+function canManageStudent(student) {
+    return currentUserData?.role === 'admin';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — মন্তব্য মডাল (Remark Modal) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _currentRemarkStudentId = null;
+
+window.openStudentRemarkModal = function (studentId) {
+    const s = studentsCache.find(x => x.id === studentId);
+    if (!s) {
+        showToast('❌ ছাত্র পাওয়া যায়নি', 'error');
+        return;
+    }
+
+    // ★ Permission চেক
+    if (!canEditStudentRemark(s)) {
+        showToast('🔒 এই ছাত্রের তথ্য আপনি পরিবর্তন করতে পারবেন না', 'warn');
+        return;
+    }
+
+    _currentRemarkStudentId = studentId;
+
+    // ★ তথ্য দেখাই
+    document.getElementById('srm-student-name').textContent = s.name || '---';
+    document.getElementById('srm-student-id').textContent = s.studentId || '---';
+    document.getElementById('srm-student-class').textContent =
+        (s.className || '---') + ' | ' + (s.dept || '---');
+
+    // ★ বর্তমান মন্তব্য প্রি-ফিল
+    const curType = s.remark?.type || '';
+    const curReason = s.remark?.reason || '';
+    document.getElementById('srm-type').value = curType;
+    document.getElementById('srm-reason').value = curReason;
+
+    // ★ UI আপডেট
+    onStudentRemarkTypeChange();
+
+    // ★ মডাল দেখাই
+    const modal = document.getElementById('student-remark-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+};
+
+window.closeStudentRemarkModal = function () {
+    const modal = document.getElementById('student-remark-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    _currentRemarkStudentId = null;
+};
+
+window.onStudentRemarkTypeChange = function () {
+    const type = document.getElementById('srm-type').value;
+    const reasonWrap = document.getElementById('srm-reason-wrap');
+    const preview = document.getElementById('srm-preview');
+    const previewContent = document.getElementById('srm-preview-content');
+
+    if (!type) {
+        reasonWrap.style.display = 'none';
+        preview.classList.add('hidden');
+        return;
+    }
+
+    reasonWrap.style.display = 'block';
+
+    // ★ প্রিভিউ আপডেট
+    const colors = {
+        'বিদায়':           { bg: '#f1f5f9', border: '#94a3b8', text: '#334155' },
+        'বহিষ্কৃত':         { bg: '#fee2e2', border: '#dc2626', text: '#991b1b' },
+        'ভর্তির অনুপযুক্ত': { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
+        'সতর্ক':            { bg: '#fef3c7', border: '#d97706', text: '#92400e' }
+    };
+    const c = colors[type];
+    const reason = document.getElementById('srm-reason').value.trim();
+
+    if (c) {
+        preview.classList.remove('hidden');
+        previewContent.innerHTML = `
+            <div style="background:${c.bg};border-left:4px solid ${c.border};padding:8px 12px;border-radius:6px;">
+                <div style="font-weight:bold;color:${c.text};font-size:13px;">${type}</div>
+                ${reason ? `<div style="font-size:11px;color:${c.text};opacity:0.85;margin-top:2px;">${reason}</div>` : ''}
+            </div>`;
+    }
+};
+
+// ★ কারণ টাইপ করলে প্রিভিউ লাইভ আপডেট
+document.addEventListener('input', function (e) {
+    if (e.target.id === 'srm-reason') {
+        onStudentRemarkTypeChange();
+    }
+});
+
+window.saveStudentRemark = async function () {
+    if (!_currentRemarkStudentId) return;
+
+    const s = studentsCache.find(x => x.id === _currentRemarkStudentId);
+    if (!s) {
+        showToast('❌ ছাত্র পাওয়া যায়নি', 'error');
+        return;
+    }
+
+    const type = document.getElementById('srm-type').value;
+    const reason = document.getElementById('srm-reason').value.trim();
+
+    // ★ কনফার্ম (মুছে ফেলার জন্য)
+    if (!type) {
+        if (!confirm(`"${s.name}" এর মন্তব্য মুছে ফেলবেন?`)) return;
+    }
+
+    // ★ Save button
+    const btn = document.getElementById('srm-save-btn');
+    const btnText = document.getElementById('srm-save-btn-text');
+    const origText = btnText.textContent;
+    btn.disabled = true;
+    btnText.textContent = 'সেভ হচ্ছে...';
+
+    try {
+        const { doc, updateDoc, serverTimestamp } = window.fbFuncs;
+
+        const remark = type ? { type, reason } : null;
+
+        await updateDoc(doc(window.fbDB, 'students', _currentRemarkStudentId), {
+            remark: remark,
+            remarkUpdatedAt: serverTimestamp(),
+            remarkUpdatedBy: currentUser?.uid || 'unknown',
+            remarkUpdatedByName: currentUserData?.name || currentUser?.email || '---'
+        });
+
+        // ★ Local cache আপডেট
+        s.remark = remark;
+
+        showToast(type ? `✅ মন্তব্য "${type}" সেভ হয়েছে` : '✅ মন্তব্য মুছে ফেলা হয়েছে', 'success');
+        closeStudentRemarkModal();
+
+        // ★ টেবিল re-render
+        renderStudentDetailContent();
+
+    } catch (err) {
+        console.error('❌ saveStudentRemark error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = origText;
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ শিক্ষার্থী — টেবিল বিল্ডার (মূল) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+function buildStudentTableHTML(students, opts = {}) {
+    const { deptKey = '', className = '', titlePrefix = '', showClass = false } = opts;
+
+    if (students.length === 0) {
+        return `
+            <div class="text-center py-16 bg-white rounded-xl border border-slate-200">
+                <i class="fa-solid fa-user-slash text-5xl mb-3 text-slate-300"></i>
+                <p class="text-sm font-bold text-slate-600">কোন শিক্ষার্থী নেই</p>
+                <p class="text-xs mt-1 text-slate-500">এডমিন প্যানেল থেকে ছাত্র যোগ করুন।</p>
+            </div>`;
+    }
+
+    // ★ remark type → রঙ
+    const remarkColors = {
+        'বিদায়':           { bg: '#f1f5f9', border: '#94a3b8', text: '#334155' },
+        'বহিষ্কৃত':         { bg: '#fee2e2', border: '#dc2626', text: '#991b1b' },
+        'ভর্তির অনুপযুক্ত': { bg: '#ffedd5', border: '#ea580c', text: '#9a3412' },
+        'সতর্ক':           { bg: '#fef3c7', border: '#d97706', text: '#92400e' }
+    };
+
+    // ★ টেবিল row
+    let rowsHTML = '';
+    students.forEach((s, i) => {
+        const remark = (s.remark?.type || '').trim();
+        const remarkReason = (s.remark?.reason || '').trim();
+        const colorSet = remark ? (remarkColors[remark] || null) : null;
+
+        const rowStyle = colorSet
+            ? `background:${colorSet.bg}; color:${colorSet.text};`
+            : '';
+
+        const remarkCellHTML = remark
+            ? `<span class="font-bold" style="color:${colorSet.text};">${remark}</span>${remarkReason ? `<div class="text-[10px] mt-0.5 opacity-80">${remarkReason}</div>` : ''}`
+            : `<span class="text-slate-400 italic text-xs">— ক্লিক করুন —</span>`;
+
+        rowsHTML += `
+            <tr class="border-b hover:bg-slate-50 transition" style="${rowStyle}">
+                <td class="p-2 text-xs text-center font-bold" style="${colorSet ? 'color:' + colorSet.text : ''}">${i + 1}</td>
+                ${showClass ? `<td class="p-2 text-[10px] whitespace-nowrap">
+                    <span class="badge bg-emerald-100 text-emerald-800">${s.dept === 'shariah' ? 'শরীয়াহ' : s.dept === 'noorani' ? 'নূরানী' : s.dept === 'non_res' ? 'অনাবাসিক' : s.dept === 'hifz' ? 'হিফয' : s.dept || '-'}</span>
+                    <div class="text-[10px] text-slate-600 font-arabic mt-0.5">${s.className || '-'}</div>
+                </td>` : ''}
+                <td class="p-2 text-sm font-bold whitespace-nowrap">${s.name || '-'}</td>
+                <td class="p-2 text-xs whitespace-nowrap">${s.guardian || '-'}</td>
+                <td class="p-2 text-xs font-mono text-center">${s.studentId || '-'}</td>
+                <td class="p-2 text-xs text-center whitespace-nowrap">${s.dob || '-'}</td>
+                <td class="p-2 text-xs font-mono whitespace-nowrap">${s.mobile1 || '-'}</td>
+                <td class="p-2 text-xs font-mono whitespace-nowrap">${s.mobile2 || '-'}</td>
+                <td class="p-2 text-xs" style="min-width:180px;max-width:280px;">${s.address || '-'}</td>
+                <td class="p-2 text-xs text-center">${s.admissionFee || ''}</td>
+                <td class="p-2 text-xs text-center">${s.firstMonthFood || ''}</td>
+                <td class="p-2 text-xs text-center">${s.sessionFee || ''}</td>
+                <td class="p-2 text-xs text-center">${s.monthlyFood || ''}</td>
+                <td class="p-2 text-xs text-center">${s.hostelFee || ''}</td>
+                <td class="p-2 text-xs text-center">${s.monthlySalary || ''}</td>
+                ${(() => {
+                    const canEdit = canEditStudentRemark(s);
+                    if (canEdit) {
+                        return `<td class="p-2 text-xs text-center cursor-pointer hover:bg-white/40"
+                                    onclick="openStudentRemarkModal('${s.id}')"
+                                    title="ক্লিক করে মন্তব্য যোগ করুন">
+                                    ${remarkCellHTML}
+                                </td>`;
+                    } else {
+                        return `<td class="p-2 text-xs text-center" title="🔒 আপনি এই ছাত্রের মন্তব্য করতে পারবেন না">
+                                    ${remarkCellHTML}
+                                    <div class="text-[9px] text-slate-400 mt-0.5"><i class="fa-solid fa-lock"></i></div>
+                                </td>`;
+                    }
+                })()}
+            </tr>`;
+    });
+
+    // ★ unique ID (প্রিন্ট/Export এর জন্য)
+    const tableId = 'student-table-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+    return `
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            
+            <!-- ★ অ্যাকশন বার -->
+            <div class="bg-slate-50 px-3 py-2 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2 no-print">
+                <div class="flex items-center gap-2 text-xs text-slate-600">
+                    <i class="fa-solid fa-users"></i>
+                    <span>মোট <strong class="text-emerald-700">${students.length}</strong> জন ছাত্র</span>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="printStudentTable('${tableId}','${titlePrefix.replace(/'/g, "\\'")}','${className.replace(/'/g, "\\'")}')"
+                            class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-print"></i> প্রিন্ট
+                    </button>
+                    <button onclick="exportStudentTableCSV('${tableId}','${titlePrefix.replace(/'/g, "\\'")}','${className.replace(/'/g, "\\'")}')"
+                            class="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-bold rounded-lg transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-csv"></i> Excel/CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- ★ টেবিল -->
+            <div class="overflow-x-auto" id="${tableId}" data-title="${titlePrefix}" data-class="${className}">
+                <table class="w-full text-left text-sm border-collapse" style="min-width:1200px;">
+                    <thead class="bg-slate-100 sticky top-0">
+                        <tr>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 text-center border-b-2 border-slate-300 w-10">#</th>
+                            ${showClass ? `<th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 whitespace-nowrap">বিভাগ / জামাত</th>` : ''}
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 whitespace-nowrap">ছাত্রের নাম</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 whitespace-nowrap">অভিভাবকের নাম</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">আইডি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">জন্ম তারিখ</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 whitespace-nowrap">মোবাইল-০১</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 whitespace-nowrap">মোবাইল-০২</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300">পূর্ণ ঠিকানা</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">ভর্তি ফি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">১ম মাসের খোরাকি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">সেশন ফি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">মাসিক খোরাকি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">আবাসন ফি</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">মাসিক বেতন</th>
+                            <th class="p-2 text-[11px] font-bold text-slate-700 border-b-2 border-slate-300 text-center whitespace-nowrap">মন্তব্য</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// ★★ ছাত্র টেবিল প্রিন্ট ★★
+window.printStudentTable = function(tableId, titlePrefix, className) {
+    const tableEl = document.getElementById(tableId);
+    if (!tableEl) { showToast('⚠️ টেবিল পাওয়া যায়নি', 'warn'); return; }
+
+    const madrasaBn = settings.madrasaName || 'জামিয়া ইসলামিয়া';
+    const madrasaAr = settings.madrasaNameAr || '';
+    const addr = settings.address || '';
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) { showToast('⚠️ Popup ব্লক হয়েছে — ব্রাউজারে allow করুন', 'warn'); return; }
+
+    // ★ রঙ ধরে রাখার জন্য inline style সহ clone
+    const cloned = tableEl.cloneNode(true);
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <title>ছাত্র তালিকা — ${className || titlePrefix}</title>
+            <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+            <style>
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+                body { font-family: 'Hind Siliguri', sans-serif; padding: 10mm 8mm; margin: 0; color: #1e293b; }
+                .head { text-align: center; border-bottom: 2px solid #065f46; padding-bottom: 10px; margin-bottom: 12px; }
+                .head h1 { margin: 0 0 4px 0; font-family: 'Amiri', serif; font-size: 22px; color: #064e3b; }
+                .head h2 { margin: 0 0 4px 0; font-size: 16px; color: #065f46; }
+                .head p { margin: 3px 0 0 0; font-size: 11px; color: #64748b; }
+                .head .title { margin: 6px 0 0 0; font-size: 13px; font-weight: bold; color: #1e293b; }
+                table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+                th, td { border: 1px solid #475569; padding: 3px 5px; text-align: left; vertical-align: top; }
+                th { background: #ecfdf5 !important; font-weight: bold; text-align: center; font-size: 8.5pt; }
+                tr[style*="background"] td { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                @page { size: A4 landscape; margin: 8mm 6mm; }
+            </style>
+        </head>
+        <body>
+            <div class="head">
+                ${madrasaAr ? `<h1 dir="rtl">${madrasaAr}</h1>` : ''}
+                <h2>${madrasaBn}</h2>
+                ${addr ? `<p>${addr}</p>` : ''}
+                <p class="title">ছাত্র তালিকা — ${titlePrefix ? titlePrefix + ' → ' : ''}${className || ''}</p>
+            </div>
+            ${cloned.outerHTML}
+            <p style="margin-top:14px;font-size:9px;text-align:center;color:#475569;">
+                প্রিন্ট: ${new Date().toLocaleString('bn-BD')} | মাকাদীরে আসবাক সিস্টেম
+            </p>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+    setTimeout(() => printWin.print(), 700);
+};
+
+// ★★ ছাত্র টেবিল CSV Export ★★
+window.exportStudentTableCSV = function(tableId, titlePrefix, className) {
+    const tableEl = document.getElementById(tableId);
+    if (!tableEl) { showToast('⚠️ টেবিল পাওয়া যায়নি', 'warn'); return; }
+
+    const table = tableEl.querySelector('table');
+    if (!table) return;
+
+    // ★ থেক header বাদ দিয়ে row গুলো পড়ি
+    const rows = [];
+    const headerCells = table.querySelectorAll('thead th');
+    const headerTexts = Array.from(headerCells).map(th => th.innerText.trim().replace(/\n+/g, ' '));
+    rows.push(headerTexts);
+
+    table.querySelectorAll('tbody tr').forEach(tr => {
+        const cells = tr.querySelectorAll('td');
+        const row = Array.from(cells).map(td => td.innerText.trim().replace(/\n+/g, ' '));
+        rows.push(row);
+    });
+
+    const esc = v => {
+        const s = String(v == null ? '' : v);
+        return (s.includes(',') || s.includes('"') || s.includes('\n'))
+            ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+
+    const csv = '\uFEFF' + rows.map(r => r.map(esc).join(',')).join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fileName = `students_${(titlePrefix || 'list').replace(/\s+/g, '_')}_${(className || '').replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`✅ CSV Download হয়েছে (${rows.length - 1}টি ছাত্র)`, 'success');
+};
+
+async function renderStudentDetailContent() {
+    const container = document.getElementById('student-detail-content');
+    if (!container) return;
+
+    if (!_currentStudentSub) {
+        container.innerHTML = `<div class="text-center py-16 text-slate-400"><p class="text-sm">কোন বিষয় নির্বাচন করা হয়নি</p></div>`;
+        return;
+    }
+
+    // ★ লোডিং দেখাই
+    container.innerHTML = `
+        <div class="text-center py-16 text-slate-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+            <p class="text-sm">শিক্ষার্থী তালিকা লোড হচ্ছে...</p>
+        </div>`;
+
+    // ★ যদি students লোড না হয়ে থাকে
+    if (!studentsLoaded) {
+        await loadStudentsFromFirestore();
+    }
+
+    const subLabels = {
+        shariah:   { bn: 'শরীয়াহ বিভাগ',                    icon: 'fa-mosque',      color: 'emerald' },
+        hifz:      { bn: 'হিফযুল কুরআন বিভাগ',                icon: 'fa-quran',       color: 'indigo'  },
+        noorani:   { bn: 'নূরানী-নাযেরা বিভাগ',               icon: 'fa-book-quran',  color: 'amber'   },
+        non_res:   { bn: 'অনাবাসিক বিভাগ',                   icon: 'fa-school',      color: 'teal'    },
+        all:       { bn: 'সকল শিক্ষার্থী',                    icon: 'fa-users',       color: 'blue'    },
+        farewell:  { bn: 'বিদায় শিক্ষার্থী',                   icon: 'fa-door-open',   color: 'slate'   },
+        accused:   { bn: 'অভিযুক্ত শিক্ষার্থী',                 icon: 'fa-gavel',       color: 'red'     }
+    };
+    const info = subLabels[_currentStudentSub];
+
+    // ★★★ বিভাগ সাব-পেইজ → জামাত/গ্রুপ ট্যাব ★★★
+    if (['shariah', 'noorani', 'non_res'].includes(_currentStudentSub)) {
+        return renderStudentDeptView(container, _currentStudentSub, info);
+    }
+
+    // ★★★ হিফয → গ্রুপ ট্যাব ★★★
+    if (_currentStudentSub === 'hifz') {
+        return renderStudentHifzView(container, info);
+    }
+
+    // ★★★ সকল শিক্ষার্থী — ফিল্টার সহ ★★★
+    if (_currentStudentSub === 'all') {
+        return renderStudentAllView(container, info);
+    }
+
+    // ★★★ বিদায় — remark.type === 'বিদায়' ★★★
+    if (_currentStudentSub === 'farewell') {
+        return renderStudentRemarkView(container, info, ['বিদায়']);
+    }
+
+    // ★★★ অভিযুক্ত — remark.type === 'বহিষ্কৃত' / 'ভর্তির অনুপযুক্ত' / 'সতর্ক' ★★★
+    if (_currentStudentSub === 'accused') {
+        return renderStudentRemarkView(container, info, ['বহিষ্কৃত', 'ভর্তির অনুপযুক্ত', 'সতর্ক']);
+    }
+}
+
+function renderStudentSubContent() {
+    const container = document.getElementById('student-sub-content');
+    if (!container) return;
+
+    if (!_currentStudentSub) {
+        container.innerHTML = `
+            <div class="text-center py-16 text-slate-400">
+                <i class="fa-solid fa-user-graduate text-5xl mb-3 text-fuchsia-300"></i>
+                <p class="text-sm">উপরে একটি বিষয় নির্বাচন করুন</p>
+            </div>`;
+        return;
+    }
+
+    // ★ ধাপ ৩-৪-এ পুরো লজিক আসবে — এখন placeholder দেখাই
+    const subLabels = {
+        shariah:   { bn: 'শরীয়াহ বিভাগের শিক্ষার্থী',      icon: 'fa-mosque',       color: 'emerald' },
+        hifz:      { bn: 'হিফযুল কুরআন বিভাগের শিক্ষার্থী',  icon: 'fa-quran',        color: 'indigo'  },
+        noorani:   { bn: 'নূরানী-নাযেরা বিভাগের শিক্ষার্থী', icon: 'fa-book-quran',   color: 'amber'   },
+        non_res:   { bn: 'অনাবাসিক বিভাগের শিক্ষার্থী',     icon: 'fa-school',       color: 'teal'    },
+        all:       { bn: 'সকল শিক্ষার্থী',                  icon: 'fa-users',        color: 'blue'    },
+        farewell:  { bn: 'বিদায় শিক্ষার্থী',                 icon: 'fa-door-open',    color: 'slate'   },
+        accused:   { bn: 'অভিযুক্ত শিক্ষার্থী',               icon: 'fa-gavel',        color: 'red'     }
+    };
+    const info = subLabels[_currentStudentSub];
+
+    container.innerHTML = `
+        <div class="text-center py-16">
+            <div class="w-20 h-20 mx-auto bg-gradient-to-br from-${info.color}-500 to-${info.color}-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4 shadow-lg">
+                <i class="fa-solid ${info.icon}"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">${info.bn}</h3>
+            <p class="text-sm text-slate-500 mb-4">এই সেকশন পরবর্তী ধাপে যোগ হবে।</p>
+            <div class="inline-block bg-amber-50 border border-amber-200 rounded-lg p-4 text-left max-w-md">
+                <p class="text-xs text-amber-900">
+                    <i class="fa-solid fa-clock"></i>
+                    <strong>ধাপ ২-এ আসবে:</strong> জামাত/গ্রুপ সাব-ট্যাব, ছাত্র তালিকা টেবিল, মন্তব্য মডাল, রঙিন সেল, ফিল্টার ইত্যাদি।
+                </p>
+            </div>
+        </div>
+    `;
+}
+
 // ═══════════════════ TAB SWITCH ═══════════════════
 function switchTab(tabId) {
     // ★ যদি পরীক্ষার কোনো সাব-ভিউ খোলা থাকে এবং ইউজার অন্য ট্যাবে যাচ্ছে
@@ -24063,6 +25582,19 @@ function switchTab(tabId) {
         if (calState.session && calState.dept) {
             checkCalReadiness();
         }
+    }
+    // ★★ শিক্ষক মূল মেনুতে গেলে sub রিসেট ★★
+    if (tabId === 'teachers') {
+        _currentTeacherSub = '';
+    }
+    // ★★ শিক্ষার্থী মূল মেনুতে গেলে sub রিসেট ★★
+    if (tabId === 'students') {
+        _currentStudentSub = '';
+    }
+    // ★★ teacher-detail এ সরাসরি switchTab কল হলে মেনুতে ফেরত ★★
+    if (tabId === 'teacher-detail' || tabId === 'student-detail') {
+        switchTab(tabId === 'teacher-detail' ? 'teachers' : 'students');
+        return;
     }
     if (tabId === 'exam') {
         // ★ মূল মেনু (৪টি কার্ড) দেখাই এবং সব সাব-ভিউ বন্ধ করি
@@ -27455,6 +28987,12 @@ function showApp() {
     const isAdmin = currentUserData?.role === 'admin';
     const isTeacher = currentUserData?.role === 'teacher';
 
+    // ★★ শিক্ষক ও শিক্ষার্থী — সবাই দেখবে ★★
+    const tBtn = document.getElementById('tab-btn-teachers');
+    if (tBtn) tBtn.classList.remove('hidden');
+    const sBtn = document.getElementById('tab-btn-students');
+    if (sBtn) sBtn.classList.remove('hidden');
+
     // ★ ক্লাস রুটিন সবাই দেখবে
     const routineBtn = document.getElementById('tab-btn-routine');
     if (routineBtn) routineBtn.classList.remove('hidden');
@@ -27482,6 +29020,16 @@ function showApp() {
     // ★ ক্যালেন্ডার dropdown প্রস্তুত করি (background)
     setTimeout(() => populateCalendarDropdowns(), 200);
 
+    // ★★ ছাত্র ডাটা লোড (শিক্ষক ও এডমিন উভয়ের জন্য) ★★
+    setTimeout(() => {
+        loadStudentsFromFirestore().then(() => {
+            // যদি শিক্ষার্থী ট্যাব খোলা থাকে, রিফ্রেশ করি
+            if (_currentStudentSub) {
+                renderStudentDetailContent();
+            }
+        });
+    }, 800);
+
     // ★★★ হোম পেইজ দেখাই (ডিফল্ট) ★★★
     setTimeout(() => switchTab('home'), 100);
 
@@ -27490,7 +29038,7 @@ function showApp() {
         // Jamat Report-এ শুধু নিজের বিভাগ
         const myName = currentUserData.teacherName || currentUserData.name;
         const myMeta = findTeacherByName(myName);
-        const deptMap = { 'শরীয়াহ': 'shariah', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
+        const deptMap = { 'শরীয়াহ': 'shariah', 'হিফযুল কুরআন': 'hifz', 'নূরানী-নাযেরা': 'noorani', 'অনাবাসিক': 'non_res' };
         const myDept = myMeta ? deptMap[myMeta.dept] : null;
         if (myDept) {
             const jdSel = document.getElementById('jamat-filter-dept');
@@ -27611,6 +29159,8 @@ window.switchAdminSub = function(sub) {
     else if (sub === 'approvals') renderAdminApprovals();
     else if (sub === 'edit-requests') renderAdminEditRequests();
     else if (sub === 'calendar') renderAdminCalendar();
+    else if (sub === 'students') renderAdminStudents();
+    else if (sub === 'hifz-groups') renderAdminHifzGroups();
     else {
         const content = document.getElementById('adm-content');
         content.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-screwdriver-wrench text-4xl mb-3"></i><p class="text-sm">"${sub}" সেকশন পরের ধাপে যোগ হবে</p></div>`;
@@ -28710,7 +30260,7 @@ window.onAdminTeacherSearch = function() {
     renderAdminTeacher();
 };
 window.addAdminTeacher = async function() {
-    const depts = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const depts = ['শরীয়াহ', 'হিফযুল কুরআন', 'নূরানী-নাযেরা', 'অনাবাসিক'];
     const dept = prompt('বিভাগ (' + depts.join(' / ') + '):', depts[0]);
     if (!dept || !depts.includes(dept.trim())) { showToast('⚠️ বিভাগ সঠিক নয়', 'warn'); return; }
     
@@ -28741,7 +30291,7 @@ window.editAdminTeacher = async function(idx) {
     const t = configData.teachers[idx];
     if (!t) return;
     
-    const depts = ['শরীয়াহ', 'নূরানী-নাযেরা', 'অনাবাসিক'];
+    const depts = ['শরীয়াহ', 'হিফযুল কুরআন', 'নূরানী-নাযেরা', 'অনাবাসিক'];
     const dept = prompt('বিভাগ (' + depts.join(' / ') + '):', t.dept);
     if (dept === null) return;
     if (!depts.includes(dept.trim())) { showToast('⚠️ বিভাগ সঠিক নয়', 'warn'); return; }
@@ -28908,6 +30458,899 @@ window.toggleTeacherAssignment = async function(teacherName, isChecked) {
     await saveAdminConfig();
     renderAdminAssign();
 };
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ এডমিন — ছাত্র ব্যবস্থাপনা ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _adminStudentFilter = { dept: '', search: '' };
+
+async function renderAdminStudents() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="text-center py-12 text-slate-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-3"></i>
+            <p>ছাত্র ডাটা লোড হচ্ছে...</p>
+        </div>`;
+
+    // ★ ছাত্র লোড (যদি না হয়ে থাকে, অথবা force reload)
+    await loadStudentsFromFirestore();
+
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক', hifz: 'হিফযুল কুরআন' };
+
+    // ★ ফিল্টার apply
+    let filtered = studentsCache.slice();
+    if (_adminStudentFilter.dept) filtered = filtered.filter(s => s.dept === _adminStudentFilter.dept);
+    if (_adminStudentFilter.search) {
+        const q = _adminStudentFilter.search.toLowerCase();
+        filtered = filtered.filter(s =>
+            (s.name || '').toLowerCase().includes(q) ||
+            (s.guardian || '').toLowerCase().includes(q) ||
+            (s.studentId || '').toLowerCase().includes(q)
+        );
+    }
+
+    // ★ স্ট্যাটস
+    const totalCount = studentsCache.length;
+    const byDept = {};
+    Object.keys(deptNames).forEach(k => byDept[k] = 0);
+    studentsCache.forEach(s => { if (byDept[s.dept] !== undefined) byDept[s.dept]++; });
+
+    // ★ টেবিল row
+    let rowsHTML = '';
+    if (filtered.length === 0) {
+        rowsHTML = `
+            <tr><td colspan="9" class="p-10 text-center text-slate-400">
+                <i class="fa-solid fa-user-slash text-4xl mb-2"></i>
+                <p class="font-bold text-slate-600">কোন ছাত্র নেই</p>
+                <p class="text-xs mt-1">উপরে "Import from CSV" বাটনে ক্লিক করুন।</p>
+            </td></tr>`;
+    } else {
+        filtered.forEach((s, i) => {
+            const remark = s.remark?.type || '';
+            const remarkColors = {
+                'বিদায়':           'bg-slate-200 text-slate-800',
+                'বহিষ্কৃত':         'bg-red-200 text-red-800',
+                'ভর্তির অনুপযুক্ত': 'bg-orange-200 text-orange-800',
+                'সতর্ক':            'bg-amber-200 text-amber-800'
+            };
+            const remarkBadge = remark
+                ? `<span class="badge ${remarkColors[remark] || 'bg-slate-200 text-slate-700'}">${remark}</span>`
+                : '<span class="text-slate-400 text-[10px]">—</span>';
+
+            rowsHTML += `
+                <tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-2 text-center text-xs font-bold text-slate-500">${i + 1}</td>
+                    <td class="p-2 text-sm font-bold">${s.name || '-'}</td>
+                    <td class="p-2 text-xs">${s.guardian || '-'}</td>
+                    <td class="p-2 text-xs font-mono text-center">${s.studentId || '-'}</td>
+                    <td class="p-2 text-xs">
+                        <span class="badge bg-emerald-100 text-emerald-800 text-[10px]">${deptNames[s.dept] || s.dept || '-'}</span>
+                        <div class="text-[10px] text-slate-600 mt-0.5 font-arabic">${s.className || '-'}</div>
+                    </td>
+                    <td class="p-2 text-xs font-mono">${s.mobile1 || '-'}</td>
+                    <td class="p-2 text-xs text-center">${remarkBadge}</td>
+                    <td class="p-2 text-xs text-center">
+                        <button onclick="openStudentRemarkModal('${s.id}')" class="text-amber-600 hover:text-amber-800 p-1" title="মন্তব্য">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </button>
+                    </td>
+                    <td class="p-2 text-xs text-center whitespace-nowrap">
+                        <button onclick="editAdminStudent('${s.id}')" class="text-blue-600 hover:text-blue-800 p-1" title="এডিট">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteAdminStudent('${s.id}')" class="text-red-600 hover:text-red-800 p-1" title="ডিলিট">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <!-- ★ হেডার + অ্যাকশন -->
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-user-graduate text-emerald-600"></i> ছাত্র ব্যবস্থাপনা
+                    <span class="badge bg-emerald-100 text-emerald-800 ml-2">মোট ${totalCount} জন</span>
+                </h3>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="openStudentImportModal()" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-file-import"></i> Import from CSV/Sheet
+                    </button>
+                    <button onclick="addAdminStudent()" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-plus"></i> নতুন ছাত্র
+                    </button>
+                    <button onclick="exportAllStudentsCSV()" class="px-3 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv"></i> Export
+                    </button>
+                    <button onclick="deleteAllStudents()" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-trash"></i> সব মুছুন
+                    </button>
+                </div>
+            </div>
+
+            <!-- ★ স্ট্যাটস কার্ড -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                ${Object.keys(deptNames).map(k => `
+                    <div class="bg-white border border-slate-200 rounded-lg p-3">
+                        <p class="text-[10px] font-bold text-slate-600">${deptNames[k]}</p>
+                        <p class="text-2xl font-bold text-slate-800">${byDept[k] || 0}</p>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- ★ ফিল্টার -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-3 flex flex-wrap gap-3 items-center">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-600 block mb-1">বিভাগ:</label>
+                    <select onchange="_adminStudentFilter.dept=this.value; renderAdminStudents();" class="rounded-lg border-slate-300 border p-1.5 text-xs">
+                        <option value="">সব বিভাগ</option>
+                        ${Object.keys(deptNames).map(k => `<option value="${k}" ${_adminStudentFilter.dept === k ? 'selected' : ''}>${deptNames[k]}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label class="text-[10px] font-bold text-slate-600 block mb-1">খুঁজুন:</label>
+                    <input type="text" value="${_adminStudentFilter.search}" oninput="_adminStudentFilter.search=this.value; renderAdminStudents();" placeholder="🔍 নাম / অভিভাবক / আইডি" class="w-full rounded-lg border-slate-300 border p-1.5 text-xs">
+                </div>
+                <div class="text-xs text-slate-500 self-end pb-1">
+                    <i class="fa-solid fa-info-circle"></i> দেখানো হচ্ছে: <strong>${filtered.length}</strong> জন
+                </div>
+            </div>
+
+            <!-- ★ টেবিল -->
+            <div class="border border-slate-200 rounded-lg overflow-hidden">
+                <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                    <table class="w-full text-left text-sm border-collapse" style="min-width:1100px;">
+                        <thead class="bg-slate-100 sticky top-0">
+                            <tr>
+                                <th class="p-2 text-[11px] font-bold text-center w-10 border-b-2 border-slate-300">#</th>
+                                <th class="p-2 text-[11px] font-bold border-b-2 border-slate-300 whitespace-nowrap">নাম</th>
+                                <th class="p-2 text-[11px] font-bold border-b-2 border-slate-300 whitespace-nowrap">অভিভাবক</th>
+                                <th class="p-2 text-[11px] font-bold text-center border-b-2 border-slate-300 whitespace-nowrap">আইডি</th>
+                                <th class="p-2 text-[11px] font-bold border-b-2 border-slate-300 whitespace-nowrap">জামাত/বিভাগ</th>
+                                <th class="p-2 text-[11px] font-bold border-b-2 border-slate-300 whitespace-nowrap">মোবাইল</th>
+                                <th class="p-2 text-[11px] font-bold text-center border-b-2 border-slate-300 whitespace-nowrap">মন্তব্য</th>
+                                <th class="p-2 text-[11px] font-bold text-center border-b-2 border-slate-300 w-12">নোট</th>
+                                <th class="p-2 text-[11px] font-bold text-center border-b-2 border-slate-300 w-24">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHTML}</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ★ নতুন ছাত্র (এডমিন)
+window.addAdminStudent = function () {
+    openStudentFormModal(null);
+};
+
+// ★ ছাত্র এডিট
+window.editAdminStudent = function (id) {
+    const s = studentsCache.find(x => x.id === id);
+    if (!s) {
+        showToast('❌ ছাত্র পাওয়া যায়নি', 'error');
+        return;
+    }
+    openStudentFormModal(s);
+};
+
+// ★★ ছাত্র সম্পূর্ণ প্রোফাইল দেখাও (quick view) ★★
+window.viewAdminStudent = function (id) {
+    const s = studentsCache.find(x => x.id === id);
+    if (!s) return;
+
+    const deptNames = { shariah: 'শরীয়াহ', noorani: 'নূরানী-নাযেরা', non_res: 'অনাবাসিক', hifz: 'হিফযুল কুরআন' };
+    const remark = s.remark?.type || '—';
+    const remarkReason = s.remark?.reason || '';
+
+    const modal = document.createElement('div');
+    modal.id = 'student-view-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto;';
+
+    modal.innerHTML = `
+        <div style="background:white;border-radius:16px;max-width:640px;width:100%;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;">
+            <div style="background:linear-gradient(135deg,#065f46,#047857);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+                <div>
+                    <h3 style="margin:0;font-size:16px;font-weight:bold;">${s.name || '---'}</h3>
+                    <p style="margin:3px 0 0;font-size:11px;opacity:0.85;">
+                        ${deptNames[s.dept] || s.dept} — ${s.className || '-'}
+                    </p>
+                </div>
+                <button onclick="document.getElementById('student-view-modal').remove()" style="background:rgba(255,255,255,0.2);color:white;border:none;width:34px;height:34px;border-radius:50%;font-size:22px;cursor:pointer;">×</button>
+            </div>
+            
+            <div style="padding:16px;overflow-y:auto;flex:1;">
+                <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;width:40%;">অভিভাবকের নাম</td><td style="padding:6px 0;font-weight:600;">${s.guardian || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">আইডি</td><td style="padding:6px 0;font-weight:600;font-family:monospace;">${s.studentId || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">জন্ম তারিখ</td><td style="padding:6px 0;font-weight:600;">${s.dob || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">মোবাইল-০১</td><td style="padding:6px 0;font-weight:600;font-family:monospace;">${s.mobile1 || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">মোবাইল-০২</td><td style="padding:6px 0;font-weight:600;font-family:monospace;">${s.mobile2 || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">ঠিকানা</td><td style="padding:6px 0;font-weight:600;">${s.address || '-'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">ভর্তি ফি</td><td style="padding:6px 0;font-weight:600;">${s.admissionFee || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">১ম মাসের খোরাকি</td><td style="padding:6px 0;font-weight:600;">${s.firstMonthFood || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">সেশন ফি</td><td style="padding:6px 0;font-weight:600;">${s.sessionFee || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">মাসিক খোরাকি</td><td style="padding:6px 0;font-weight:600;">${s.monthlyFood || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">আবাসন ফি</td><td style="padding:6px 0;font-weight:600;">${s.hostelFee || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">মাসিক বেতন</td><td style="padding:6px 0;font-weight:600;">${s.monthlySalary || '0'}</td></tr>
+                    <tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:6px 0;color:#64748b;">মন্তব্য</td><td style="padding:6px 0;font-weight:600;">${remark}${remarkReason ? ' — ' + remarkReason : ''}</td></tr>
+                </table>
+            </div>
+            
+            <div style="padding:12px;border-top:1px solid #e2e8f0;background:#f8fafc;display:flex;justify-content:flex-end;gap:8px;">
+                <button onclick="document.getElementById('student-view-modal').remove()" style="padding:9px 20px;background:#e2e8f0;color:#334155;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">বন্ধ</button>
+                <button onclick="document.getElementById('student-view-modal').remove(); editAdminStudent('${s.id}');" style="padding:9px 20px;background:#059669;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">✏️ এডিট</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+};
+
+// ★ ছাত্র ডিলিট
+window.deleteAdminStudent = async function (id) {
+    const s = studentsCache.find(x => x.id === id);
+    if (!s) return;
+    if (!confirm(`"${s.name}" কে মুছে ফেলবেন?\n\nএই ক্রিয়া ফেরানো যাবে না।`)) return;
+
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        await deleteDoc(doc(window.fbDB, 'students', id));
+        studentsCache = studentsCache.filter(x => x.id !== id);
+        showToast('🗑️ ছাত্র মুছে ফেলা হয়েছে', 'info');
+        renderAdminStudents();
+    } catch (err) {
+        console.error('❌ deleteAdminStudent error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
+// ★ সব ছাত্র মুছুন (ডেঞ্জার জোন)
+window.deleteAllStudents = async function () {
+    if (studentsCache.length === 0) {
+        showToast('⚠️ কোন ছাত্র নেই', 'warn');
+        return;
+    }
+    if (!confirm(`⚠️ সতর্কতা!\n\nসম্পূর্ণ ${studentsCache.length} জন ছাত্রের ডাটা মুছে যাবে।\n\nআপনি কি নিশ্চিত?`)) return;
+    if (!confirm('🚨 চূড়ান্ত নিশ্চিতকরণ: সত্যিই সব মুছে ফেলবেন?')) return;
+
+    showToast('⏳ সব মুছে ফেলা হচ্ছে...', 'info');
+
+    try {
+        const { doc, deleteDoc } = window.fbFuncs;
+        for (const s of studentsCache) {
+            await deleteDoc(doc(window.fbDB, 'students', s.id));
+        }
+        studentsCache = [];
+        showToast('🗑️ সব ছাত্র মুছে ফেলা হয়েছে', 'success');
+        renderAdminStudents();
+    } catch (err) {
+        console.error('❌ deleteAllStudents error:', err);
+        showToast('❌ ' + err.message, 'error');
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ এডমিন — হিফয গ্রুপ সেটআপ ★★★
+// ═══════════════════════════════════════════════════════════════
+
+async function renderAdminHifzGroups() {
+    const content = document.getElementById('adm-content');
+    if (!content) return;
+
+    const groups = configData?.hifzGroups || [];
+
+    // ★ শিক্ষক লিস্ট (হিফয বিভাগ)
+    const teachers = (configData?.teachers || []).filter(t => t.dept === 'হিফযুল কুরআন');
+
+    let rowsHTML = '';
+    if (groups.length === 0) {
+        rowsHTML = `
+            <div class="text-center py-10 text-slate-400 bg-white rounded-lg border border-dashed border-slate-300">
+                <i class="fa-solid fa-users-rectangle text-4xl mb-2"></i>
+                <p class="font-bold text-slate-600">কোন গ্রুপ নেই</p>
+                <p class="text-xs mt-1">নিচের "গ্রুপ যোগ করুন" বাটনে ক্লিক করুন।</p>
+            </div>`;
+    } else {
+        rowsHTML = groups.map((g, i) => {
+            const count = studentsCache.filter(s => s.dept === 'hifz' && s.className === g.name).length;
+            return `
+                <div class="bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-800 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0">
+                        ${i + 1}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800">${g.name}</p>
+                        <p class="text-[10px] text-slate-500">
+                            <i class="fa-solid fa-user-graduate"></i> ${count} জন ছাত্র
+                        </p>
+                    </div>
+                    <div class="flex gap-1 flex-shrink-0">
+                        <button onclick="editHifzGroup(${i})" class="text-blue-600 hover:text-blue-800 p-1.5">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteHifzGroup(${i})" class="text-red-600 hover:text-red-800 p-1.5">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>`;
+        }).join('');
+    }
+
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h3 class="text-base font-bold text-slate-800">
+                    <i class="fa-solid fa-users-rectangle text-indigo-600"></i> হিফযুল কুরআন গ্রুপ
+                    <span class="badge bg-indigo-100 text-indigo-800 ml-2">${groups.length} টি</span>
+                </h3>
+                <button onclick="addHifzGroup()" class="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-lg transition flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-plus"></i> নতুন গ্রুপ যোগ
+                </button>
+            </div>
+
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                <p class="text-xs text-indigo-900">
+                    <i class="fa-solid fa-info-circle"></i>
+                    প্রতিটি গ্রুপের নাম হবে শিক্ষকের নাম। গ্রুপের ভেতরে সেই শিক্ষক ছাত্রদের দেখতে ও মন্তব্য করতে পারবেন।
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                ${rowsHTML}
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+                <button onclick="autoFillHifzGroups()" class="px-4 py-2.5 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> হিফয শিক্ষক দিয়ে অটো-fill
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// ★ নতুন গ্রুপ
+window.addHifzGroup = async function () {
+    const teachers = (configData?.teachers || []).filter(t => t.dept === 'হিফযুল কুরআন');
+    let name = '';
+
+    if (teachers.length > 0) {
+        const teacherList = teachers.map((t, i) => `${i + 1}. ${t.name}`).join('\n');
+        const choice = prompt(
+            `কোন শিক্ষকের নামে গ্রুপ বানাবেন?\n\n${teacherList}\n\nঅথবা নিজে নাম লিখুন:`,
+            ''
+        );
+        if (choice === null) return;
+        const idx = parseInt(choice);
+        if (idx >= 1 && idx <= teachers.length) {
+            name = teachers[idx - 1].name;
+        } else {
+            name = choice.trim();
+        }
+    } else {
+        name = prompt('গ্রুপের নাম (শিক্ষকের নাম):');
+    }
+
+    if (!name || !name.trim()) return;
+
+    if (!configData.hifzGroups) configData.hifzGroups = [];
+    if (configData.hifzGroups.some(g => g.name === name.trim())) {
+        showToast('⚠️ এই নামে ইতিমধ্যে গ্রুপ আছে', 'warn');
+        return;
+    }
+
+    configData.hifzGroups.push({
+        id: 'hifz_' + Date.now(),
+        name: name.trim()
+    });
+
+    await saveAdminConfig();
+    showToast('✅ গ্রুপ যোগ হয়েছে', 'success');
+    renderAdminHifzGroups();
+};
+
+// ★ এডিট
+window.editHifzGroup = async function (i) {
+    const g = configData.hifzGroups[i];
+    if (!g) return;
+
+    const newName = prompt('নতুন নাম:', g.name);
+    if (newName === null || !newName.trim()) return;
+
+    configData.hifzGroups[i].name = newName.trim();
+    await saveAdminConfig();
+    showToast('✅ আপডেট হয়েছে', 'success');
+    renderAdminHifzGroups();
+};
+
+// ★ ডিলিট
+window.deleteHifzGroup = async function (i) {
+    const g = configData.hifzGroups[i];
+    if (!g) return;
+
+    const count = studentsCache.filter(s => s.dept === 'hifz' && s.className === g.name).length;
+    const msg = count > 0
+        ? `⚠️ "${g.name}" গ্রুপে ${count} জন ছাত্র আছে। গ্রুপ মুছলে তারা "গ্রুপ নেই" হয়ে যাবে। আপনি কি নিশ্চিত?`
+        : `"${g.name}" গ্রুপটি মুছে ফেলবেন?`;
+
+    if (!confirm(msg)) return;
+
+    configData.hifzGroups.splice(i, 1);
+    await saveAdminConfig();
+    showToast('🗑️ গ্রুপ মুছে ফেলা হয়েছে', 'info');
+    renderAdminHifzGroups();
+};
+
+// ★ অটো-fill (হিফয শিক্ষক দিয়ে)
+window.autoFillHifzGroups = async function () {
+    const teachers = (configData?.teachers || []).filter(t => t.dept === 'হিফযুল কুরআন');
+    if (teachers.length === 0) {
+        showToast('⚠️ হিফয বিভাগে কোন শিক্ষক নেই', 'warn');
+        return;
+    }
+
+    if (!confirm(`${teachers.length} জন হিফয শিক্ষকের নামে গ্রুপ তৈরি করবেন?`)) return;
+
+    if (!configData.hifzGroups) configData.hifzGroups = [];
+
+    let added = 0;
+    teachers.forEach(t => {
+        if (!configData.hifzGroups.some(g => g.name === t.name)) {
+            configData.hifzGroups.push({
+                id: 'hifz_' + Date.now() + '_' + added,
+                name: t.name
+            });
+            added++;
+        }
+    });
+
+    await saveAdminConfig();
+    showToast(`✅ ${added}টি গ্রুপ যোগ হয়েছে`, 'success');
+    renderAdminHifzGroups();
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ ছাত্র Import (CSV/Google Sheet) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+window.openStudentImportModal = function () {
+    const modal = document.getElementById('student-import-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    // reset
+    document.getElementById('sim-data').value = '';
+    document.getElementById('sim-file').value = '';
+    document.getElementById('sim-dept').value = '';
+    document.getElementById('sim-class').innerHTML = '<option value="">-- আগে বিভাগ নির্বাচন করুন --</option>';
+    document.getElementById('sim-preview-wrap').classList.add('hidden');
+};
+
+window.closeStudentImportModal = function () {
+    const modal = document.getElementById('student-import-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+};
+
+window.onImportDeptChange = function () {
+    const dept = document.getElementById('sim-dept').value;
+    const classSel = document.getElementById('sim-class');
+    classSel.innerHTML = '<option value="">-- জামাত নির্বাচন করুন --</option>';
+
+    if (!dept) return;
+
+    let classes = [];
+    if (dept === 'hifz') {
+        classes = (configData?.hifzGroups || []).map(g => g.name);
+    } else {
+        classes = (configData?.classes || {})[dept] || [];
+    }
+
+    classes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        classSel.appendChild(opt);
+    });
+};
+
+window.onStudentImportFileChange = function (ev) {
+    const file = ev.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        document.getElementById('sim-data').value = e.target.result;
+        parseImportPreview();
+    };
+    reader.readAsText(file, 'UTF-8');
+    ev.target.value = '';
+};
+
+// ★★★ CSV parse (Tab, Comma, Semicolon) ★★★
+function parseImportData(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+    if (lines.length === 0) return [];
+
+    // ★ delimiter detect
+    const firstLine = lines[0];
+    let delim = '\t';
+    if (firstLine.split('\t').length >= 3) delim = '\t';
+    else if (firstLine.split(',').length >= 3) delim = ',';
+    else if (firstLine.split(';').length >= 3) delim = ';';
+
+    // ★ quote-aware split
+    function splitLine(line, d) {
+        const out = [];
+        let cur = '';
+        let inQuote = false;
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (ch === '"') {
+                if (inQuote && line[i + 1] === '"') { cur += '"'; i++; }
+                else inQuote = !inQuote;
+            } else if (ch === d && !inQuote) {
+                out.push(cur);
+                cur = '';
+            } else {
+                cur += ch;
+            }
+        }
+        out.push(cur);
+        return out.map(s => s.trim());
+    }
+
+    const rows = lines.map(l => splitLine(l, delim));
+
+    // ★ হেডার স্কিপ (যদি প্রথম লাইনে "নাম" বা "name" থাকে)
+    const firstCell = (rows[0][0] || '').toLowerCase();
+    if (firstCell.includes('নাম') || firstCell.includes('name') || firstCell.includes('ছাত্র')) {
+        rows.shift();
+    }
+
+    // ★ ১৩টি কলাম হিসেবে ম্যাপ
+    const students = [];
+    rows.forEach(r => {
+        if (r.length < 3) return; // খুব কম ডাটা, skip
+
+        const student = {
+            name:         (r[0] || '').trim(),
+            guardian:     (r[1] || '').trim(),
+            studentId:    (r[2] || '').trim(),
+            dob:          (r[3] || '').trim(),
+            mobile1:      (r[4] || '').trim(),
+            mobile2:      (r[5] || '').trim(),
+            address:      (r[6] || '').trim(),
+            admissionFee: (r[7] || '').trim(),
+            firstMonthFood: (r[8] || '').trim(),
+            sessionFee:   (r[9] || '').trim(),
+            monthlyFood:  (r[10] || '').trim(),
+            hostelFee:    (r[11] || '').trim(),
+            monthlySalary: (r[12] || '').trim()
+        };
+
+        if (student.name) students.push(student);
+    });
+
+    return students;
+}
+
+window.parseImportPreview = function () {
+    const text = document.getElementById('sim-data').value;
+    if (!text.trim()) {
+        showToast('⚠️ আগে ডাটা পেস্ট করুন', 'warn');
+        return;
+    }
+
+    const students = parseImportData(text);
+    const wrap = document.getElementById('sim-preview-wrap');
+    const preview = document.getElementById('sim-preview');
+    const countEl = document.getElementById('sim-preview-count');
+
+    if (students.length === 0) {
+        wrap.classList.add('hidden');
+        showToast('⚠️ কোন বৈধ ডাটা পাওয়া যায়নি', 'warn');
+        return;
+    }
+
+    wrap.classList.remove('hidden');
+    countEl.textContent = students.length;
+
+    preview.innerHTML = students.slice(0, 15).map((s, i) => `
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-1">
+            <span class="font-bold text-slate-500 w-6">${i + 1}.</span>
+            <span class="font-bold text-slate-800">${s.name}</span>
+            <span class="text-slate-500">|</span>
+            <span>${s.guardian || '—'}</span>
+            <span class="text-slate-500">|</span>
+            <span class="font-mono">${s.studentId || '—'}</span>
+            <span class="text-slate-500">|</span>
+            <span class="font-mono">${s.mobile1 || '—'}</span>
+        </div>
+    `).join('') + (students.length > 15 ? `<div class="text-center text-slate-500 italic pt-1">...আরও ${students.length - 15} জন</div>` : '');
+};
+
+window.executeStudentImport = async function () {
+    const text = document.getElementById('sim-data').value;
+    const dept = document.getElementById('sim-dept').value;
+    const className = document.getElementById('sim-class').value;
+
+    if (!text.trim()) { showToast('⚠️ ডাটা পেস্ট করুন', 'warn'); return; }
+    if (!dept) { showToast('⚠️ বিভাগ সিলেক্ট করুন', 'warn'); return; }
+    if (!className) { showToast('⚠️ জামাত/গ্রুপ সিলেক্ট করুন', 'warn'); return; }
+
+    const students = parseImportData(text);
+    if (students.length === 0) {
+        showToast('⚠️ কোন বৈধ ডাটা নেই', 'warn');
+        return;
+    }
+
+    if (!confirm(`${students.length} জন ছাত্র "${className}"-এ যোগ করবেন?`)) return;
+
+    const btn = document.getElementById('sim-import-btn');
+    const btnText = document.getElementById('sim-import-btn-text');
+    const origText = btnText.textContent;
+    btn.disabled = true;
+
+    let success = 0;
+    let failed = 0;
+
+    try {
+        const { doc, addDoc, collection, serverTimestamp } = window.fbFuncs;
+
+        for (let i = 0; i < students.length; i++) {
+            const s = students[i];
+            try {
+                const payload = {
+                    ...s,
+                    dept: dept,
+                    className: className,
+                    remark: null,
+                    createdAt: serverTimestamp(),
+                    createdBy: currentUser?.uid || 'unknown'
+                };
+
+                const ref = await addDoc(collection(window.fbDB, 'students'), payload);
+                studentsCache.push({ id: ref.id, ...payload });
+                success++;
+
+                btnText.textContent = `সেভ হচ্ছে (${success}/${students.length})...`;
+            } catch (e) {
+                console.error('❌ Row failed:', e, s);
+                failed++;
+            }
+        }
+
+        showToast(`✅ ${success}টি সেভ হয়েছে${failed > 0 ? ' | ❌ ' + failed + 'টি ব্যর্থ' : ''}`, success > 0 ? 'success' : 'error');
+
+        closeStudentImportModal();
+        renderAdminStudents();
+
+    } catch (err) {
+        console.error('❌ executeStudentImport error:', err);
+        showToast('❌ Import ব্যর্থ: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = origText;
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// ★★★ ছাত্র ফর্ম মডাল (Add/Edit) ★★★
+// ═══════════════════════════════════════════════════════════════
+
+let _editingStudentId = null;
+
+window.openStudentFormModal = function (student) {
+    _editingStudentId = student?.id || null;
+
+    // ★ Title
+    document.getElementById('sfm-title').textContent = student ? '✏️ ছাত্র এডিট করুন' : 'নতুন ছাত্র যোগ করুন';
+    document.getElementById('sfm-save-btn-text').textContent = student ? 'আপডেট করুন' : 'সংরক্ষণ করুন';
+
+    // ★ ফিল্ড populate
+    document.getElementById('sfm-id').value = student?.id || '';
+    document.getElementById('sfm-name').value = student?.name || '';
+    document.getElementById('sfm-guardian').value = student?.guardian || '';
+    document.getElementById('sfm-student-id').value = student?.studentId || '';
+    document.getElementById('sfm-dob').value = student?.dob || '';
+    document.getElementById('sfm-mobile1').value = student?.mobile1 || '';
+    document.getElementById('sfm-mobile2').value = student?.mobile2 || '';
+    document.getElementById('sfm-address').value = student?.address || '';
+    document.getElementById('sfm-dept').value = student?.dept || '';
+    document.getElementById('sfm-admissionFee').value = student?.admissionFee || '';
+    document.getElementById('sfm-firstMonthFood').value = student?.firstMonthFood || '';
+    document.getElementById('sfm-sessionFee').value = student?.sessionFee || '';
+    document.getElementById('sfm-monthlyFood').value = student?.monthlyFood || '';
+    document.getElementById('sfm-hostelFee').value = student?.hostelFee || '';
+    document.getElementById('sfm-monthlySalary').value = student?.monthlySalary || '';
+
+    // ★ জামাত dropdown populate
+    onStudentFormDeptChange();
+
+    // ★ existing class সিলেক্ট
+    setTimeout(() => {
+        if (student?.className) {
+            const classSel = document.getElementById('sfm-class');
+            if (classSel) classSel.value = student.className;
+        }
+    }, 50);
+
+    // ★ মডাল দেখাই
+    const modal = document.getElementById('student-form-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+};
+
+window.closeStudentFormModal = function () {
+    const modal = document.getElementById('student-form-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+    _editingStudentId = null;
+};
+
+window.onStudentFormDeptChange = function () {
+    const dept = document.getElementById('sfm-dept').value;
+    const classSel = document.getElementById('sfm-class');
+
+    classSel.innerHTML = '';
+
+    if (!dept) {
+        classSel.innerHTML = '<option value="">-- আগে বিভাগ নির্বাচন করুন --</option>';
+        return;
+    }
+
+    // ★ হিফযের জন্য গ্রুপ
+    if (dept === 'hifz') {
+        const groups = configData?.hifzGroups || [];
+        if (groups.length === 0) {
+            classSel.innerHTML = '<option value="">-- কোন গ্রুপ নেই --</option>';
+            return;
+        }
+        classSel.innerHTML = '<option value="">-- গ্রুপ নির্বাচন করুন --</option>';
+        groups.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.name;
+            opt.textContent = g.name;
+            classSel.appendChild(opt);
+        });
+        return;
+    }
+
+    // ★ অন্যদের জন্য জামাত
+    const classes = (configData?.classes || {})[dept] || [];
+    if (classes.length === 0) {
+        classSel.innerHTML = '<option value="">-- কোন জামাত নেই --</option>';
+        return;
+    }
+    classSel.innerHTML = '<option value="">-- জামাত নির্বাচন করুন --</option>';
+    classes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        classSel.appendChild(opt);
+    });
+};
+
+window.saveStudentForm = async function () {
+    // ★ Validation
+    const name = document.getElementById('sfm-name').value.trim();
+    const dept = document.getElementById('sfm-dept').value;
+    const className = document.getElementById('sfm-class').value;
+
+    if (!name) { showToast('⚠️ ছাত্রের নাম দিন', 'warn'); return; }
+    if (!dept) { showToast('⚠️ বিভাগ সিলেক্ট করুন', 'warn'); return; }
+    if (!className) { showToast('⚠️ জামাত/গ্রুপ সিলেক্ট করুন', 'warn'); return; }
+
+    const btn = document.getElementById('sfm-save-btn');
+    const btnText = document.getElementById('sfm-save-btn-text');
+    const origText = btnText.textContent;
+    btn.disabled = true;
+    btnText.textContent = 'সেভ হচ্ছে...';
+
+    try {
+        const { doc, setDoc, addDoc, collection, serverTimestamp } = window.fbFuncs;
+
+        const studentData = {
+            name: name,
+            guardian: document.getElementById('sfm-guardian').value.trim(),
+            studentId: document.getElementById('sfm-student-id').value.trim(),
+            dob: document.getElementById('sfm-dob').value.trim(),
+            mobile1: document.getElementById('sfm-mobile1').value.trim(),
+            mobile2: document.getElementById('sfm-mobile2').value.trim(),
+            address: document.getElementById('sfm-address').value.trim(),
+            dept: dept,
+            className: className,
+            admissionFee: document.getElementById('sfm-admissionFee').value.trim(),
+            firstMonthFood: document.getElementById('sfm-firstMonthFood').value.trim(),
+            sessionFee: document.getElementById('sfm-sessionFee').value.trim(),
+            monthlyFood: document.getElementById('sfm-monthlyFood').value.trim(),
+            hostelFee: document.getElementById('sfm-hostelFee').value.trim(),
+            monthlySalary: document.getElementById('sfm-monthlySalary').value.trim(),
+            updatedAt: serverTimestamp()
+        };
+
+        if (_editingStudentId) {
+            // ★ আপডেট
+            await setDoc(doc(window.fbDB, 'students', _editingStudentId), studentData, { merge: true });
+
+            // ★ Local cache আপডেট
+            const s = studentsCache.find(x => x.id === _editingStudentId);
+            if (s) Object.assign(s, studentData);
+
+            showToast('✅ ছাত্র আপডেট হয়েছে', 'success');
+        } else {
+            // ★ নতুন
+            studentData.createdAt = serverTimestamp();
+            studentData.createdBy = currentUser?.uid || 'unknown';
+
+            const ref = await addDoc(collection(window.fbDB, 'students'), studentData);
+
+            // ★ Local cache
+            studentsCache.push({ id: ref.id, ...studentData });
+
+            showToast('✅ ছাত্র যোগ হয়েছে', 'success');
+        }
+
+        closeStudentFormModal();
+        renderAdminStudents();
+
+    } catch (err) {
+        console.error('❌ saveStudentForm error:', err);
+        showToast('❌ সেভ ব্যর্থ: ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btnText.textContent = origText;
+    }
+};
+
+// ★ সব ছাত্র Export
+window.exportAllStudentsCSV = function () {
+    if (studentsCache.length === 0) {
+        showToast('⚠️ কোন ডাটা নেই', 'warn');
+        return;
+    }
+
+    const headers = ['নাম', 'অভিভাবক', 'আইডি', 'জন্ম তারিখ', 'মোবাইল১', 'মোবাইল২', 'ঠিকানা',
+                    'ভর্তি ফি', '১ম মাসের খোরাকি', 'সেশন ফি', 'মাসিক খোরাকি', 'আবাসন ফি', 'মাসিক বেতন',
+                    'বিভাগ', 'জামাত', 'মন্তব্য', 'কারণ'];
+
+    const esc = v => {
+        const s = String(v == null ? '' : v);
+        return (s.includes(',') || s.includes('"') || s.includes('\n'))
+            ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+
+    const rows = [headers.map(esc).join(',')];
+    studentsCache.forEach(s => {
+        rows.push([
+            s.name, s.guardian, s.studentId, s.dob, s.mobile1, s.mobile2, s.address,
+            s.admissionFee, s.firstMonthFood, s.sessionFee, s.monthlyFood, s.hostelFee, s.monthlySalary,
+            s.dept, s.className, s.remark?.type || '', s.remark?.reason || ''
+        ].map(esc).join(','));
+    });
+
+    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `students_all_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast(`✅ ${studentsCache.length}টি রেকর্ড Export হয়েছে`, 'success');
+};
+
 // ═══════════════════ ADMIN: ইউজার অ্যাকাউন্ট ═══════════════════
 let adminUsersList = [];
 
