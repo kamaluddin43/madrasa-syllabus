@@ -2229,16 +2229,16 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 <!-- ═══════════════════ TAB: EXAM (পরীক্ষা) ═══════════════════ -->
 <section id="tab-exam" class="tab-content hidden space-y-4">
 
-    <!-- ★ হোম বাটন (sticky) -->
-    <div class="sticky top-16 md:top-20 z-30 flex justify-start">
+    <!-- ★ হোম বাটন (sticky) — শুধু মূল মেনুতে দেখাবে -->
+    <div id="exam-main-menu-home-btn" class="sticky top-16 md:top-20 z-30 flex justify-start">
         <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
             <i class="fa-solid fa-house"></i>
             <span>হোম</span>
         </button>
     </div>
 
-    <!-- ★ হেডার কার্ড -->
-    <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
+    <!-- ★ হেডার কার্ড (মূল মেনু) -->
+    <div id="exam-main-menu" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
         <div class="text-center mb-8">
             <div class="w-20 h-20 mx-auto bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl flex items-center justify-center text-white text-4xl mb-4 shadow-lg">
                 <i class="fa-solid fa-clipboard-question"></i>
@@ -2283,21 +2283,47 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 
     <!-- ═══════════════════ আরবি প্রশ্ন মেকার ═══════════════════ -->
     <div id="exam-view-question-maker" class="exam-view hidden">
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
-            
-            <!-- ★ হেডার -->
-            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
-                <h3 class="text-lg font-bold text-blue-900 flex items-center gap-3">
-                    <i class="fa-solid fa-file-pen text-blue-600 text-xl"></i>
-                    <span>প্রশ্ন মেকার</span>
-                </h3>
-                <div class="flex gap-2 flex-wrap">
-                    <select id="qm-subject-selector" onchange="switchQmSubject(this.value)" class="rounded-lg border-slate-300 border p-2 text-sm font-medium bg-white">
+        
+            <!-- ★ Back + Home নেভিগেশন (sticky) -->
+            <div class="sticky top-16 md:top-20 z-40 flex justify-start gap-2 flex-wrap mb-3 no-print">
+                <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>পরীক্ষা মেনু</span>
+                </button>
+                <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-house"></i>
+                    <span>হোম</span>
+                </button>
+            </div>
+
+            <!-- ★★★ Common Subject Selector Bar — Back/Home এর নিচে ★★★ -->
+            <div id="qm-common-subject-bar" class="hidden bg-white rounded-xl shadow-sm border-2 border-orange-300 p-3 no-print sticky top-28 md:top-32 z-30 mb-3">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-open text-orange-600"></i>
+                        <span>বিষয় নির্বাচন:</span>
+                    </label>
+                    <select id="qm-subject-selector" onchange="switchQmSubject(this.value)" class="rounded-lg border-slate-300 border p-2 text-sm font-medium bg-white flex-1 min-w-[160px]">
                         <option value="arabic" selected>🕌 আরবি</option>
                         <option value="bangla">🇧🇩 বাংলা</option>
                         <option value="english">🇬🇧 ইংরেজি</option>
                         <option value="math">🔢 গণিত</option>
                     </select>
+                    <span class="text-[10px] text-slate-500 hidden md:inline">
+                        <i class="fa-solid fa-info-circle"></i> বিষয় বদলালে আগের ডাটা মুছে যাবে
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
+                
+                <!-- ★ হেডার -->
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 flex-wrap gap-2">
+                <h3 class="text-lg font-bold text-blue-900 flex items-center gap-3">
+                    <i class="fa-solid fa-file-pen text-blue-600 text-xl"></i>
+                    <span>প্রশ্ন মেকার</span>
+                </h3>
+                <div class="flex gap-2 flex-wrap">
                     <button onclick="loadSavedQmSets()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition flex items-center gap-2">
                         <i class="fa-solid fa-folder-open"></i> সেভ করা
                     </button>
@@ -2465,6 +2491,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <!-- ★★★ বাংলা প্রশ্ন মেকার ★★★                                       -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="exam-view-bangla-qm" class="exam-view hidden">
+        
+        <!-- ★ Back + Home নেভিগেশন (sticky) -->
+        <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+            <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>পরীক্ষা মেনু</span>
+            </button>
+            <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-house"></i>
+                <span>হোম</span>
+            </button>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
             
             <!-- ★ হেডার -->
@@ -2617,6 +2656,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <!-- ★★★ ইংরেজি প্রশ্ন মেকার ★★★                                      -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="exam-view-english-qm" class="exam-view hidden">
+        
+        <!-- ★ Back + Home নেভিগেশন (sticky) -->
+        <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+            <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>পরীক্ষা মেনু</span>
+            </button>
+            <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-house"></i>
+                <span>হোম</span>
+            </button>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
             
             <!-- ★ হেডার -->
@@ -2776,6 +2828,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <!-- ★★★ গণিত প্রশ্ন মেকার ★★★                                         -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="exam-view-math-qm" class="exam-view hidden">
+        
+        <!-- ★ Back + Home নেভিগেশন (sticky) -->
+        <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+            <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>পরীক্ষা মেনু</span>
+            </button>
+            <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-house"></i>
+                <span>হোম</span>
+            </button>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
             
             <!-- ★ হেডার -->
@@ -2944,6 +3009,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     <!-- ★★★ পরীক্ষার রুটিন ★★★                                          -->
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div id="exam-view-exam-routine" class="exam-view hidden">
+        
+        <!-- ★ Back + Home নেভিগেশন (sticky) -->
+        <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+            <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>পরীক্ষা মেনু</span>
+            </button>
+            <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                <i class="fa-solid fa-house"></i>
+                <span>হোম</span>
+            </button>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 md:p-6">
             
             <!-- ★ হেডার -->
@@ -3213,6 +3291,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
     </div>
         <!-- Results View -->
         <div id="exam-view-results" class="exam-view hidden">
+            
+            <!-- ★ Back + Home নেভিগেশন (sticky) -->
+            <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+                <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>পরীক্ষা মেনু</span>
+                </button>
+                <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-house"></i>
+                    <span>হোম</span>
+                </button>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
                 <div class="text-center py-12 text-slate-400">
                     <i class="fa-solid fa-chart-simple text-5xl mb-4 text-green-300"></i>
@@ -3227,6 +3318,19 @@ body { font-family: 'Hind Siliguri', 'Amiri', sans-serif; background-color: #f8f
 
         <!-- Exam Settings View -->
         <div id="exam-view-exam-settings" class="exam-view hidden">
+            
+            <!-- ★ Back + Home নেভিগেশন (sticky) -->
+            <div class="sticky top-16 md:top-20 z-30 flex justify-start gap-2 flex-wrap mb-3 no-print">
+                <button onclick="closeExamSub()" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-orange-50 border-2 border-orange-600 text-orange-800 hover:text-orange-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>পরীক্ষা মেনু</span>
+                </button>
+                <button onclick="switchTab('home')" class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-emerald-50 border-2 border-emerald-600 text-emerald-800 hover:text-emerald-900 rounded-lg shadow-md hover:shadow-lg transition-all font-bold text-sm">
+                    <i class="fa-solid fa-house"></i>
+                    <span>হোম</span>
+                </button>
+            </div>
+
             <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 md:p-8">
                 <div class="text-center py-12 text-slate-400">
                     <i class="fa-solid fa-gear text-5xl mb-4 text-slate-300"></i>
@@ -19360,11 +19464,12 @@ window.initArabicQm = function() {
     populateAqmYearDropdown();
     populateAqmClassDropdown();
     
-    // ★ বিষয় dropdown default আরবি
+    // ★ বিষয় dropdown default আরবি (শুধু মান সেট, UI পরিবর্তন নয়)
     const subjSel = document.getElementById('qm-subject-selector');
     if (subjSel) subjSel.value = 'arabic';
     
-    switchQmSubject('arabic');
+    // ★ switchQmSubject আর কল করব না — এটা sub-view দেখানোর কাজ করে
+    //   sub-view দেখানো হবে শুধু switchExamSub('question-maker') কল হলে
     
     console.log('✅ initArabicQm শেষ');
 };
@@ -19372,6 +19477,15 @@ window.initArabicQm = function() {
 // ═══════════════════ বিষয় পরিবর্তন ═══════════════════
 window.switchQmSubject = function(subject) {
     console.log('📌 Subject পরিবর্তন:', subject);
+    
+    // ★★★ নতুন: মূল exam মেনু খোলা থাকলে sub-view দেখাব না ★★★
+    const mainMenu = document.getElementById('exam-main-menu');
+    const isMainMenuVisible = mainMenu && !mainMenu.classList.contains('hidden');
+    
+    if (isMainMenuVisible) {
+        console.log('ℹ️ মূল মেনু খোলা আছে — sub-view দেখানো হবে না');
+        return;
+    }
     
     const arabicView = document.getElementById('exam-view-question-maker');
     const banglaView = document.getElementById('exam-view-bangla-qm');
@@ -23792,39 +23906,58 @@ window.resetExamRoutine = function() {
     showToast('🔄 রুটিন রিসেট হয়েছে', 'info');
 };
 
-// ═══════════════════ পরীক্ষা — সাব-মেনু ═══════════════════
+// ═══════════════════ পরীক্ষা — সাব-মেনু (নতুন ভার্সন) ═══════════════════
 window.switchExamSub = function(sub) {
-    // সব view লুকাই
+    // ★ ১) মূল মেনু (৪টি কার্ড) লুকাই
+    const mainMenu = document.getElementById('exam-main-menu');
+    if (mainMenu) mainMenu.classList.add('hidden');
+    
+    // ★★★ উপরের sticky হোম বাটনও লুকাই (সাব-ভিউয়ে দরকার নেই) ★★★
+    const mainMenuHomeBtn = document.getElementById('exam-main-menu-home-btn');
+    if (mainMenuHomeBtn) mainMenuHomeBtn.classList.add('hidden');
+    
+    // ★ ২) সব সাব-ভিউ লুকাই
     document.querySelectorAll('.exam-view').forEach(v => v.classList.add('hidden'));
     
-    // সাব-বাটন থেকে active স্টাইল সরাই
+    // ★ ৩) সাব-বাটন থেকে active স্টাইল সরাই
     document.querySelectorAll('.exam-sub-btn').forEach(b => {
         b.classList.remove('ring-4', 'ring-offset-2', 'ring-orange-400', 'scale-95');
     });
     
-    // active বাটনে স্টাইল দিই
+    // ★ ৪) active বাটনে স্টাইল দিই
     const activeBtn = document.getElementById('exam-sub-btn-' + sub);
     if (activeBtn) {
         activeBtn.classList.add('ring-4', 'ring-offset-2', 'ring-orange-400');
     }
     
-    // কনটেন্ট দেখাই
-    const contentArea = document.getElementById('exam-content');
-    if (contentArea) contentArea.classList.remove('hidden');
+    // ★★★ ৫) Subject bar শুধু প্রশ্ন মেকারে দেখাব ★★★
+    const subjectBar = document.getElementById('qm-common-subject-bar');
+    if (subjectBar) {
+        if (sub === 'question-maker') {
+            subjectBar.classList.remove('hidden');
+        } else {
+            subjectBar.classList.add('hidden');
+        }
+    }
     
+    // ★ ৬) টার্গেট সাব-ভিউ দেখাই
     const targetView = document.getElementById('exam-view-' + sub);
-    if (targetView) targetView.classList.remove('hidden');
+    if (!targetView) {
+        console.warn('⚠️ Exam sub-view পাওয়া যায়নি:', sub);
+        return;
+    }
+    targetView.classList.remove('hidden');
     
-    // ★ পরীক্ষার রুটিন হলে init করি
+    // ★ ৭) পেজের একেবারে উপরে scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // ★ ৮) সাব-ভিউ অনুযায়ী init কল
     if (sub === 'exam-routine') {
         setTimeout(() => {
             if (typeof initExamRoutine === 'function') initExamRoutine();
         }, 100);
     }
-    
-    // ★ প্রশ্ন মেকার হলে বাংলা/ইংরেজি/গণিত/আরবি init হবে (switchQmSubject-এর মাধ্যমে)
     if (sub === 'question-maker') {
-        // ডিফল্ট আরবি
         const subjSel = document.getElementById('qm-subject-selector');
         if (subjSel && typeof switchQmSubject === 'function') {
             switchQmSubject(subjSel.value || 'arabic');
@@ -23832,8 +23965,44 @@ window.switchExamSub = function(sub) {
     }
 };
 
+// ★ সাব-ভিউ থেকে ফিরে মূল পরীক্ষা মেনুতে আসা
+window.closeExamSub = function() {
+    // ★ ১) সব সাব-ভিউ লুকাই
+    document.querySelectorAll('.exam-view').forEach(v => v.classList.add('hidden'));
+    
+    // ★ ২) সাব-বাটন থেকে active স্টাইল সরাই
+    document.querySelectorAll('.exam-sub-btn').forEach(b => {
+        b.classList.remove('ring-4', 'ring-offset-2', 'ring-orange-400', 'scale-95');
+    });
+    
+    // ★★★ ৩) Subject bar লুকাই ★★★
+    const subjectBar = document.getElementById('qm-common-subject-bar');
+    if (subjectBar) subjectBar.classList.add('hidden');
+    
+    // ★ ৪) মূল মেনু (৪টি কার্ড) দেখাই
+    const mainMenu = document.getElementById('exam-main-menu');
+    if (mainMenu) mainMenu.classList.remove('hidden');
+    
+    // ★★★ ৫) উপরের sticky হোম বাটনও আবার দেখাই ★★★
+    const mainMenuHomeBtn = document.getElementById('exam-main-menu-home-btn');
+    if (mainMenuHomeBtn) mainMenuHomeBtn.classList.remove('hidden');
+    
+    // ★ ৫) উপরে scroll
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 // ═══════════════════ TAB SWITCH ═══════════════════
 function switchTab(tabId) {
+    // ★ যদি পরীক্ষার কোনো সাব-ভিউ খোলা থাকে এবং ইউজার অন্য ট্যাবে যাচ্ছে
+    // → সাব-ভিউ বন্ধ করি (ক্লিন state)
+    const anyExamSubOpen = Array.from(document.querySelectorAll('.exam-view'))
+        .some(v => !v.classList.contains('hidden'));
+    
+    if (anyExamSubOpen && tabId !== 'exam') {
+        // পরীক্ষার সাব-ভিউ খোলা ছিল এবং অন্য ট্যাবে যাচ্ছে → পরিষ্কার
+        document.querySelectorAll('.exam-view').forEach(v => v.classList.add('hidden'));
+    }
+    
     // সব tab-content লুকাই
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
 
@@ -23896,11 +24065,27 @@ function switchTab(tabId) {
         }
     }
     if (tabId === 'exam') {
-        // পরীক্ষা ট্যাব খুললে কেস
+        // ★ মূল মেনু (৪টি কার্ড) দেখাই এবং সব সাব-ভিউ বন্ধ করি
         setTimeout(() => {
-            if (typeof initArabicQm === 'function') initArabicQm();
+            const mainMenu = document.getElementById('exam-main-menu');
+            if (mainMenu) mainMenu.classList.remove('hidden');
+            
+            // ★★★ উপরের sticky হোম বাটনও দেখাই ★★★
+            const mainMenuHomeBtn = document.getElementById('exam-main-menu-home-btn');
+            if (mainMenuHomeBtn) mainMenuHomeBtn.classList.remove('hidden');
+            
+            // সব সাব-ভিউ লুকাই
+            document.querySelectorAll('.exam-view').forEach(v => v.classList.add('hidden'));
+            
+            // ★★★ Subject bar লুকাই (মূল মেনুতে দেখাবে না) ★★★
+            const subjectBar = document.getElementById('qm-common-subject-bar');
+            if (subjectBar) subjectBar.classList.add('hidden');
+            
+            // ★★★ শুধু ড্রপডাউন populate করি — UI দেখাই না ★★★
+            if (typeof populateAqmYearDropdown === 'function') populateAqmYearDropdown();
+            if (typeof populateAqmClassDropdown === 'function') populateAqmClassDropdown();
         }, 100);
-        console.log('📋 পরীক্ষা ট্যাব খোলা হয়েছে');
+        console.log('📋 পরীক্ষা ট্যাব খোলা হয়েছে — মূল মেনু');
     }
 }
 
